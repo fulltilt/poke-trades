@@ -28,7 +28,13 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 
 Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
 
+https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
+
 [x] Display list of sets
-[] Display list of cards in a set
+[x] Display list of cards in a set
+[] Migrate data to PG
+[] Add search
 [] Display list of all cards
 [] Let a user create a collection
+[] Verify Suspense is working
+[] Limit the amount of fields returned from card search

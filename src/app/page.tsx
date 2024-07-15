@@ -4,7 +4,7 @@ import { SSet, getSets } from "~/server/queries";
 const SetDisplay = ({ set }: { set: SSet }) => {
   return (
     <div className="relative flex h-32 w-56 cursor-pointer flex-col rounded border border-[#BFC1D7]">
-      <Link href={`cardlist/${set.id}`}>
+      <Link href={`cardlist/${set.id}?q=set.id:${set.id}&page=1&pageSize=30`}>
         <div className="mt-4 flex h-[55px] justify-center">
           <img
             src={set.images.logo}

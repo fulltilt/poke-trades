@@ -85,8 +85,11 @@ export async function getSets(): Promise<Map<string, SSet[]>> {
   }, new Map());
 }
 
-export async function getCardsFromSet(id: string) {
-  const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}`, {
+export async function getCardsFromSet(query: string) {
+  console.log(query);
+  if (query.indexOf("pageSize") === -1) return;
+
+  const res = await fetch(`https://api.pokemontcg.io/v2/cards?${query}`, {
     method: "GET",
     headers: {
       "X-Api-Key": process.env.XAPIKEY!,
