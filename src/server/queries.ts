@@ -17,20 +17,83 @@ export type SSet = {
   };
 };
 
+export type Card = {
+  id: string;
+  name: string;
+  supertype: string;
+  subtypes: string[];
+  hp: string;
+  types: string[];
+  evolvesFrom: string;
+  //   abilities: any[];
+  //   attacks: any[];
+  //   weaknesses: any[];
+  retreatCost: string[];
+  convertedRetreatCost: number;
+  set: SSet;
+  number: string;
+  artist: string;
+  rarity: string;
+  flavorText: string;
+  nationalPokedexNumbers: string[];
+  legalities: {
+    unlimited: string;
+    standard: string;
+    expanded: string;
+  };
+  images: {
+    small: string;
+    large: string;
+  };
+  tcgplayer: {
+    url: string;
+    updatedAt: string;
+    prices: {
+      normal: {
+        low: number;
+        mid: number;
+        high: number;
+        market: number;
+        directLow: number;
+      };
+    };
+    reverseHolofoil: {
+      low: number;
+      mid: number;
+      high: number;
+      market: number;
+      directLow: number;
+    };
+  };
+};
+
 export async function getSets(): Promise<Map<string, SSet[]>> {
   const res = await fetch("https://api.pokemontcg.io/v2/sets", {
     method: "GET",
     headers: {
-      "X-Api-Key": "e5f992bc-7cb1-45ff-978c-8083c73a3fb8",
+      "X-Api-Key": process.env.XAPIKEY!,
     },
   });
 
-  let data = await res.json();
+  const data = await res.json();
 
   return data.data.reduce((allSets: Map<string, SSet[]>, set: SSet) => {
-    let series = set.series;
+    const series = set.series;
     if (!allSets.has(series)) allSets.set(series, []);
     allSets.get(series)?.push(set);
     return allSets;
   }, new Map());
+}
+
+export async function getCardsFromSet(id: string) {
+  const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}`, {
+    method: "GET",
+    headers: {
+      "X-Api-Key": process.env.XAPIKEY!,
+    },
+  });
+
+  const data = await res.json();
+
+  return Object.assign({}, data);
 }
