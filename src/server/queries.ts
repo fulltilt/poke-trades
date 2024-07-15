@@ -17,6 +17,14 @@ export type SSet = {
   };
 };
 
+type SSetData = {
+  data: SSet[];
+  page: number;
+  pageSize: number;
+  count: number;
+  totalCount: number;
+};
+
 export type Card = {
   id: string;
   name: string;
@@ -67,6 +75,14 @@ export type Card = {
   };
 };
 
+type CardData = {
+  data: Card[];
+  page: number;
+  pageSize: number;
+  count: number;
+  totalCount: number;
+};
+
 export async function getSets(): Promise<Map<string, SSet[]>> {
   const res = await fetch("https://api.pokemontcg.io/v2/sets", {
     method: "GET",
@@ -75,7 +91,7 @@ export async function getSets(): Promise<Map<string, SSet[]>> {
     },
   });
 
-  const data = await res.json();
+  const data = (await res.json()) as SSetData;
 
   return data.data.reduce((allSets: Map<string, SSet[]>, set: SSet) => {
     const series = set.series;
@@ -85,9 +101,9 @@ export async function getSets(): Promise<Map<string, SSet[]>> {
   }, new Map());
 }
 
-export async function getCardsFromSet(query: string) {
+export async function getCardsFromSet(query: string): Promise<CardData> {
   console.log(query);
-  if (query.indexOf("pageSize") === -1) return;
+  //   if (query.indexOf("pageSize") === -1) return;
 
   const res = await fetch(`https://api.pokemontcg.io/v2/cards?${query}`, {
     method: "GET",
@@ -96,7 +112,7 @@ export async function getCardsFromSet(query: string) {
     },
   });
 
-  const data = await res.json();
+  const data = (await res.json()) as CardData;
 
-  return Object.assign({}, data);
+  return data;
 }

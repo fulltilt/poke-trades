@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { SSet, getSets } from "~/server/queries";
+import { getSets } from "~/server/queries";
+import type { SSet } from "~/server/queries";
 
 const SetDisplay = ({ set }: { set: SSet }) => {
   return (

@@ -36,5 +36,6 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [] Add search
 [] Display list of all cards
 [] Let a user create a collection
+[] Fix pagination
 [] Verify Suspense is working
 [] Limit the amount of fields returned from card search

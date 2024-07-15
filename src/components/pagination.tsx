@@ -18,15 +18,15 @@ export default function PaginationComponent({
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { replace } = useRouter();
+  const router = useRouter();
 
-  const currentPage = Number(searchParams.get("page")) || 1;
-  const pageSize = Number(searchParams.get("pageSize")) || 30;
+  //   const currentPage = Number(searchParams.get("page")) || 1;
+  //   const pageSize = Number(searchParams.get("pageSize")) || 30;
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", pageNumber.toString());
-    replace(`${pathname}?${params.toString()}`);
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   return (
@@ -42,9 +42,9 @@ export default function PaginationComponent({
             </PaginationLink>
           </PaginationItem>
         ))}
-        {/* <PaginationItem>
+        <PaginationItem>
           <PaginationEllipsis />
-        </PaginationItem> */}
+        </PaginationItem>
         <PaginationItem>
           <PaginationNext href="#" />
         </PaginationItem>

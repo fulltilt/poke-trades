@@ -2,7 +2,8 @@ import { Suspense } from "react";
 import PaginationComponent from "~/components/pagination";
 import SearchInput from "~/components/searchInput";
 import { SkeletonCard } from "~/components/skeletonCard";
-import { Card, getCardsFromSet } from "~/server/queries";
+import { getCardsFromSet } from "~/server/queries";
+import type { Card } from "~/server/queries";
 
 export default function CardList({
   params,
@@ -15,7 +16,7 @@ export default function CardList({
     const currentPage = Number(searchParams?.page) || 1;
     const pageSize = Number(searchParams?.pageSize) || 30;
     const query =
-      searchParams?.query ||
+      searchParams?.query ??
       `q=set.id:${params?.id}&page=${currentPage}&pageSize=${pageSize}`;
     const data = await getCardsFromSet(query);
     const cards = data.data;
