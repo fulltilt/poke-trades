@@ -37,9 +37,11 @@ export const createTable = pgTableCreator((name) => `poketrades_${name}`);
 // );
 
 export const sets = createTable("set", {
-  json_data: jsonb("json_data"),
+  id: varchar("id").primaryKey(),
+  data: jsonb("data"),
 });
 
 export const cards = createTable("card", {
-  json_data: jsonb("json_data"),
+  id: varchar("id").primaryKey(),
+  data: jsonb("data"),
 });
