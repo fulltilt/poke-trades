@@ -10,7 +10,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { SSet } from "../queries";
+import { Card, SSet } from "../queries";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -44,5 +44,5 @@ export const sets = createTable("set", {
 
 export const cards = createTable("card", {
   id: varchar("id").primaryKey(),
-  data: jsonb("data"),
+  data: jsonb("data").$type<Card>(),
 });
