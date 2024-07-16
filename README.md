@@ -30,6 +30,18 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 
+export async function seedData() {
+let dat = []
+
+// console.log(dat.length);
+await db.insert(cards).values(
+dat.map((d) => ({
+id: d.id,
+data: d,
+})),
+);
+}
+
 SELECT
 data
 FROM
@@ -39,7 +51,7 @@ data->>'id' LIKE 'bw1-%'
 
 [x] Display list of sets
 [x] Display list of cards in a set
-[] Migrate data to PG
+[x] Migrate data to PG
 [] Add search
 [] Display list of all cards
 [] Let a user create a collection

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getSets } from "~/server/queries";
+import { getSets, seedData } from "~/server/queries";
 import type { SSet } from "~/server/queries";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +32,7 @@ const SetDisplay = ({ set }: { set: SSet }) => {
 
 async function Series() {
   const sets = await getSets();
+  // await seedData();
 
   return (
     <div className="flex flex-col">
