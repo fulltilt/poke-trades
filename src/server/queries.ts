@@ -1,6 +1,6 @@
-import { placeholder, sql } from "drizzle-orm";
+import { sql, count, like } from "drizzle-orm";
 import { db } from "./db";
-import { sets } from "./db/schema";
+import { sets, cards } from "./db/schema";
 
 export type SSet = {
   id: string;
@@ -80,10 +80,10 @@ export type Card = {
 };
 
 type CardData = {
-  data: Card[];
-  page: number;
-  pageSize: number;
-  count: number;
+  cards: Card[];
+  // page: number;
+  // pageSize: number;
+  // count: number;
   totalCount: number;
 };
 
@@ -111,6 +111,11 @@ export async function getCardsFromSet(
   page: number,
   pageSize: number,
 ) {
+  const ct: { count: number }[] = await db
+    .select({ count: count() })
+    .from(cards)
+    .where(like(cards.id, `${id}-%`));
+
   const prepared = db.query.cards
     .findMany({
       limit: sql.placeholder("limit"),
@@ -125,7 +130,11 @@ export async function getCardsFromSet(
     searchterm: `${id}-%`,
   });
 
-  return data.map((r) => r.data);
+  return Object.assign(
+    {},
+    { cards: data.map((r) => r.data) },
+    { totalCount: ct[0]?.count },
+  );
 }
 
 // export async function getSets(): Promise<Map<string, SSet[]>> {

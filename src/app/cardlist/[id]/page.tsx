@@ -18,12 +18,11 @@ export default function CardList({
     // const query =
     //   searchParams?.query ??
     //   `q=set.id:${params?.id}&page=${currentPage}&pageSize=${pageSize}`;
-    const cards = await getCardsFromSet(
-      params?.id || "",
-      currentPage,
-      pageSize,
+    const data = await getCardsFromSet(params?.id || "", currentPage, pageSize);
+
+    const cards = data.cards.sort(
+      (a, b) => Number(a?.number) - Number(b?.number),
     );
-    cards.sort((a, b) => Number(a?.number) - Number(b?.number));
     // const cards = data.data;
     // const totalPages = Math.ceil(data.totalCount / pageSize);
 
