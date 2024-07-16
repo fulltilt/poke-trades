@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getSets } from "~/server/queries";
 import type { SSet } from "~/server/queries";
 
+export const dynamic = "force-dynamic";
+
 const SetDisplay = ({ set }: { set: SSet }) => {
   return (
     <div className="relative flex h-32 w-56 cursor-pointer flex-col rounded border border-[#BFC1D7]">
