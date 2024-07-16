@@ -30,6 +30,13 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 
+SELECT
+data
+FROM
+poketrades_card
+WHERE
+data->>'id' LIKE 'bw1-%'
+
 [x] Display list of sets
 [x] Display list of cards in a set
 [] Migrate data to PG
