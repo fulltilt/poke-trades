@@ -13,40 +13,41 @@ export default function CardList({
   searchParams?: { query?: string; page?: string; pageSize?: string };
 }) {
   async function Cards() {
-    const currentPage = Number(searchParams?.page) || 1;
-    const pageSize = Number(searchParams?.pageSize) || 30;
+    const currentPage = Number(searchParams?.page) ?? 1;
+    const pageSize = Number(searchParams?.pageSize) ?? 30;
     // const query =
     //   searchParams?.query ??
     //   `q=set.id:${params?.id}&page=${currentPage}&pageSize=${pageSize}`;
+
     const data = await getCardsFromSet(params?.id || "", currentPage, pageSize);
 
     const cards = data.cards.sort(
       (a, b) => Number(a?.number) - Number(b?.number),
     );
     // const cards = data.data;
-    // const totalPages = Math.ceil(data.totalCount / pageSize);
+    // const totalPages = Math.ceil((data?.totalCount ?? 0) / pageSize);
+    // console.log("totalCount", data?.totalCount);
 
     return (
-      <div className="m-12 flex flex-col justify-center">
+      <div className="m-12 flex flex-col">
         <div className="max-w-[300px]">
           <SearchInput placeholder={"Search cards..."} />
         </div>
         {/* <div className="text-lg">{params.name}</div> */}
+        {/* <SkeletonCard /> */}
         <div className="m-auto grid max-w-[1200px] gap-4 md:grid-cols-4 lg:grid-cols-6">
-          <Suspense key={params?.id} fallback={<SkeletonCard />}>
-            {cards.map((card: Card | null) => (
-              <div key={card?.id}>
-                <img
-                  src={card?.images.small}
-                  alt={`${card?.name}`}
-                  className="cursor-pointer transition-all duration-200 hover:scale-105"
-                />
-              </div>
-            ))}
-          </Suspense>
+          {cards.map((card: Card | null) => (
+            <div key={card?.id}>
+              <img
+                src={card?.images.small}
+                alt={`${card?.name}`}
+                className="cursor-pointer transition-all duration-200 hover:scale-105"
+              />
+            </div>
+          ))}
         </div>
         <div className="mt-6">
-          <PaginationComponent totalPages={2} />
+          <PaginationComponent totalCount={data?.totalCount || 0} />
         </div>
       </div>
     );
@@ -54,7 +55,17 @@ export default function CardList({
 
   return (
     <div>
-      <Cards />
+      <Suspense
+        fallback={[...Array(3).keys()].map(() => (
+          <div>
+            {[...Array(6).keys()].map(() => (
+              <SkeletonCard />
+            ))}
+          </div>
+        ))}
+      >
+        <Cards />
+      </Suspense>
     </div>
   );
 }

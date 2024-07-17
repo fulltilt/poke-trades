@@ -52,9 +52,9 @@ data->>'id' LIKE 'bw1-%'
 [x] Display list of sets
 [x] Display list of cards in a set
 [x] Migrate data to PG
+[x] Fix pagination (https://github.com/hqasmei/youtube-tutorials/blob/main/shadcn-pagination/src/components/client-pagination.tsx)
+[] Verify Suspense is working (works but I need to clean up layout)
 [] Add search
 [] Display list of all cards
 [] Let a user create a collection
-[] Fix pagination
-[] Verify Suspense is working
 [] Limit the amount of fields returned from card search

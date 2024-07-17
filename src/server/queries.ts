@@ -120,6 +120,42 @@ export async function getCardsFromSet(
     .findMany({
       limit: sql.placeholder("limit"),
       offset: sql.placeholder("offset"),
+      // orderBy: (model, { asc }) => asc(model.data->),
+      // orderBy: ["posts.metadata.score", 'DESC'],
+      where: (model, { like }) => like(model.id, sql.placeholder("searchterm")),
+    })
+    .prepare("query_name");
+
+  const data = await prepared.execute({
+    limit: pageSize,
+    offset: (page - 1) * pageSize,
+    searchterm: `${id}-%`,
+  });
+
+  return Object.assign(
+    {},
+    { cards: data.map((r) => r.data) },
+    { totalCount: ct[0]?.count },
+  );
+}
+
+export async function searchCards(
+  term: string,
+  id: string,
+  page: number,
+  pageSize: number,
+) {
+  const ct: { count: number }[] = await db
+    .select({ count: count() })
+    .from(cards)
+    .where(like(cards.id, `${id}-%`));
+
+  const prepared = db.query.cards
+    .findMany({
+      limit: sql.placeholder("limit"),
+      offset: sql.placeholder("offset"),
+      // orderBy: (model, { asc }) => asc(model.data->),
+      // orderBy: ["posts.metadata.score", 'DESC'],
       where: (model, { like }) => like(model.id, sql.placeholder("searchterm")),
     })
     .prepare("query_name");
@@ -172,7 +208,7 @@ export async function getCardsFromSet(
 // }
 
 export async function seedData() {
-  let dat = [
+  const dat = [
     {
       id: "base1",
       name: "Base",

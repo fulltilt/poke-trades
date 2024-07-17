@@ -12,16 +12,16 @@ import {
 } from "~/components/ui/pagination";
 
 export default function PaginationComponent({
-  totalPages,
+  totalCount,
 }: {
-  totalPages: number;
+  totalCount: number;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  //   const currentPage = Number(searchParams.get("page")) || 1;
-  //   const pageSize = Number(searchParams.get("pageSize")) || 30;
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 30;
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
@@ -29,26 +29,86 @@ export default function PaginationComponent({
     router.replace(`${pathname}?${params.toString()}`);
   };
 
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(totalCount / pageSize); i++) {
+    pageNumbers.push(i);
+  }
+
+  const maxPageNum = 5; // Maximum page numbers to display at once
+  const pageNumLimit = Math.floor(maxPageNum / 2); // Current page should be in the middle if possible
+
+  let activePages = pageNumbers.slice(
+    Math.max(0, currentPage - 1 - pageNumLimit),
+    Math.min(currentPage - 1 + pageNumLimit + 1, pageNumbers.length),
+  );
+
+  const handleNextPage = () => {
+    if (currentPage < pageNumbers.length) {
+      createPageURL(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      createPageURL(currentPage - 1);
+    }
+  };
+
+  // Function to render page numbers with ellipsis
+  const renderPages = () => {
+    const renderedPages = activePages.map((page, idx) => (
+      <PaginationItem
+        key={idx}
+        className={currentPage === page ? "rounded-md bg-neutral-100" : ""}
+      >
+        <PaginationLink onClick={() => createPageURL(page)}>
+          {page}
+        </PaginationLink>
+      </PaginationItem>
+    ));
+
+    // Add ellipsis at the start if necessary
+    if (activePages && activePages[0] && activePages[0] > 1) {
+      renderedPages.unshift(
+        <PaginationEllipsis
+          key="ellipsis-start"
+          onClick={() => createPageURL(activePages[0] ?? 0 - 1)}
+        />,
+      );
+    }
+
+    // Add ellipsis at the end if necessary
+    if (
+      activePages &&
+      activePages[activePages.length - 1] &&
+      activePages[activePages.length - 1]! < pageNumbers.length
+    ) {
+      renderedPages.push(
+        <PaginationEllipsis
+          key="ellipsis-end"
+          onClick={() =>
+            createPageURL(activePages[activePages.length - 1] ?? 0 + 1)
+          }
+        />,
+      );
+    }
+
+    return renderedPages;
+  };
+
   return (
-    <Pagination>
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious href="#" />
-        </PaginationItem>
-        {[...Array(totalPages).keys()].map((i) => (
-          <PaginationItem key={i}>
-            <PaginationLink onClick={() => createPageURL(i + 1)}>
-              {i + 1}
-            </PaginationLink>
+    <div>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious onClick={handlePrevPage} />
           </PaginationItem>
-        ))}
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href="#" />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+          {renderPages()}
+          <PaginationItem>
+            <PaginationNext onClick={handleNextPage} />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </div>
   );
 }
