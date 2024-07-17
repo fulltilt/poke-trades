@@ -1,4 +1,4 @@
-import { sql, count, like } from "drizzle-orm";
+import { sql, count, like, and, ilike } from "drizzle-orm";
 import { db } from "./db";
 import { sets, cards } from "./db/schema";
 
@@ -97,7 +97,7 @@ export async function getSets() {
       allSets: Map<string, (SSet | null)[]>,
       set: { id: string; data: SSet | null },
     ) => {
-      const series = set?.data?.series || "";
+      const series = set?.data?.series ?? "";
       if (!allSets.has(series)) allSets.set(series, []);
       allSets.get(series)?.push(set?.data);
       return allSets;
@@ -107,69 +107,66 @@ export async function getSets() {
 }
 
 export async function getCardsFromSet(
+  search: string,
   id: string,
   page: number,
   pageSize: number,
 ) {
-  const ct: { count: number }[] = await db
+  console.log("search", search);
+  const countPrepared = db
     .select({ count: count() })
     .from(cards)
-    .where(like(cards.id, `${id}-%`));
+    .where(
+      and(
+        like(cards.id, sql.placeholder("searchterm")),
+        search.length
+          ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
+          : undefined,
+      ),
+    );
+  // .prepare("cardsCountStatement");
 
-  const prepared = db.query.cards
-    .findMany({
-      limit: sql.placeholder("limit"),
-      offset: sql.placeholder("offset"),
-      // orderBy: (model, { asc }) => asc(model.data->),
-      // orderBy: ["posts.metadata.score", 'DESC'],
-      where: (model, { like }) => like(model.id, sql.placeholder("searchterm")),
-    })
-    .prepare("query_name");
+  const countData = await countPrepared.execute({
+    searchterm: `${id}-%`,
+    search: `%${search}%`,
+  });
 
-  const data = await prepared.execute({
+  // const prepared = db.query.cards
+  //   .findMany({
+  //     limit: sql.placeholder("limit"),
+  //     offset: sql.placeholder("offset"),
+  //     orderBy: sql`CAST(DATA->>'number' AS INTEGER)`,
+  //     where: (model, { like }) => like(model.id, sql.placeholder("searchterm")),
+  //   })
+  //   .prepare("query_name");
+
+  const cardsPrepared = db
+    .select()
+    .from(cards)
+    .where(
+      and(
+        like(cards.id, sql.placeholder("searchterm")),
+        search.length
+          ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
+          : undefined,
+      ),
+    )
+    .limit(sql.placeholder("limit"))
+    .offset(sql.placeholder("offset"))
+    .orderBy(sql`CAST(DATA->>'number' AS INTEGER)`);
+  // .prepare("cardsStatement");
+
+  const cardsData = await cardsPrepared.execute({
     limit: pageSize,
     offset: (page - 1) * pageSize,
     searchterm: `${id}-%`,
+    search: `%${search}%`,
   });
 
   return Object.assign(
     {},
-    { cards: data.map((r) => r.data) },
-    { totalCount: ct[0]?.count },
-  );
-}
-
-export async function searchCards(
-  term: string,
-  id: string,
-  page: number,
-  pageSize: number,
-) {
-  const ct: { count: number }[] = await db
-    .select({ count: count() })
-    .from(cards)
-    .where(like(cards.id, `${id}-%`));
-
-  const prepared = db.query.cards
-    .findMany({
-      limit: sql.placeholder("limit"),
-      offset: sql.placeholder("offset"),
-      // orderBy: (model, { asc }) => asc(model.data->),
-      // orderBy: ["posts.metadata.score", 'DESC'],
-      where: (model, { like }) => like(model.id, sql.placeholder("searchterm")),
-    })
-    .prepare("query_name");
-
-  const data = await prepared.execute({
-    limit: pageSize,
-    offset: (page - 1) * pageSize,
-    searchterm: `${id}-%`,
-  });
-
-  return Object.assign(
-    {},
-    { cards: data.map((r) => r.data) },
-    { totalCount: ct[0]?.count },
+    { cards: cardsData.map((r) => r.data) },
+    { totalCount: countData[0]?.count },
   );
 }
 

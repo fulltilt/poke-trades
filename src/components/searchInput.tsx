@@ -13,9 +13,10 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
     const params = new URLSearchParams(searchParams);
 
     if (term) {
-      params.set("query", term);
+      params.set("search", term);
+      params.set("page", "1");
     } else {
-      params.delete("query");
+      params.delete("search");
     }
     console.log("pathname", pathname);
     console.log("params", params.toString());
@@ -33,7 +34,7 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
         onChange={(e) => {
           handleSearch(e.target.value);
         }}
-        defaultValue={searchParams.get("query")?.toString()}
+        defaultValue={searchParams.get("search")?.toString()}
       />
     </div>
   );

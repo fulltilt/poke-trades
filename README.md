@@ -49,12 +49,22 @@ poketrades_card
 WHERE
 data->>'id' LIKE 'bw1-%'
 
+SELECT
+DATA->>'number'
+FROM
+poketrades_card
+WHERE
+DATA ->> 'id' LIKE 'bw1-%'
+DATA ->> 'name' ILIKE '%Sniv%'
+ORDER BY
+CAST(DATA->>'number' AS INTEGER)
+
 [x] Display list of sets
 [x] Display list of cards in a set
 [x] Migrate data to PG
 [x] Fix pagination (https://github.com/hqasmei/youtube-tutorials/blob/main/shadcn-pagination/src/components/client-pagination.tsx)
-[] Verify Suspense is working (works but I need to clean up layout)
-[] Add search
+[x] Add search
+[] Clean up Suspense and search bar
 [] Display list of all cards
 [] Let a user create a collection
 [] Limit the amount of fields returned from card search

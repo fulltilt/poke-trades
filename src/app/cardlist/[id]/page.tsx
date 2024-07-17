@@ -10,31 +10,29 @@ export default function CardList({
   searchParams,
 }: {
   params?: { id: string };
-  searchParams?: { query?: string; page?: string; pageSize?: string };
+  searchParams?: { search?: string; page?: string; pageSize?: string };
 }) {
   async function Cards() {
     const currentPage = Number(searchParams?.page) ?? 1;
     const pageSize = Number(searchParams?.pageSize) ?? 30;
-    // const query =
-    //   searchParams?.query ??
-    //   `q=set.id:${params?.id}&page=${currentPage}&pageSize=${pageSize}`;
-
-    const data = await getCardsFromSet(params?.id || "", currentPage, pageSize);
+    const search = searchParams?.search ?? "";
+    console.log("search ui", search);
+    const data = await getCardsFromSet(
+      search,
+      params?.id ?? "",
+      currentPage,
+      pageSize,
+    );
 
     const cards = data.cards.sort(
       (a, b) => Number(a?.number) - Number(b?.number),
     );
-    // const cards = data.data;
-    // const totalPages = Math.ceil((data?.totalCount ?? 0) / pageSize);
-    // console.log("totalCount", data?.totalCount);
 
     return (
       <div className="m-12 flex flex-col">
         <div className="max-w-[300px]">
           <SearchInput placeholder={"Search cards..."} />
         </div>
-        {/* <div className="text-lg">{params.name}</div> */}
-        {/* <SkeletonCard /> */}
         <div className="m-auto grid max-w-[1200px] gap-4 md:grid-cols-4 lg:grid-cols-6">
           {cards.map((card: Card | null) => (
             <div key={card?.id}>
@@ -47,7 +45,7 @@ export default function CardList({
           ))}
         </div>
         <div className="mt-6">
-          <PaginationComponent totalCount={data?.totalCount || 0} />
+          <PaginationComponent totalCount={data?.totalCount ?? 0} />
         </div>
       </div>
     );
@@ -56,10 +54,10 @@ export default function CardList({
   return (
     <div>
       <Suspense
-        fallback={[...Array(3).keys()].map(() => (
-          <div>
-            {[...Array(6).keys()].map(() => (
-              <SkeletonCard />
+        fallback={[...Array(3).keys()].map((x, i) => (
+          <div key={`${x}${i}`}>
+            {[...Array(6).keys()].map((x2, i2) => (
+              <SkeletonCard key={`${i2}${x2}`} />
             ))}
           </div>
         ))}

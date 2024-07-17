@@ -37,7 +37,7 @@ export default function PaginationComponent({
   const maxPageNum = 5; // Maximum page numbers to display at once
   const pageNumLimit = Math.floor(maxPageNum / 2); // Current page should be in the middle if possible
 
-  let activePages = pageNumbers.slice(
+  const activePages = pageNumbers.slice(
     Math.max(0, currentPage - 1 - pageNumLimit),
     Math.min(currentPage - 1 + pageNumLimit + 1, pageNumbers.length),
   );
@@ -59,7 +59,11 @@ export default function PaginationComponent({
     const renderedPages = activePages.map((page, idx) => (
       <PaginationItem
         key={idx}
-        className={currentPage === page ? "rounded-md bg-neutral-100" : ""}
+        className={
+          currentPage === page
+            ? "cursor-pointer rounded-md bg-neutral-100"
+            : "cursor-pointer"
+        }
       >
         <PaginationLink onClick={() => createPageURL(page)}>
           {page}
@@ -68,27 +72,26 @@ export default function PaginationComponent({
     ));
 
     // Add ellipsis at the start if necessary
-    if (activePages && activePages[0] && activePages[0] > 1) {
+    // if (activePages && activePages[0] && activePages[0] > 1) {
+    if (activePages?.[0]! > 1) {
       renderedPages.unshift(
         <PaginationEllipsis
           key="ellipsis-start"
           onClick={() => createPageURL(activePages[0] ?? 0 - 1)}
+          className="cursor-pointer"
         />,
       );
     }
 
     // Add ellipsis at the end if necessary
-    if (
-      activePages &&
-      activePages[activePages.length - 1] &&
-      activePages[activePages.length - 1]! < pageNumbers.length
-    ) {
+    if (activePages?.[activePages.length - 1]! < pageNumbers.length) {
       renderedPages.push(
         <PaginationEllipsis
           key="ellipsis-end"
           onClick={() =>
             createPageURL(activePages[activePages.length - 1] ?? 0 + 1)
           }
+          className="cursor-pointer"
         />,
       );
     }
@@ -100,11 +103,11 @@ export default function PaginationComponent({
     <div>
       <Pagination>
         <PaginationContent>
-          <PaginationItem>
+          <PaginationItem className="cursor-pointer">
             <PaginationPrevious onClick={handlePrevPage} />
           </PaginationItem>
           {renderPages()}
-          <PaginationItem>
+          <PaginationItem className="cursor-pointer">
             <PaginationNext onClick={handleNextPage} />
           </PaginationItem>
         </PaginationContent>

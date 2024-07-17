@@ -18,7 +18,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
-          <div>
+          <div className="grid h-screen grid-rows-[auto,1fr]">
             <TopNav />
             {children}
           </div>
