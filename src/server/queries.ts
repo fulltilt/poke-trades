@@ -106,19 +106,36 @@ export async function getSets() {
   );
 }
 
+export async function getCardsFromSetAPI(query: string) {
+  console.log(query);
+  //   if (query.indexOf("pageSize") === -1) return;
+
+  const res = await fetch(`https://api.pokemontcg.io/v2/cards?${query}`, {
+    method: "GET",
+    headers: {
+      "X-Api-Key": process.env.XAPIKEY!,
+    },
+  });
+  // for (let i = 0; i < 72; ++i) {
+
+  // }
+
+  const data = await res.json();
+  console.log(data);
+}
+
 export async function getCardsFromSet(
   search: string,
   id: string,
   page: number,
   pageSize: number,
 ) {
-  console.log("search", search);
   const countPrepared = db
     .select({ count: count() })
     .from(cards)
     .where(
       and(
-        like(cards.id, sql.placeholder("searchterm")),
+        id.length ? like(cards.id, sql.placeholder("searchterm")) : undefined,
         search.length
           ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
           : undefined,
@@ -145,7 +162,7 @@ export async function getCardsFromSet(
     .from(cards)
     .where(
       and(
-        like(cards.id, sql.placeholder("searchterm")),
+        id.length ? like(cards.id, sql.placeholder("searchterm")) : undefined,
         search.length
           ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
           : undefined,
@@ -154,12 +171,11 @@ export async function getCardsFromSet(
     .limit(sql.placeholder("limit"))
     .offset(sql.placeholder("offset"))
     .orderBy(sql`CAST(DATA->>'number' AS INTEGER)`);
-  // .prepare("cardsStatement");
 
   const cardsData = await cardsPrepared.execute({
     limit: pageSize,
     offset: (page - 1) * pageSize,
-    searchterm: `${id}-%`,
+    searchterm: id.length ? `${id}-%` : "",
     search: `%${search}%`,
   });
 

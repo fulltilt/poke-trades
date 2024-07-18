@@ -17,12 +17,7 @@ export default function CardList({
     const pageSize = Number(searchParams?.pageSize) ?? 30;
     const search = searchParams?.search ?? "";
 
-    const data = await getCardsFromSet(
-      search,
-      params?.id ?? "",
-      currentPage,
-      pageSize,
-    );
+    const data = await getCardsFromSet(search, "", currentPage, pageSize);
 
     const cards = data.cards.sort(
       (a, b) => Number(a?.number) - Number(b?.number),

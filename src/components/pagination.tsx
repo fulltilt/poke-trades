@@ -10,6 +10,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "~/components/ui/pagination";
+import { getCardsFromSetAPI } from "~/server/queries";
 
 export default function PaginationComponent({
   totalCount,
@@ -28,6 +29,13 @@ export default function PaginationComponent({
     params.set("page", pageNumber.toString());
     router.replace(`${pathname}?${params.toString()}`);
   };
+
+  const params = new URLSearchParams(searchParams);
+  const path = pathname.split("/");
+  getCardsFromSetAPI(
+    // `q=set.id:${path[path.length - 1]}&${params.toString()}&select=id,tcgplayer`,
+    `select=id,tcgplayer`,
+  );
 
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(totalCount / pageSize); i++) {

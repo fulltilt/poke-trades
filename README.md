@@ -64,7 +64,7 @@ CAST(DATA->>'number' AS INTEGER)
 [x] Migrate data to PG
 [x] Fix pagination (https://github.com/hqasmei/youtube-tutorials/blob/main/shadcn-pagination/src/components/client-pagination.tsx)
 [x] Add search
-[] Clean up Suspense and search bar
 [] Display list of all cards
 [] Let a user create a collection
+[] Clean up Suspense and search bar
 [] Limit the amount of fields returned from card search
