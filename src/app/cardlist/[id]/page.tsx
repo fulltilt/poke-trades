@@ -2,15 +2,15 @@ import { Suspense } from "react";
 import PaginationComponent from "~/components/pagination";
 import SearchInput from "~/components/searchInput";
 import { SkeletonCard } from "~/components/skeletonCard";
-import { getCardsFromSet } from "~/server/queries";
+import { getCardsFromSet, seedData } from "~/server/queries";
 import type { Card } from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 
-function Favorite(fill: string) {
+function Favorite({ fill }: { fill: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="#b6b6b6"
+      fill={fill}
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       // stroke="currentColor"
@@ -45,6 +45,7 @@ export default function CardList({
       currentPage,
       pageSize,
     );
+    // await seedData();
 
     const cards = data.cards.sort(
       (a, b) => Number(a?.number) - Number(b?.number),
@@ -63,9 +64,15 @@ export default function CardList({
                 alt={`${card?.name}`}
                 className="cursor-pointer transition-all duration-200 hover:scale-105"
               />
-              <div className="flex justify-between">
+              <div className="flex justify-between p-2">
                 <div>{card?.number}/</div>
-                <div>$</div>
+                <div>
+                  $
+                  {card?.tcgplayer?.prices?.holofoil?.market ??
+                    card?.tcgplayer?.prices?.reverseHolofoil?.market ??
+                    card?.tcgplayer?.prices?.normal?.market ??
+                    "-"}
+                </div>
                 <div>
                   <Favorite fill={"#b6b6b6"} />
                 </div>

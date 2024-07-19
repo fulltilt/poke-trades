@@ -7,6 +7,7 @@ import {
   jsonb,
   pgTableCreator,
   serial,
+  text,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";

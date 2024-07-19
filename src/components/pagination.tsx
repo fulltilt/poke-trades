@@ -32,10 +32,10 @@ export default function PaginationComponent({
 
   const params = new URLSearchParams(searchParams);
   const path = pathname.split("/");
-  getCardsFromSetAPI(
-    // `q=set.id:${path[path.length - 1]}&${params.toString()}&select=id,tcgplayer`,
-    `select=id,tcgplayer`,
-  );
+  // getCardsFromSetAPI(
+  //   // `q=set.id:${path[path.length - 1]}&${params.toString()}&select=id,tcgplayer`,
+  //   `select=id,tcgplayer`,
+  // );
 
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(totalCount / pageSize); i++) {
@@ -81,7 +81,7 @@ export default function PaginationComponent({
 
     // Add ellipsis at the start if necessary
     // if (activePages && activePages[0] && activePages[0] > 1) {
-    if (activePages?.[0]! > 1) {
+    if (activePages?.[0] ?? -Infinity > 1) {
       renderedPages.unshift(
         <PaginationEllipsis
           key="ellipsis-start"
@@ -92,7 +92,10 @@ export default function PaginationComponent({
     }
 
     // Add ellipsis at the end if necessary
-    if (activePages?.[activePages.length - 1]! < pageNumbers.length) {
+    if (
+      activePages?.[activePages.length - 1] ??
+      +Infinity < pageNumbers.length
+    ) {
       renderedPages.push(
         <PaginationEllipsis
           key="ellipsis-end"

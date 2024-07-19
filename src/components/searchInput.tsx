@@ -18,8 +18,8 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
     } else {
       params.delete("search");
     }
-    console.log("pathname", pathname);
-    console.log("params", params.toString());
+    // console.log("pathname", pathname);
+    // console.log("params", params.toString());
     router.replace(`${pathname}?${params.toString()}`);
   }, 300);
 
