@@ -1,6 +1,6 @@
-import { sql, count, like, and, ilike } from "drizzle-orm";
+import { sql, count, like, and, ilike, eq } from "drizzle-orm";
 import { db } from "./db";
-import { sets, cards } from "./db/schema";
+import { sets, cards, user } from "./db/schema";
 
 export type SSet = {
   id: string;
@@ -94,6 +94,35 @@ type CardData = {
   totalCount: number;
 };
 
+export type TradeObject = {
+  id: string;
+  name: string;
+  price: number;
+};
+
+export type Trade = {
+  user: string;
+  haves: TradeObject[];
+  wants: TradeObject[];
+  partner: string;
+  completed: boolean;
+};
+
+export type List = {
+  id: string;
+  user: string;
+  listName: string;
+  cards: Card[];
+};
+
+export type User = {
+  id: string;
+  email: string;
+  createdAt: Date;
+  cardLists: List[];
+  trades: Trade[];
+};
+
 export async function getSets() {
   const res: { id: string; data: SSet | null }[] = await db.query.sets.findMany(
     {},
@@ -113,22 +142,10 @@ export async function getSets() {
   );
 }
 
-export async function getCardsFromSetAPI(query: string) {
-  console.log(query);
-  //   if (query.indexOf("pageSize") === -1) return;
-
-  const res = await fetch(`https://api.pokemontcg.io/v2/cards?${query}`, {
-    method: "GET",
-    headers: {
-      "X-Api-Key": process.env.XAPIKEY!,
-    },
-  });
-  // for (let i = 0; i < 72; ++i) {
-
-  // }
-
-  // const data = await res.json();
-  // console.log(data);
+export async function getSet(id: string) {
+  //: {id: string, data: SSet}[]
+  const res = await db.select().from(sets).where(eq(sets.id, id));
+  return res[0];
 }
 
 export async function getCardsFromSet(
@@ -137,6 +154,11 @@ export async function getCardsFromSet(
   page: number,
   pageSize: number,
 ) {
+  if (![30, 60, 90, 120].includes(Number(pageSize))) {
+    pageSize = 30;
+    page = 1;
+  }
+
   const countPrepared = db
     .select({ count: count() })
     .from(cards)
@@ -191,6 +213,28 @@ export async function getCardsFromSet(
     { cards: cardsData.map((r) => r.data) },
     { totalCount: countData[0]?.count },
   );
+}
+
+export async function getCardsFromSetAPI(query: string) {
+  console.log(query);
+  //   if (query.indexOf("pageSize") === -1) return;
+
+  const res = await fetch(`https://api.pokemontcg.io/v2/cards?${query}`, {
+    method: "GET",
+    headers: {
+      "X-Api-Key": process.env.XAPIKEY!,
+    },
+  });
+  // for (let i = 0; i < 72; ++i) {
+
+  // }
+
+  // const data = await res.json();
+  // console.log(data);
+}
+
+export async function createUser(authId: string, email: string) {
+  await db.insert(user).values({ authId, email });
 }
 
 // export async function getSets(): Promise<Map<string, SSet[]>> {
