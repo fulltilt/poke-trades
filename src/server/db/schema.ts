@@ -72,15 +72,6 @@ export const trade = createTable("trade", {
   wants: integer("wants").references(() => tradeObjectList.id),
 });
 
-export const cardList = createTable("card_list", {
-  id: serial("id").primaryKey(),
-  user: varchar("user")
-    .notNull()
-    .references((): AnyPgColumn => user.id),
-  listName: varchar("listName").notNull(),
-  cards: varchar("cards").references(() => cards.id),
-});
-
 export const tradeList = createTable("trade_list", {
   id: serial("id").primaryKey(),
   user1List: integer("user1List").references(() => tradeObjectList.id),
@@ -89,11 +80,23 @@ export const tradeList = createTable("trade_list", {
 
 export const user = createTable("user", {
   id: serial("id").primaryKey(),
-  authId: varchar("authId").notNull(),
+  authId: varchar("authId").unique().notNull(),
   email: varchar("email").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  cardLists: integer("cardLists").references(() => cardList.id),
-  trades: integer("trades").references(() => tradeList.id),
+});
+
+export const cardList = createTable("card_list", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  userId: varchar("user")
+    .notNull()
+    .references((): AnyPgColumn => user.authId),
+});
+
+export const cardListItem = createTable("card_list_item", {
+  id: serial("id").primaryKey(),
+  cardListId: integer("cardListId").references(() => cardList.id),
+  cardId: varchar("cardId").references(() => cards.id),
 });

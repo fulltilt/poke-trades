@@ -1,6 +1,6 @@
 import { sql, count, like, and, ilike, eq } from "drizzle-orm";
 import { db } from "./db";
-import { sets, cards, user } from "./db/schema";
+import { sets, cards, user, cardList } from "./db/schema";
 
 export type SSet = {
   id: string;
@@ -235,6 +235,10 @@ export async function getCardsFromSetAPI(query: string) {
 
 export async function createUser(authId: string, email: string) {
   await db.insert(user).values({ authId, email });
+}
+
+export async function createList(userId: string, name: string) {
+  await db.insert(cardList).values({ userId, name });
 }
 
 // export async function getSets(): Promise<Map<string, SSet[]>> {

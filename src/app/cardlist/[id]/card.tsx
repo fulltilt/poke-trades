@@ -31,7 +31,6 @@ export default function CardComponent({
   userId: string | null;
 }) {
   {
-    console.log(setInfo);
     const holo = card?.tcgplayer?.prices?.holofoil?.market
       ? (Math.round(card.tcgplayer.prices.holofoil.market * 100) / 100).toFixed(
           2,
