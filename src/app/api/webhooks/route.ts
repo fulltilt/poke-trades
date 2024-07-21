@@ -57,10 +57,11 @@ export async function POST(req: Request) {
   console.log("Webhook body:", body);
 
   if (evt.type === "user.created") {
-    await createUser(
+    const res = await createUser(
       evt.data.id,
       evt.data.email_addresses[0]?.email_address ?? "",
     );
+    console.log(res);
     console.log("created userId:", evt.data.id);
   } else if (evt.type === "user.updated") {
     console.log("updated userId:", evt.data.id);
