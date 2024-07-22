@@ -30,42 +30,16 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 
-export async function seedData() {
-let dat = []
-
-// console.log(dat.length);
-await db.insert(cards).values(
-dat.map((d) => ({
-id: d.id,
-data: d,
-})),
-);
-}
-
-SELECT
-data
-FROM
-poketrades_card
-WHERE
-data->>'id' LIKE 'bw1-%'
-
-SELECT
-DATA->>'number'
-FROM
-poketrades_card
-WHERE
-DATA ->> 'id' LIKE 'bw1-%'
-DATA ->> 'name' ILIKE '%Sniv%'
-ORDER BY
-CAST(DATA->>'number' AS INTEGER)
-
 [x] Display list of sets
 [x] Display list of cards in a set
 [x] Migrate data to PG
 [x] Fix pagination (https://github.com/hqasmei/youtube-tutorials/blob/main/shadcn-pagination/src/components/client-pagination.tsx)
 [x] Add search
 [x] Clean up Suspense and search bar
-[] Attach user creation to webhook and save to local db
+[x] Attach user creation to webhook and save to local db
 [] Let a user create a collection
+[x] Clean DB of cards with null data
 [] Display list of all cards
+[] Add top progress bar
 [] Limit the amount of fields returned from card search
+[] Clerk route testing (redirects after auth, redirects after logging out, etc)

@@ -99,4 +99,5 @@ export const cardListItem = createTable("card_list_item", {
   id: serial("id").primaryKey(),
   cardListId: integer("cardListId").references(() => cardList.id),
   cardId: varchar("cardId").references(() => cards.id),
+  quantity: integer("quantity").notNull().default(0),
 });

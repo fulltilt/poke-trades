@@ -1,6 +1,8 @@
+"use server";
+
 import { sql, count, like, and, ilike, eq } from "drizzle-orm";
 import { db } from "./db";
-import { sets, cards, user, cardList } from "./db/schema";
+import { sets, cards, user, cardList, cardListItem } from "./db/schema";
 
 export type SSet = {
   id: string;
@@ -148,6 +150,37 @@ export async function getSet(id: string) {
   return res[0];
 }
 
+export async function getAllCards(page: number, pageSize: number) {
+  if (![30, 60, 90, 120].includes(Number(pageSize))) {
+    pageSize = 30;
+    page = 1;
+  }
+  const countPrepared = db.select({ count: count() }).from(cards);
+  const countData = await countPrepared.execute();
+
+  const cardsPrepared = db
+    .select()
+    .from(cards)
+    .orderBy(
+      sql`(DATA->'set'->>'releaseDate')::date DESC, CAST(DATA->>'number' AS INTEGER)`,
+      // sql`CAST(DATA->>'number' AS INTEGER)`,
+    )
+    .limit(sql.placeholder("limit"))
+    .offset(sql.placeholder("offset"));
+
+  const cardsData = await cardsPrepared.execute({
+    limit: pageSize,
+    offset: (page - 1) * pageSize,
+  });
+  console.log(cardsData);
+
+  return Object.assign(
+    {},
+    { cards: cardsData.map((r) => r.data) },
+    { totalCount: countData[0]?.count },
+  );
+}
+
 export async function getCardsFromSet(
   search: string,
   id: string,
@@ -241,6 +274,87 @@ export async function createList(userId: string, name: string) {
   await db.insert(cardList).values({ userId, name });
 }
 
+export async function getCardList(userId: string | null, listName: string) {
+  console.log(userId, listName);
+
+  if (!userId) return; // TODO: have message that user has to be signed in
+
+  const res = await db
+    .select()
+    .from(cardList)
+    .innerJoin(
+      cardListItem,
+      and(
+        eq(cardList.userId, userId),
+        eq(cardList.name, listName),
+        eq(cardList.id, cardListItem.cardListId),
+      ),
+    )
+    .execute();
+  console.log("getCardList result", res);
+}
+
+export async function updateCardList(
+  userId: string,
+  listName: string,
+  cardId: string,
+  difference: number,
+) {
+  console.log(userId, listName, cardId);
+  // get CardList id (need to do this step in case the next query results is empty)
+  const cardListRes = await db
+    .select({ cardListId: cardList.id })
+    .from(cardList)
+    .where(and(eq(cardList.userId, userId), eq(cardList.name, listName)))
+    .execute();
+
+  const cardListId = cardListRes[0]?.cardListId || null;
+
+  if (cardListId) {
+    // get CardListItems for User's particular CardList
+    const cardListItemsRes = await db
+      .select({
+        cardListItemId: cardListItem.id,
+        cardId: cardListItem.cardId,
+        quantity: cardListItem.quantity,
+      })
+      .from(cardListItem)
+      .where(eq(cardListItem.cardListId, cardListId))
+      .execute();
+
+    // check if Card is in CardList
+    const filteredList = cardListItemsRes.filter((el) => el.cardId === cardId);
+    console.log(filteredList);
+    // if Card is not in CardList, add entry
+    if (!filteredList.length) {
+      const cardListItemRes = await db
+        .insert(cardListItem)
+        .values({
+          cardListId,
+          cardId,
+          quantity: 1,
+        })
+        .execute();
+      console.log("cardListItemRes", cardListItemRes);
+    } else {
+      const cardListItemId = filteredList[0]?.cardListItemId ?? 0;
+      const quantity = filteredList[0]?.quantity ?? 0;
+      const cardListItemRes = await db
+        .update(cardListItem)
+        .set({
+          quantity: quantity + difference,
+        })
+        .where(eq(cardListItem.id, cardListItemId))
+        .execute();
+      console.log("cardListItemRes", cardListItemRes);
+    }
+  } else {
+    // TODO: display error message that CardList cannot be found
+  }
+
+  // await db.insert(cardList).values({ userId, name });
+}
+
 // export async function getSets(): Promise<Map<string, SSet[]>> {
 //   const res = await fetch("https://api.pokemontcg.io/v2/sets", {
 //     method: "GET",
@@ -276,12 +390,11 @@ export async function createList(userId: string, name: string) {
 // }
 
 export async function seedData() {
-  // const dat: any = [];
-  // await db.insert(sets).values(
+  // const dat = ;
+  // await db.insert(cards).values(
   //   dat.map((d: any) => ({
   //     id: sql`${d.id}::text`,
-  //     info: sql`${d}::jsonb`,
+  //     data: sql`${d}::jsonb`,
   //   })),
   // );
-  // await db.delete(sets);
 }

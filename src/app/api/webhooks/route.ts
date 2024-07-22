@@ -66,7 +66,6 @@ export async function POST(req: Request) {
     console.log(`created list 'Collection' for user ${id}`);
     await createList(id ?? "", "Wish List");
     console.log(`created list 'Wish List' for user ${id}`);
-    // console.log("created userId:", evt.data.id);
   } else if (evt.type === "user.updated") {
     console.log("updated userId:", evt.data.id);
   }

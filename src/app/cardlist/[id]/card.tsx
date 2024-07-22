@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, SSet } from "~/server/queries";
+import { Card, updateCardList } from "~/server/queries";
 
 function Favorite({ fill }: { fill: string }) {
   return (
@@ -10,7 +10,7 @@ function Favorite({ fill }: { fill: string }) {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       // stroke="currentColor"
-      className="size-6"
+      className="size-6 cursor-pointer"
     >
       <path
         strokeLinecap="round"
@@ -54,10 +54,14 @@ export default function CardComponent({
         />
         <div className="flex justify-between p-2">
           <div>
-            {card?.number}/{setInfo?.total}
+            {card?.number}/{setInfo?.printedTotal}
           </div>
           <div>${holo ?? reverse ?? normal ?? "-"}</div>
-          <div onClick={() => console.log(userId, card?.id)}>
+          <div
+            onClick={() =>
+              updateCardList(userId ?? "", "Collection", card?.id ?? "", 1)
+            }
+          >
             <Favorite fill={"#b6b6b6"} />
           </div>
         </div>

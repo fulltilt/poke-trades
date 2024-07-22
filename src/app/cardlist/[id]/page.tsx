@@ -2,7 +2,13 @@ import { Suspense } from "react";
 import PaginationComponent from "~/components/pagination";
 import SearchInput from "~/components/searchInput";
 import { SkeletonCard } from "~/components/skeletonCard";
-import { getCardsFromSet, getSet } from "~/server/queries";
+import {
+  getAllCards,
+  getCardList,
+  getCardsFromSet,
+  getSet,
+  seedData,
+} from "~/server/queries";
 import type { Card } from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./card";
@@ -21,15 +27,17 @@ export default async function CardList({
     const pageSize = Number(searchParams?.pageSize) ?? 30;
     const search = searchParams?.search ?? "";
 
-    const data = await getCardsFromSet(
+    const cardData = await getCardsFromSet(
       search,
       params?.id ?? "",
       currentPage,
       pageSize,
     );
+    const collectionData = await getCardList(user?.userId, "Collection");
     // await seedData();
+    // const data = await getAlCards(currentPage, pageSize);
 
-    const cards = data.cards.sort(
+    const cards = cardData.cards.sort(
       (a, b) => Number(a?.number) - Number(b?.number),
     );
 
@@ -45,7 +53,7 @@ export default async function CardList({
           ))}
         </div>
         <div className="mt-6">
-          <PaginationComponent totalCount={data?.totalCount ?? 0} />
+          <PaginationComponent totalCount={cardData?.totalCount ?? 0} />
         </div>
       </div>
     );
