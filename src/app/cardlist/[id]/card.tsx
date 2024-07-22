@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Card, updateCardList } from "~/server/queries";
 
 function Favorite({ fill }: { fill: string }) {
@@ -25,11 +26,15 @@ export default function CardComponent({
   card,
   setInfo,
   userId,
+  inWishList,
 }: {
   card: Card | null;
   setInfo: any | null;
   userId: string | null;
+  inWishList: boolean;
 }) {
+  const [isInWishList, setIsInWishList] = useState(inWishList);
+
   {
     const holo = card?.tcgplayer?.prices?.holofoil?.market
       ? (Math.round(card.tcgplayer.prices.holofoil.market * 100) / 100).toFixed(
@@ -58,11 +63,18 @@ export default function CardComponent({
           </div>
           <div>${holo ?? reverse ?? normal ?? "-"}</div>
           <div
-            onClick={() =>
-              updateCardList(userId ?? "", "Collection", card?.id ?? "", 1)
-            }
+            onClick={async () => {
+              await updateCardList(
+                userId ?? "",
+                "Wish List",
+                card?.id ?? "",
+                isInWishList ? -1 : 1,
+              );
+
+              setIsInWishList(!isInWishList);
+            }}
           >
-            <Favorite fill={"#b6b6b6"} />
+            <Favorite fill={isInWishList ? "red" : "#b6b6b6"} />
           </div>
         </div>
       </div>

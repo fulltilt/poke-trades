@@ -33,7 +33,10 @@ export default async function CardList({
       currentPage,
       pageSize,
     );
-    const collectionData = await getCardList(user?.userId, "Collection");
+    const wishList = (await getCardList(user?.userId, "Wish List"))?.map(
+      (a) => a.cardId,
+    );
+
     // await seedData();
     // const data = await getAlCards(currentPage, pageSize);
 
@@ -49,6 +52,8 @@ export default async function CardList({
               card={card}
               setInfo={setInfo?.data || null}
               userId={user.userId}
+              key={card?.id}
+              inWishList={wishList?.includes(card?.id ?? null) ?? false}
             />
           ))}
         </div>

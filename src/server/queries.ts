@@ -248,24 +248,6 @@ export async function getCardsFromSet(
   );
 }
 
-export async function getCardsFromSetAPI(query: string) {
-  console.log(query);
-  //   if (query.indexOf("pageSize") === -1) return;
-
-  const res = await fetch(`https://api.pokemontcg.io/v2/cards?${query}`, {
-    method: "GET",
-    headers: {
-      "X-Api-Key": process.env.XAPIKEY!,
-    },
-  });
-  // for (let i = 0; i < 72; ++i) {
-
-  // }
-
-  // const data = await res.json();
-  // console.log(data);
-}
-
 export async function createUser(authId: string, email: string) {
   await db.insert(user).values({ authId, email });
 }
@@ -275,12 +257,12 @@ export async function createList(userId: string, name: string) {
 }
 
 export async function getCardList(userId: string | null, listName: string) {
-  console.log(userId, listName);
-
   if (!userId) return; // TODO: have message that user has to be signed in
 
   const res = await db
-    .select()
+    .select({
+      cardId: cardListItem.cardId,
+    })
     .from(cardList)
     .innerJoin(
       cardListItem,
@@ -291,7 +273,8 @@ export async function getCardList(userId: string | null, listName: string) {
       ),
     )
     .execute();
-  console.log("getCardList result", res);
+
+  return res;
 }
 
 export async function updateCardList(
