@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 const SetDisplay = ({ set }: { set: SSet | null }) => {
   return (
     <div className="relative flex h-32 w-56 cursor-pointer flex-col rounded border border-[#BFC1D7]">
-      <Link href={`cardlist/${set?.id}?page=1&pageSize=30`}>
+      <Link href={`cardlist/${set?.id}?page=1&pageSize=120`}>
         <div className="mt-4 flex h-[55px] justify-center">
           <img
             src={set?.images.logo}

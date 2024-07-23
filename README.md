@@ -43,3 +43,10 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [] Add top progress bar
 [] Limit the amount of fields returned from card search
 [] Clerk route testing (redirects after auth, redirects after logging out, etc)
+
+Shortcomings
+-only main variants. Basically, official checklist so won't have variations like cosmos
+-English only
+
+Gym Challenge
+McDonalds 2014/15/17/18

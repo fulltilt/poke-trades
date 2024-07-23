@@ -162,7 +162,8 @@ export async function getAllCards(page: number, pageSize: number) {
     .select()
     .from(cards)
     .orderBy(
-      sql`(DATA->'set'->>'releaseDate')::date DESC, CAST(DATA->>'number' AS INTEGER)`,
+      // sql`(DATA->'set'->>'releaseDate')::date DESC, CAST(DATA->>'number' AS INTEGER)`,
+      sql`DATA->'set'->>'releaseDate' DESC`,
       // sql`CAST(DATA->>'number' AS INTEGER)`,
     )
     .limit(sql.placeholder("limit"))
@@ -172,7 +173,11 @@ export async function getAllCards(page: number, pageSize: number) {
     limit: pageSize,
     offset: (page - 1) * pageSize,
   });
-  console.log(cardsData);
+  // console.log(JSON.stringify(cardsData[0]));
+  console.log(
+    page,
+    cardsData.map((r) => r.data?.set.releaseDate),
+  );
 
   return Object.assign(
     {},
@@ -191,7 +196,6 @@ export async function getCardsFromSet(
     pageSize = 30;
     page = 1;
   }
-
   const countPrepared = db
     .select({ count: count() })
     .from(cards)
@@ -203,7 +207,6 @@ export async function getCardsFromSet(
           : undefined,
       ),
     );
-  // .prepare("cardsCountStatement");
 
   const countData = await countPrepared.execute({
     searchterm: `${id}-%`,
@@ -328,8 +331,18 @@ export async function updateCardList(
           quantity: quantity + difference,
         })
         .where(eq(cardListItem.id, cardListItemId))
+        .returning({
+          cardListItemId: cardListItem.id,
+          quantity: cardListItem.quantity,
+        })
         .execute();
-      console.log("cardListItemRes", cardListItemRes);
+
+      // if resulting quantity is 0, delete row from CardListItem table
+      const newQuantity = cardListItemRes[0]?.quantity;
+      if (newQuantity === 0) {
+        const id = cardListItemRes[0]?.cardListItemId ?? 0;
+        await db.delete(cardListItem).where(eq(cardListItem.id, id));
+      }
     }
   } else {
     // TODO: display error message that CardList cannot be found

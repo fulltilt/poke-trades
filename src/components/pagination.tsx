@@ -26,6 +26,7 @@ export default function PaginationComponent({
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", pageNumber.toString());
+    params.set("pageSize", pageSize.toString());
     router.replace(`${pathname}?${params.toString()}`);
   };
 
