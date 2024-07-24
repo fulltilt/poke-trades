@@ -225,11 +225,6 @@ export async function getAllCards(
     OFFSET ${(page - 1) * pageSize}
   `);
 
-  // console.log(
-  //   page,
-  //   cardsData.rows.map((r) => r?.data?.set.releaseDate),
-  // );
-
   return Object.assign(
     {},
     {
