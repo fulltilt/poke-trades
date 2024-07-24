@@ -2,6 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { Card, updateCardList } from "~/server/queries";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { SignInButton } from "@clerk/nextjs";
 
 function Favorite({ fill }: { fill: string }) {
   return (
@@ -32,6 +42,7 @@ export default function CardComponent({
   inWishList: boolean;
 }) {
   const [isInWishList, setIsInWishList] = useState(inWishList);
+  const [openDialog, setOpenDialog] = useState(false);
 
   {
     const unlimitedHolo = card?.tcgplayer?.prices?.unlimitedHolofoil
@@ -92,12 +103,16 @@ export default function CardComponent({
           </div>
           <div
             onClick={async () => {
-              await updateCardList(
+              const updateRes = await updateCardList(
                 userId ?? "",
                 "Wish List",
                 card?.id ?? "",
                 isInWishList ? -1 : 1,
               );
+              if (updateRes?.error) {
+                setOpenDialog(true);
+                return;
+              }
 
               setIsInWishList(!isInWishList);
             }}
@@ -105,6 +120,22 @@ export default function CardComponent({
             <Favorite fill={isInWishList ? "red" : "#b6b6b6"} />
           </div>
         </div>
+        <Dialog open={openDialog}>
+          <DialogTrigger asChild></DialogTrigger>
+          <DialogContent
+            className="sm:max-w-[425px]"
+            onEscapeKeyDown={() => setOpenDialog(false)}
+            onInteractOutside={(e) => setOpenDialog(false)}
+          >
+            <DialogHeader>
+              <DialogTitle>Please log in</DialogTitle>
+              <DialogDescription>
+                Please <SignInButton /> to add to a wish list
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter></DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }

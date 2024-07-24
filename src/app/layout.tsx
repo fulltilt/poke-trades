@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { TopNav } from "./_components/topnav";
+import { Footer } from "./_components/footer";
 
 export const metadata: Metadata = {
   title: "PokeTrades",
@@ -21,6 +22,7 @@ export default function RootLayout({
           <div className="grid h-screen grid-rows-[auto,1fr]">
             <TopNav />
             {children}
+            <Footer />
           </div>
         </body>
       </html>

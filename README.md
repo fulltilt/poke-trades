@@ -49,5 +49,5 @@ Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos
 -English only
 
-Gym Challenge
-McDonalds 2014/15/17/18
+Bugs
+sticky nav disappears at bottom of page

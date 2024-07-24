@@ -178,18 +178,6 @@ export async function getSet(id: string) {
   return res[0];
 }
 
-function isCard(value: unknown): value is Card {
-  if (
-    typeof value === "object" &&
-    value &&
-    value.hasOwnProperty("id") &&
-    value.hasOwnProperty("set")
-  )
-    return true;
-
-  return false;
-}
-
 export async function getAllCards(
   page: number,
   pageSize: number,
@@ -335,6 +323,10 @@ export async function updateCardList(
   difference: number,
 ) {
   console.log(userId, listName, cardId);
+  if (!userId)
+    return {
+      error: "User not logged in",
+    };
   // get CardList id (need to do this step in case the next query results is empty)
   const cardListRes = await db
     .select({ cardListId: cardList.id })
@@ -395,8 +387,6 @@ export async function updateCardList(
   } else {
     // TODO: display error message that CardList cannot be found
   }
-
-  // await db.insert(cardList).values({ userId, name });
 }
 
 // export async function getSets(): Promise<Map<string, SSet[]>> {
