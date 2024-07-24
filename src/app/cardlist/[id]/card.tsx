@@ -24,30 +24,48 @@ function Favorite({ fill }: { fill: string }) {
 
 export default function CardComponent({
   card,
-  setInfo,
   userId,
   inWishList,
 }: {
   card: Card | null;
-  setInfo: any | null;
   userId: string | null;
   inWishList: boolean;
 }) {
   const [isInWishList, setIsInWishList] = useState(inWishList);
 
   {
+    const unlimitedHolo = card?.tcgplayer?.prices?.unlimitedHolofoil
+      ? (
+          Math.round(card.tcgplayer.prices.unlimitedHolofoil.market * 100) / 100
+        ).toFixed(2)
+      : undefined;
+    const firstEditionHolo = card?.tcgplayer?.prices?.["1stEdition"]
+      ? (
+          Math.round(card.tcgplayer.prices["1stEdition"].market * 100) / 100
+        ).toFixed(2)
+      : undefined;
+    const unlimited = card?.tcgplayer?.prices?.unlimited?.market
+      ? (
+          Math.round(card.tcgplayer.prices.unlimited.market * 100) / 100
+        ).toFixed(2)
+      : undefined;
+    const firstEdition = card?.tcgplayer?.prices?.["1stEdition"]?.market
+      ? (
+          Math.round(card.tcgplayer.prices["1stEdition"].market * 100) / 100
+        ).toFixed(2)
+      : undefined;
     const holo = card?.tcgplayer?.prices?.holofoil?.market
       ? (Math.round(card.tcgplayer.prices.holofoil.market * 100) / 100).toFixed(
           2,
         )
       : undefined;
-    const reverse = card?.tcgplayer?.prices?.normal?.market
-      ? (Math.round(card.tcgplayer.prices.normal.market * 100) / 100).toFixed(2)
-      : undefined;
-    const normal = card?.tcgplayer?.prices?.reverseHolofoil?.market
+    const reverse = card?.tcgplayer?.prices?.reverseHolofoil?.market
       ? (
           Math.round(card.tcgplayer.prices.reverseHolofoil.market * 100) / 100
         ).toFixed(2)
+      : undefined;
+    const normal = card?.tcgplayer?.prices?.normal?.market
+      ? (Math.round(card.tcgplayer.prices.normal.market * 100) / 100).toFixed(2)
       : undefined;
 
     return (
@@ -59,9 +77,19 @@ export default function CardComponent({
         />
         <div className="flex justify-between p-2">
           <div>
-            {card?.number}/{setInfo?.printedTotal}
+            {card?.number}/{card?.set?.printedTotal}
           </div>
-          <div>${holo ?? reverse ?? normal ?? "-"}</div>
+          <div>
+            $
+            {firstEditionHolo ??
+              unlimitedHolo ??
+              firstEdition ??
+              unlimited ??
+              holo ??
+              reverse ??
+              normal ??
+              "-"}
+          </div>
           <div
             onClick={async () => {
               await updateCardList(

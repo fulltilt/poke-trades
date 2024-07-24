@@ -84,6 +84,34 @@ export type Card = {
         market: number;
         directLow: number;
       };
+      unlimitedHolofoil?: {
+        low: number;
+        mid: number;
+        high: number;
+        market: number;
+        directLow: number;
+      };
+      "1EditionHolofoil"?: {
+        low: number;
+        mid: number;
+        high: number;
+        market: number;
+        directLow: number;
+      };
+      unlimited?: {
+        low: number;
+        mid: number;
+        high: number;
+        market: number;
+        directLow: number;
+      };
+      "1stEdition"?: {
+        low: number;
+        mid: number;
+        high: number;
+        market: number;
+        directLow: number;
+      };
     };
   };
 };
@@ -150,7 +178,22 @@ export async function getSet(id: string) {
   return res[0];
 }
 
-export async function getAllCards(page: number, pageSize: number) {
+function isCard(value: unknown): value is Card {
+  if (
+    typeof value === "object" &&
+    value &&
+    value.hasOwnProperty("id") &&
+    value.hasOwnProperty("set")
+  )
+    return true;
+
+  return false;
+}
+
+export async function getAllCards(
+  page: number,
+  pageSize: number,
+): Promise<{ totalCount: number; cards: Card[] }> {
   if (![30, 60, 90, 120].includes(Number(pageSize))) {
     pageSize = 30;
     page = 1;
@@ -158,31 +201,41 @@ export async function getAllCards(page: number, pageSize: number) {
   const countPrepared = db.select({ count: count() }).from(cards);
   const countData = await countPrepared.execute();
 
-  const cardsPrepared = db
-    .select()
-    .from(cards)
-    .orderBy(
-      // sql`(DATA->'set'->>'releaseDate')::date DESC, CAST(DATA->>'number' AS INTEGER)`,
-      sql`DATA->'set'->>'releaseDate' DESC`,
-      // sql`CAST(DATA->>'number' AS INTEGER)`,
-    )
-    .limit(sql.placeholder("limit"))
-    .offset(sql.placeholder("offset"));
+  // const cardsPrepared = db
+  //   .select()
+  //   .from(cards)
+  //   .orderBy(
+  //     // sql`(DATA->'set'->>'releaseDate')::date DESC, CAST(DATA->>'number' AS INTEGER)`,
+  //     sql`DATA->'set'->>'releaseDate' DESC`,
+  //     // sql`CAST(DATA->>'number' AS INTEGER)`,
+  //   )
+  //   .limit(sql.placeholder("limit"))
+  //   .offset(sql.placeholder("offset"));
 
-  const cardsData = await cardsPrepared.execute({
-    limit: pageSize,
-    offset: (page - 1) * pageSize,
-  });
-  // console.log(JSON.stringify(cardsData[0]));
-  console.log(
-    page,
-    cardsData.map((r) => r.data?.set.releaseDate),
-  );
+  // const cardsData = await cardsPrepared.execute({
+  //   limit: pageSize,
+  //   offset: (page - 1) * pageSize,
+  // });
+
+  const cardsData = await db.execute(sql`
+    SELECT *
+    FROM poketrades_card
+    ORDER BY data->'set'->>'releaseDate' DESC, CAST(DATA->>'number' AS INTEGER)
+    LIMIT ${pageSize}
+    OFFSET ${(page - 1) * pageSize}
+  `);
+
+  // console.log(
+  //   page,
+  //   cardsData.rows.map((r) => r?.data?.set.releaseDate),
+  // );
 
   return Object.assign(
     {},
-    { cards: cardsData.map((r) => r.data) },
-    { totalCount: countData[0]?.count },
+    {
+      cards: cardsData.rows.map((r) => r.data) as Card[],
+    },
+    { totalCount: countData[0]?.count ?? 0 },
   );
 }
 
@@ -294,7 +347,7 @@ export async function updateCardList(
     .where(and(eq(cardList.userId, userId), eq(cardList.name, listName)))
     .execute();
 
-  const cardListId = cardListRes[0]?.cardListId || null;
+  const cardListId = cardListRes[0]?.cardListId ?? null;
 
   if (cardListId) {
     // get CardListItems for User's particular CardList
