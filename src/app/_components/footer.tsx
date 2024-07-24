@@ -2,7 +2,7 @@
 
 export function Footer() {
   return (
-    <nav className="flex w-full items-center bg-black p-4 text-sm font-semibold text-white">
+    <nav className="flex w-full items-center justify-center bg-black p-4 text-center text-[10px] font-semibold text-white">
       <div className="flex flex-col items-center gap-4">
         <p>
           Pokémon and its trademarks are ©1995-2024 Nintendo, Creatures, and

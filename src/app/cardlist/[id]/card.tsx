@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, updateCardList } from "~/server/queries";
 import {
   Dialog,
@@ -20,7 +20,6 @@ function Favorite({ fill }: { fill: string }) {
       fill={fill}
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      // stroke="currentColor"
       className="size-6 cursor-pointer"
     >
       <path
@@ -120,17 +119,18 @@ export default function CardComponent({
             <Favorite fill={isInWishList ? "red" : "#b6b6b6"} />
           </div>
         </div>
-        <Dialog open={openDialog}>
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
           <DialogTrigger asChild></DialogTrigger>
           <DialogContent
             className="sm:max-w-[425px]"
             onEscapeKeyDown={() => setOpenDialog(false)}
-            onInteractOutside={(e) => setOpenDialog(false)}
+            onInteractOutside={() => setOpenDialog(false)}
           >
             <DialogHeader>
               <DialogTitle>Please log in</DialogTitle>
               <DialogDescription>
-                Please <SignInButton /> to add to a wish list
+                Please <SignInButton className="underline focus:outline-none" />{" "}
+                to add to a wish list
               </DialogDescription>
             </DialogHeader>
             <DialogFooter></DialogFooter>

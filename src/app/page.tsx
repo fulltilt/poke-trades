@@ -64,7 +64,7 @@ export default function HomePage() {
 
   if (!user.userId) {
     return (
-      <div className="bg-black">
+      <div className="bg-slate-900">
         <section className="body-font text-gray-600">
           <div className="mx-auto max-w-5xl pb-24 pt-52">
             <h1 className="text-80 font-4 lh-6 ld-04 mb-6 text-center text-6xl font-bold text-white">
@@ -74,8 +74,8 @@ export default function HomePage() {
               PokeTrades is a collection tracker that can be used to make the
               trading process smooth and trackable
             </h2>
-            <div className="ml-6 text-center">
-              <Button variant="outline">
+            <div className="ml-6 flex justify-center gap-8">
+              <Button variant="outline" className="w-28">
                 <SignInButton />
               </Button>
               <Link
@@ -87,7 +87,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <h2 className="mb-1 pt-40 text-center text-2xl font-semibold tracking-tighter text-gray-200 md:text-6xl lg:text-7xl">
+          {/* <h2 className="mb-1 pt-40 text-center text-2xl font-semibold tracking-tighter text-gray-200 md:text-6xl lg:text-7xl">
             Clean and tidy code.
           </h2>
           <br></br>
@@ -97,7 +97,6 @@ export default function HomePage() {
           </p>
           <div className="fsac4 mx-auto max-w-4xl px-3 pb-24 pt-12 md:px-1">
             <div className="ktq4">
-              <img className="w-10" src="https://nine4.app/favicon.png"></img>
               <h3 className="pt-3 text-lg font-semibold text-white">
                 Lorem ipsum dolor sit amet
               </h3>
@@ -108,7 +107,6 @@ export default function HomePage() {
               </p>
             </div>
             <div className="ktq4">
-              <img className="w-10" src="https://nine4.app/favicon.png"></img>
               <h3 className="pt-3 text-lg font-semibold text-white">
                 Lorem ipsum dolor sit amet
               </h3>
@@ -119,7 +117,6 @@ export default function HomePage() {
               </p>
             </div>
             <div className="ktq4">
-              <img className="w-10" src="https://nine4.app/favicon.png"></img>
               <h3 className="pt-3 text-lg font-semibold text-white">
                 Lorem ipsum dolor sit amet
               </h3>
@@ -130,7 +127,6 @@ export default function HomePage() {
               </p>
             </div>
             <div className="ktq4">
-              <img className="w-10" src="https://nine4.app/favicon.png"></img>
               <h3 className="pt-3 text-lg font-semibold text-white">
                 Lorem ipsum dolor sit amet
               </h3>
@@ -143,7 +139,6 @@ export default function HomePage() {
           </div>
           <div className="fsac4 mx-auto max-w-6xl px-3 pb-32 pt-32 md:px-1">
             <div className="ktq4">
-              <img src="https://nine4.app/images/nine4-3.png"></img>
               <h3 className="pt-3 text-lg font-semibold text-white">
                 Lorem ipsum dolor sit amet
               </h3>
@@ -156,7 +151,6 @@ export default function HomePage() {
               </p>
             </div>
             <div className="ktq4">
-              <img src="https://nine4.app/images/nine4-3.png"></img>
               <h3 className="pt-3 text-lg font-semibold text-white">
                 Lorem ipsum dolor sit amet
               </h3>
@@ -168,33 +162,7 @@ export default function HomePage() {
                 sodales tellus ex nec odio.
               </p>
             </div>
-          </div>
-          <section className="relative pb-24">
-            <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
-              <div className="py-24 md:py-36">
-                <h1 className="mb-5 text-6xl font-bold text-white">
-                  Subscribe to our newsletter
-                </h1>
-                <h1 className="mb-9 text-2xl font-semibold text-gray-200">
-                  Enter your email address and get our newsletters straight
-                  away.
-                </h1>
-                <input
-                  type="email"
-                  placeholder="jack@example.com"
-                  name="email"
-                  // autocomplete="email"
-                  className="mt-2 w-1/4 rounded-md border border-gray-600 bg-black py-3 pl-2 pr-2 font-semibold text-gray-800 hover:border-gray-700"
-                />{" "}
-                <a
-                  className="ml-2 mt-2 inline-flex transform items-center rounded-lg border bg-transparent bg-white px-14 py-3 font-medium text-black transition duration-500 ease-in-out"
-                  href="/"
-                >
-                  <span className="justify-center">Subscribe</span>
-                </a>
-              </div>
-            </div>
-          </section>
+          </div> */}
         </section>
       </div>
     );
