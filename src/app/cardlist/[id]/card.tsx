@@ -204,6 +204,7 @@ export default function CardComponent({
           <DialogHeader>
             <DialogTitle>Please log in</DialogTitle>
             <DialogDescription>
+              {/* @ts-ignore */}
               Please <SignInButton className="underline focus:outline-none" />{" "}
               to add to a wish list
             </DialogDescription>
