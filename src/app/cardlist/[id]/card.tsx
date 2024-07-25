@@ -157,6 +157,10 @@ export default function CardComponent({
         <div
           className="cursor-pointer font-bold"
           onClick={async () => {
+            if (!userId) {
+              setOpenDialog(true);
+              return;
+            }
             if (cardQuantity === 0) return;
             const updateRes = await updateCardList(
               userId ?? "",
@@ -178,6 +182,11 @@ export default function CardComponent({
         <div
           className="cursor-pointer font-bold"
           onClick={async () => {
+            if (!userId) {
+              setOpenDialog(true);
+              return;
+            }
+
             const updateRes = await updateCardList(
               userId ?? "",
               "Collection",
@@ -206,7 +215,7 @@ export default function CardComponent({
             <DialogDescription>
               {/* @ts-expect-error  flag is here as for whatever reason adding className to Clerk SignInButton component triggers TypeScript error */}
               Please <SignInButton className="underline focus:outline-none" />{" "}
-              to add to a wish list
+              or create an account to access functionality
             </DialogDescription>
           </DialogHeader>
           <DialogFooter></DialogFooter>
