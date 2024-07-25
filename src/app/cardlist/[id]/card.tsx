@@ -204,7 +204,7 @@ export default function CardComponent({
           <DialogHeader>
             <DialogTitle>Please log in</DialogTitle>
             <DialogDescription>
-              {/* @ts-expect-error */}
+              {/* @ts-expect-error  flag is here as for whatever reason adding className to Clerk SignInButton component triggers TypeScript error */}
               Please <SignInButton className="underline focus:outline-none" />{" "}
               to add to a wish list
             </DialogDescription>

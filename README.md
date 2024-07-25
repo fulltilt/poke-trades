@@ -39,7 +39,7 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Attach user creation to webhook and save to local db
 [x] Clean DB of cards with null data
 [x] Display list of all cards
-[] Let a user create a collection
+[x] Let a user create a collection
 [] Let a user propose a trade
 [] Add top progress bar
 [] Limit the amount of fields returned from card search
