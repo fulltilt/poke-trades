@@ -181,6 +181,7 @@ export async function getSet(id: string) {
 export async function getAllCards(
   page: number,
   pageSize: number,
+  search: string,
 ): Promise<{ totalCount: number; cards: Card[] }> {
   if (![30, 60, 90, 120].includes(Number(pageSize))) {
     pageSize = 30;
@@ -189,34 +190,26 @@ export async function getAllCards(
   const countPrepared = db.select({ count: count() }).from(cards);
   const countData = await countPrepared.execute();
 
-  // const cardsPrepared = db
-  //   .select()
-  //   .from(cards)
-  //   .orderBy(
-  //     // sql`(DATA->'set'->>'releaseDate')::date DESC, CAST(DATA->>'number' AS INTEGER)`,
-  //     sql`DATA->'set'->>'releaseDate' DESC`,
-  //     // sql`CAST(DATA->>'number' AS INTEGER)`,
-  //   )
-  //   .limit(sql.placeholder("limit"))
-  //   .offset(sql.placeholder("offset"));
+  const cardsPrepared = db
+    .select()
+    .from(cards)
+    .where(sql`data->>'name' ILIKE ${sql.placeholder("search")}`)
+    .orderBy(
+      sql`data->'set'->>'releaseDate' DESC, CAST(DATA->>'number' AS INTEGER)`,
+    )
+    .limit(sql.placeholder("limit"))
+    .offset(sql.placeholder("offset"));
 
-  // const cardsData = await cardsPrepared.execute({
-  //   limit: pageSize,
-  //   offset: (page - 1) * pageSize,
-  // });
-
-  const cardsData = await db.execute(sql`
-    SELECT *
-    FROM poketrades_card
-    ORDER BY data->'set'->>'releaseDate' DESC, CAST(DATA->>'number' AS INTEGER)
-    LIMIT ${pageSize}
-    OFFSET ${(page - 1) * pageSize}
-  `);
+  const cardsData = await cardsPrepared.execute({
+    search: `%${search}%`,
+    limit: pageSize,
+    offset: (page - 1) * pageSize,
+  });
 
   return Object.assign(
     {},
     {
-      cards: cardsData.rows.map((r) => r.data) as Card[],
+      cards: cardsData.map((r) => r.data) as Card[],
     },
     { totalCount: countData[0]?.count ?? 0 },
   );

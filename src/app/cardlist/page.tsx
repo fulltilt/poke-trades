@@ -26,7 +26,7 @@ export default async function CardList({
     );
 
     // await seedData();
-    const cardData = await getAllCards(currentPage, pageSize);
+    const cardData = await getAllCards(currentPage, pageSize, search);
 
     return (
       <div className="m-auto flex max-w-[1200px] flex-col">
