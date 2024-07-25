@@ -31,112 +31,153 @@ function Favorite({ fill }: { fill: string }) {
   );
 }
 
+function Plus() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="size-6"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 4.5v15m7.5-7.5h-15"
+      />
+    </svg>
+  );
+}
+
+function Minus() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="size-6"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
+    </svg>
+  );
+}
 export default function CardComponent({
   card,
   userId,
   inWishList,
+  quantity,
 }: {
   card: Card | null;
   userId: string | null;
   inWishList: boolean;
+  quantity: number;
 }) {
   const [isInWishList, setIsInWishList] = useState(inWishList);
   const [openDialog, setOpenDialog] = useState(false);
 
-  {
-    const unlimitedHolo = card?.tcgplayer?.prices?.unlimitedHolofoil
-      ? (
-          Math.round(card.tcgplayer.prices.unlimitedHolofoil.market * 100) / 100
-        ).toFixed(2)
-      : undefined;
-    const firstEditionHolo = card?.tcgplayer?.prices?.["1stEdition"]
-      ? (
-          Math.round(card.tcgplayer.prices["1stEdition"].market * 100) / 100
-        ).toFixed(2)
-      : undefined;
-    const unlimited = card?.tcgplayer?.prices?.unlimited?.market
-      ? (
-          Math.round(card.tcgplayer.prices.unlimited.market * 100) / 100
-        ).toFixed(2)
-      : undefined;
-    const firstEdition = card?.tcgplayer?.prices?.["1stEdition"]?.market
-      ? (
-          Math.round(card.tcgplayer.prices["1stEdition"].market * 100) / 100
-        ).toFixed(2)
-      : undefined;
-    const holo = card?.tcgplayer?.prices?.holofoil?.market
-      ? (Math.round(card.tcgplayer.prices.holofoil.market * 100) / 100).toFixed(
-          2,
-        )
-      : undefined;
-    const reverse = card?.tcgplayer?.prices?.reverseHolofoil?.market
-      ? (
-          Math.round(card.tcgplayer.prices.reverseHolofoil.market * 100) / 100
-        ).toFixed(2)
-      : undefined;
-    const normal = card?.tcgplayer?.prices?.normal?.market
-      ? (Math.round(card.tcgplayer.prices.normal.market * 100) / 100).toFixed(2)
-      : undefined;
+  // console.log("quantity", quantity);
+  const unlimitedHolo = card?.tcgplayer?.prices?.unlimitedHolofoil
+    ? (
+        Math.round(card.tcgplayer.prices.unlimitedHolofoil.market * 100) / 100
+      ).toFixed(2)
+    : undefined;
+  const firstEditionHolo = card?.tcgplayer?.prices?.["1stEdition"]
+    ? (
+        Math.round(card.tcgplayer.prices["1stEdition"].market * 100) / 100
+      ).toFixed(2)
+    : undefined;
+  const unlimited = card?.tcgplayer?.prices?.unlimited?.market
+    ? (Math.round(card.tcgplayer.prices.unlimited.market * 100) / 100).toFixed(
+        2,
+      )
+    : undefined;
+  const firstEdition = card?.tcgplayer?.prices?.["1stEdition"]?.market
+    ? (
+        Math.round(card.tcgplayer.prices["1stEdition"].market * 100) / 100
+      ).toFixed(2)
+    : undefined;
+  const holo = card?.tcgplayer?.prices?.holofoil?.market
+    ? (Math.round(card.tcgplayer.prices.holofoil.market * 100) / 100).toFixed(2)
+    : undefined;
+  const reverse = card?.tcgplayer?.prices?.reverseHolofoil?.market
+    ? (
+        Math.round(card.tcgplayer.prices.reverseHolofoil.market * 100) / 100
+      ).toFixed(2)
+    : undefined;
+  const normal = card?.tcgplayer?.prices?.normal?.market
+    ? (Math.round(card.tcgplayer.prices.normal.market * 100) / 100).toFixed(2)
+    : undefined;
 
-    return (
-      <div key={card?.id} className="pb-8">
-        <img
-          src={card?.images.small}
-          alt={`${card?.name}`}
-          className="cursor-pointer transition-all duration-200 hover:scale-105"
-        />
-        <div className="flex justify-between p-2">
-          <div>
-            {card?.number}/{card?.set?.printedTotal}
-          </div>
-          <div>
-            $
-            {firstEditionHolo ??
-              unlimitedHolo ??
-              firstEdition ??
-              unlimited ??
-              holo ??
-              reverse ??
-              normal ??
-              "-"}
-          </div>
-          <div
-            onClick={async () => {
-              const updateRes = await updateCardList(
-                userId ?? "",
-                "Wish List",
-                card?.id ?? "",
-                isInWishList ? -1 : 1,
-              );
-              if (updateRes?.error) {
-                setOpenDialog(true);
-                return;
-              }
-
-              setIsInWishList(!isInWishList);
-            }}
-          >
-            <Favorite fill={isInWishList ? "red" : "#b6b6b6"} />
-          </div>
+  return (
+    <div key={card?.id} className="pb-8">
+      <img
+        src={card?.images.small}
+        alt={`${card?.name}`}
+        className="cursor-pointer transition-all duration-200 hover:scale-105"
+      />
+      <div className="flex justify-between p-2">
+        <div>
+          {card?.number}/{card?.set?.printedTotal}
         </div>
-        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-          <DialogTrigger asChild></DialogTrigger>
-          <DialogContent
-            className="sm:max-w-[425px]"
-            onEscapeKeyDown={() => setOpenDialog(false)}
-            onInteractOutside={() => setOpenDialog(false)}
-          >
-            <DialogHeader>
-              <DialogTitle>Please log in</DialogTitle>
-              <DialogDescription>
-                Please <SignInButton className="underline focus:outline-none" />{" "}
-                to add to a wish list
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter></DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <div>
+          $
+          {firstEditionHolo ??
+            unlimitedHolo ??
+            firstEdition ??
+            unlimited ??
+            holo ??
+            reverse ??
+            normal ??
+            "-"}
+        </div>
+        <div
+          onClick={async () => {
+            const updateRes = await updateCardList(
+              userId ?? "",
+              "Wish List",
+              card?.id ?? "",
+              isInWishList ? -1 : 1,
+            );
+            if (updateRes?.error) {
+              setOpenDialog(true);
+              return;
+            }
+
+            setIsInWishList(!isInWishList);
+          }}
+        >
+          <Favorite fill={isInWishList ? "red" : "#b6b6b6"} />
+        </div>
       </div>
-    );
-  }
+      <div className="flex justify-center">
+        <div className="font-bold">
+          <Minus />
+        </div>
+        <div className="bold ml-4 mr-4">{quantity}</div>
+        <div className="font-bold">
+          <Plus />
+        </div>
+      </div>
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogTrigger asChild></DialogTrigger>
+        <DialogContent
+          className="sm:max-w-[425px]"
+          onEscapeKeyDown={() => setOpenDialog(false)}
+          onInteractOutside={() => setOpenDialog(false)}
+        >
+          <DialogHeader>
+            <DialogTitle>Please log in</DialogTitle>
+            <DialogDescription>
+              Please <SignInButton className="underline focus:outline-none" />{" "}
+              to add to a wish list
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter></DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 }

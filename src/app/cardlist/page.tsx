@@ -37,6 +37,7 @@ export default async function CardList({
               userId={user.userId}
               key={card?.id}
               inWishList={wishList?.includes(card?.id ?? null) ?? false}
+              quantity={0}
             />
           ))}
         </div>

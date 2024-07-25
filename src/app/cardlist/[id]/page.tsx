@@ -36,7 +36,10 @@ export default async function CardList({
     const wishList = (await getCardList(user?.userId, "Wish List"))?.map(
       (a) => a.cardId,
     );
-
+    const collection = (await getCardList(user?.userId, "Collection"))?.map(
+      (a) => a.cardId,
+    );
+    // console.log(cardData, collection);
     // await seedData();
 
     return (
@@ -48,6 +51,7 @@ export default async function CardList({
               userId={user.userId}
               key={card?.id}
               inWishList={wishList?.includes(card?.id ?? null) ?? false}
+              quantity={0}
             />
           ))}
         </div>
