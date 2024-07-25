@@ -58,7 +58,7 @@ export async function POST(req: Request) {
   // console.log("Webhook body:", body);
 
   if (evt.type === "user.created") {
-    const res = await createUser(
+    await createUser(
       evt.data.id,
       evt.data.email_addresses[0]?.email_address ?? "",
     );

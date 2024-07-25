@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import PaginationComponent from "~/components/pagination";
 import SearchInput from "~/components/searchInput";
 import { SkeletonCard } from "~/components/skeletonCard";
-import { getAllCards, getCardList, getSet, seedData } from "~/server/queries";
+import { getAllCards, getCardList, getSet } from "~/server/queries";
 import type { Card } from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./[id]/card";
@@ -25,7 +25,6 @@ export default async function CardList({
       (a) => a.cardId,
     );
 
-    // await seedData();
     const cardData = await getAllCards(currentPage, pageSize, search);
 
     return (

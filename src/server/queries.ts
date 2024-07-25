@@ -1,6 +1,6 @@
 "use server";
 
-import { sql, count, like, and, ilike, eq } from "drizzle-orm";
+import { sql, count, like, and, eq } from "drizzle-orm";
 import { db } from "./db";
 import { sets, cards, user, cardList, cardListItem } from "./db/schema";
 
@@ -23,13 +23,13 @@ export type SSet = {
   };
 };
 
-type SSetData = {
-  data: SSet[];
-  page: number;
-  pageSize: number;
-  count: number;
-  totalCount: number;
-};
+// type SSetData = {
+//   data: SSet[];
+//   page: number;
+//   pageSize: number;
+//   count: number;
+//   totalCount: number;
+// };
 
 export type Card = {
   id: string;
@@ -116,13 +116,13 @@ export type Card = {
   };
 };
 
-type CardData = {
-  cards: Card[];
-  // page: number;
-  // pageSize: number;
-  // count: number;
-  totalCount: number;
-};
+// type CardData = {
+//   cards: Card[];
+//   // page: number;
+//   // pageSize: number;
+//   // count: number;
+//   totalCount: number;
+// };
 
 export type TradeObject = {
   id: string;
@@ -262,9 +262,9 @@ export async function getCardsFromSet(
           : undefined,
       ),
     )
+    .orderBy(sql`CAST(DATA->>'number' AS INTEGER)`)
     .limit(sql.placeholder("limit"))
-    .offset(sql.placeholder("offset"))
-    .orderBy(sql`CAST(DATA->>'number' AS INTEGER)`);
+    .offset(sql.placeholder("offset"));
 
   const cardsData = await cardsPrepared.execute({
     limit: pageSize,
@@ -288,12 +288,16 @@ export async function createList(userId: string, name: string) {
   await db.insert(cardList).values({ userId, name });
 }
 
-export async function getCardList(userId: string | null, listName: string) {
+export async function getCardList(
+  userId: string | null,
+  listName: string,
+): Promise<{ cardId: string | null; quantity: number }[] | undefined> {
   if (!userId) return; // TODO: have message that user has to be signed in
 
   const res = await db
     .select({
       cardId: cardListItem.cardId,
+      quantity: cardListItem.quantity,
     })
     .from(cardList)
     .innerJoin(
@@ -320,6 +324,7 @@ export async function updateCardList(
     return {
       error: "User not logged in",
     };
+
   // get CardList id (need to do this step in case the next query results is empty)
   const cardListRes = await db
     .select({ cardListId: cardList.id })

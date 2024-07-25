@@ -30,9 +30,6 @@ export default function PaginationComponent({
     router.replace(`${pathname}?${params.toString()}`);
   };
 
-  const params = new URLSearchParams(searchParams);
-  const path = pathname.split("/");
-
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(totalCount / pageSize); i++) {
     pageNumbers.push(i);

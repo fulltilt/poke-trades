@@ -76,6 +76,7 @@ export default function CardComponent({
   quantity: number;
 }) {
   const [isInWishList, setIsInWishList] = useState(inWishList);
+  const [cardQuantity, setCardQuantity] = useState(quantity);
   const [openDialog, setOpenDialog] = useState(false);
 
   // console.log("quantity", quantity);
@@ -153,11 +154,43 @@ export default function CardComponent({
         </div>
       </div>
       <div className="flex justify-center">
-        <div className="font-bold">
+        <div
+          className="cursor-pointer font-bold"
+          onClick={async () => {
+            if (cardQuantity === 0) return;
+            const updateRes = await updateCardList(
+              userId ?? "",
+              "Collection",
+              card?.id ?? "",
+              -1,
+            );
+            if (updateRes?.error) {
+              // TODO: display error message
+              return;
+            }
+
+            setCardQuantity(cardQuantity - 1);
+          }}
+        >
           <Minus />
         </div>
-        <div className="bold ml-4 mr-4">{quantity}</div>
-        <div className="font-bold">
+        <div className="bold ml-4 mr-4">{cardQuantity}</div>
+        <div
+          className="cursor-pointer font-bold"
+          onClick={async () => {
+            const updateRes = await updateCardList(
+              userId ?? "",
+              "Collection",
+              card?.id ?? "",
+              1,
+            );
+            if (updateRes?.error) {
+              // TODO: display error message
+              return;
+            }
+            setCardQuantity(cardQuantity + 1);
+          }}
+        >
           <Plus />
         </div>
       </div>

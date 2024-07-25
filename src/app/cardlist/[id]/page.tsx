@@ -2,13 +2,7 @@ import { Suspense } from "react";
 import PaginationComponent from "~/components/pagination";
 import SearchInput from "~/components/searchInput";
 import { SkeletonCard } from "~/components/skeletonCard";
-import {
-  getAllCards,
-  getCardList,
-  getCardsFromSet,
-  getSet,
-  seedData,
-} from "~/server/queries";
+import { getCardList, getCardsFromSet, getSet } from "~/server/queries";
 import type { Card } from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./card";
@@ -36,24 +30,29 @@ export default async function CardList({
     const wishList = (await getCardList(user?.userId, "Wish List"))?.map(
       (a) => a.cardId,
     );
-    const collection = (await getCardList(user?.userId, "Collection"))?.map(
-      (a) => a.cardId,
-    );
-    // console.log(cardData, collection);
-    // await seedData();
+    const collection = await getCardList(user?.userId, "Collection");
+    const collectionCardIds = collection?.map((a) => a.cardId);
 
     return (
       <div className="m-auto flex max-w-[1200px] flex-col">
         <div className="m-auto grid gap-4 md:grid-cols-4 lg:grid-cols-6">
-          {cardData.cards.map((card: Card | null) => (
-            <CardComponent
-              card={card}
-              userId={user.userId}
-              key={card?.id}
-              inWishList={wishList?.includes(card?.id ?? null) ?? false}
-              quantity={0}
-            />
-          ))}
+          {cardData.cards.map((card: Card | null) => {
+            const isCardInCollection = collectionCardIds?.includes(
+              card?.id ?? "",
+            );
+            const quantity =
+              collection?.filter((c) => c.cardId === card?.id)[0]?.quantity ??
+              0;
+            return (
+              <CardComponent
+                card={card}
+                userId={user.userId}
+                key={card?.id}
+                inWishList={wishList?.includes(card?.id ?? null) ?? false}
+                quantity={isCardInCollection ? quantity : 0}
+              />
+            );
+          })}
         </div>
         <div className="mt-6">
           <PaginationComponent totalCount={cardData?.totalCount ?? 0} />
