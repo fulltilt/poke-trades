@@ -75,9 +75,11 @@ export default function HomePage() {
               trading process smooth and trackable
             </h2>
             <div className="ml-6 flex justify-center gap-8">
-              <Button variant="outline" className="w-28">
-                <SignInButton />
-              </Button>
+              <SignInButton>
+                <Button variant="outline" className="w-28">
+                  Sign In
+                </Button>
+              </SignInButton>
               <Link
                 href="/cardlist"
                 className={buttonVariants({ variant: "outline" })}

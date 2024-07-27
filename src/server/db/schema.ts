@@ -3,19 +3,15 @@
 
 import { sql } from "drizzle-orm";
 import {
-  AnyPgColumn,
   boolean,
-  index,
   integer,
   jsonb,
-  numeric,
   pgTableCreator,
   serial,
-  text,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { Card, SSet, Trade, TradeObject } from "../queries";
+import { Card, SSet } from "../queries";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -52,35 +48,37 @@ export const cards = createTable("card", {
   data: jsonb("data").$type<Card>(),
 });
 
-export const tradeObject = createTable("trade_object", {
+export const tradeItem = createTable("trade_item", {
   id: serial("id").primaryKey(),
-  name: varchar("name").notNull(),
-  price: numeric("price").notNull(),
-});
-
-export const tradeObjectList = createTable("trade_object_list", {
-  id: serial("id").primaryKey(),
-  tradeObjectId: integer("tradeObjectId").references(() => tradeObject.id),
+  data: jsonb("data"),
 });
 
 export const trade = createTable("trade", {
   id: serial("id").primaryKey(),
-  user: varchar("user").notNull(),
-  partner: varchar("partner").notNull(),
-  completed: boolean("completed").notNull(),
-  haves: integer("haves").references(() => tradeObjectList.id),
-  wants: integer("wants").references(() => tradeObjectList.id),
+  userId: integer("user")
+    .references(() => user.id)
+    .notNull(),
+  cardListId: integer("cardListId").references(() => cardList.id),
+  otherPartyCardListId: integer("otherPartyCardListId").references(
+    () => cardList.id,
+  ),
+  status: integer("status")
+    .references(() => statusType.id)
+    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });
 
-export const tradeList = createTable("trade_list", {
+export const statusType = createTable("status_type", {
   id: serial("id").primaryKey(),
-  user1List: integer("user1List").references(() => tradeObjectList.id),
-  user2List: integer("user2List").references(() => tradeObjectList.id),
+  name: varchar("name").notNull(),
 });
 
 export const user = createTable("user", {
   id: serial("id").primaryKey(),
   authId: varchar("authId").unique().notNull(),
+  username: varchar("username").unique(),
   email: varchar("email").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
@@ -90,14 +88,30 @@ export const user = createTable("user", {
 export const cardList = createTable("card_list", {
   id: serial("id").primaryKey(),
   name: varchar("name").notNull(),
-  userId: varchar("user")
+  userId: varchar("userId")
     .notNull()
-    .references((): AnyPgColumn => user.authId),
+    .references(() => user.authId),
+  isPrivate: boolean("isPrivate").default(false),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });
 
 export const cardListItem = createTable("card_list_item", {
   id: serial("id").primaryKey(),
   cardListId: integer("cardListId").references(() => cardList.id),
   cardId: varchar("cardId").references(() => cards.id),
+  tradeItemId: integer("tradeItemId").references(() => tradeItem.id),
+  entityType: integer("entityType")
+    .default(1)
+    .references(() => entityType.id),
   quantity: integer("quantity").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});
+
+export const entityType = createTable("entity_type", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
 });

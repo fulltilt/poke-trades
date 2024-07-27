@@ -153,6 +153,42 @@ export type User = {
   trades: Trade[];
 };
 
+export async function getUser(userId: string) {
+  if (!userId) throw new Error("Invalid User");
+
+  const res = await db
+    .select()
+    .from(user)
+    .where(eq(user.authId, userId))
+    .execute();
+
+  return res[0];
+}
+
+export async function updateUsername(
+  userId: string,
+  username: string,
+): Promise<{ success?: string; error?: string }> {
+  if (!userId) throw new Error("Invalid User");
+
+  try {
+    const res = await db
+      .update(user)
+      .set({ username })
+      .where(eq(user.authId, userId))
+      .execute();
+    console.log(res);
+    return {
+      success: "Updated username",
+    };
+  } catch (err) {
+    console.log("err", err);
+    return {
+      error: "Username already exists",
+    };
+  }
+}
+
 export async function getSets() {
   const res: { id: string; data: SSet | null }[] = await db.query.sets.findMany(
     {},
@@ -285,7 +321,9 @@ export async function createUser(authId: string, email: string) {
 }
 
 export async function createList(userId: string, name: string) {
-  await db.insert(cardList).values({ userId, name });
+  await db
+    .insert(cardList)
+    .values({ userId, name, isPrivate: name === "Wish List" ? true : false });
 }
 
 export async function getCardList(
@@ -319,7 +357,6 @@ export async function updateCardList(
   cardId: string,
   difference: number,
 ) {
-  console.log(userId, listName, cardId);
   if (!userId)
     return {
       error: "User not logged in",

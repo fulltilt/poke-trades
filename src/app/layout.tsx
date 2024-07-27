@@ -1,10 +1,13 @@
 import "~/styles/globals.css";
+import { inter } from "~/app/fonts";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { TopNav } from "./_components/topnav";
 import { Footer } from "./_components/footer";
+// import { Toaster } from "~/components/ui/sonner";
+import { Toaster } from "~/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "PokeTrades",
@@ -18,10 +21,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
-        <body>
+        <body className={`${inter.className} antialiased`}>
           <div className="grid h-screen grid-rows-[auto,1fr]">
             <TopNav />
             {children}
+            <Toaster />
             <Footer />
           </div>
         </body>

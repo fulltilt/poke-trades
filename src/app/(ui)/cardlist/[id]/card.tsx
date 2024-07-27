@@ -213,8 +213,12 @@ export default function CardComponent({
           <DialogHeader>
             <DialogTitle>Please log in</DialogTitle>
             <DialogDescription>
-              {/* @ts-expect-error  flag is here as for whatever reason adding className to Clerk SignInButton component triggers TypeScript error */}
-              Please <SignInButton className="underline focus:outline-none" />{" "}
+              Please{" "}
+              <SignInButton>
+                <span className="cursor-pointer underline focus:outline-none">
+                  Sign In
+                </span>
+              </SignInButton>{" "}
               or create an account to access functionality
             </DialogDescription>
           </DialogHeader>
