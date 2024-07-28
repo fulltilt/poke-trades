@@ -321,9 +321,11 @@ export async function createUser(authId: string, email: string) {
 }
 
 export async function createList(userId: string, name: string) {
-  await db
-    .insert(cardList)
-    .values({ userId, name, isPrivate: name === "Collection" ? true : false });
+  await db.insert(cardList).values({
+    user_id: userId,
+    name,
+    is_private: name === "Collection" ? true : false,
+  });
 }
 
 export async function getCardList(
@@ -338,7 +340,6 @@ export async function getCardList(
   //   | undefined
   // >
   if (!userId) return; // TODO: have message that user has to be signed in
-  console.log(userId, listId);
   const countRes = await db
     .select({
       count: count(),
@@ -347,12 +348,12 @@ export async function getCardList(
     .innerJoin(
       cardListItem,
       and(
-        eq(cardList.userId, userId),
+        eq(cardList.user_id, userId),
         eq(cardList.id, Number(listId)),
-        eq(cardList.id, cardListItem.cardListId),
+        eq(cardList.id, cardListItem.card_list_id),
       ),
     )
-    .innerJoin(cards, eq(cardListItem.cardId, cards.id))
+    .innerJoin(cards, eq(cardListItem.card_id, cards.id))
     .execute();
   // const countRes = await db
   //   .select({
@@ -372,8 +373,8 @@ export async function getCardList(
 
   const res = await db
     .select({
-      userId: cardList.userId,
-      cardId: cardListItem.cardId,
+      userId: cardList.user_id,
+      cardId: cardListItem.card_id,
       cardListId: cardList.id,
       name: cardList.name,
       quantity: cardListItem.quantity,
@@ -383,12 +384,12 @@ export async function getCardList(
     .innerJoin(
       cardListItem,
       and(
-        eq(cardList.userId, userId),
+        eq(cardList.user_id, userId),
         eq(cardList.id, Number(listId)),
-        eq(cardList.id, cardListItem.cardListId),
+        eq(cardList.id, cardListItem.card_list_id),
       ),
     )
-    .innerJoin(cards, eq(cardListItem.cardId, cards.id))
+    .innerJoin(cards, eq(cardListItem.card_id, cards.id))
     .limit(pageSize)
     .offset((page - 1) * pageSize)
     .execute();
@@ -404,10 +405,10 @@ export async function getUsersCardLists(userId: string) {
     .select({
       cardListId: cardList.id,
       name: cardList.name,
-      isPrivate: cardList.isPrivate,
+      is_private: cardList.is_private,
     })
     .from(cardList)
-    .where(and(eq(cardList.userId, userId)))
+    .where(and(eq(cardList.user_id, userId)))
     .execute();
   return cardListRes;
 }
@@ -426,11 +427,11 @@ export async function updateCardList(
   const cardListItemsRes = await db
     .select({
       cardListItemId: cardListItem.id,
-      cardId: cardListItem.cardId,
+      cardId: cardListItem.card_id,
       quantity: cardListItem.quantity,
     })
     .from(cardListItem)
-    .where(eq(cardListItem.cardListId, cardListId))
+    .where(eq(cardListItem.card_list_id, cardListId))
     .execute();
 
   // check if Card is in CardList
@@ -441,8 +442,8 @@ export async function updateCardList(
     const cardListItemRes = await db
       .insert(cardListItem)
       .values({
-        cardListId,
-        cardId,
+        card_list_id: cardListId,
+        card_id: cardId,
         quantity: 1,
       })
       .execute();
@@ -471,6 +472,22 @@ export async function updateCardList(
   }
 }
 
+export async function getTradeLists(userId: string) {
+  const res = await db.execute(sql`
+      SELECT DISTINCT cl.id 
+      FROM poketrades_card_list cl, poketrades_card_list_item cli
+      WHERE cl.is_private IS NOT TRUE AND 
+      cl.name != 'Wish List' AND
+      cl.user_id != ${userId} AND
+      cli.card_id IN 
+        (SELECT icli.card_id 
+         FROM poketrades_card_list icl, poketrades_card_list_item icli
+         WHERE icl.user_id = ${userId} AND 
+         icl.name = 'Wish List' AND 
+         icl.id = icli.card_list_id)
+      `);
+  console.log(res.rows);
+}
 // export async function getSets(): Promise<Map<string, SSet[]>> {
 //   const res = await fetch("https://api.pokemontcg.io/v2/sets", {
 //     method: "GET",

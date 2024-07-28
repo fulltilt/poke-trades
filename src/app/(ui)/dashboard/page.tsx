@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getUser, getUsersCardLists } from "~/server/queries";
 import Link from "next/link";
+import { Button } from "~/components/ui/button";
 
 export default async function Dashboard() {
   const user = auth();
@@ -16,41 +17,45 @@ export default async function Dashboard() {
   }
 
   const cardLists = await getUsersCardLists(user.userId);
-  const publicLists = cardLists.filter((l) => !l.isPrivate);
-  const privateLists = cardLists.filter((l) => l.isPrivate);
+  const publicLists = cardLists.filter((l) => !l.is_private);
+  const privateLists = cardLists.filter((l) => l.is_private);
 
   return (
-    <div className="flex flex-col md:items-center">
-      <div className="mt-20 flex w-full max-w-[1200px] flex-col gap-8 md:flex-row">
-        <div className="flex w-1/2 rounded-sm border-[1px] border-solid border-black p-6">
-          <p className="font-bold">Pending Trades</p>
+    <div className="flex-colrounded-md flex max-h-full flex-1 pl-14 pr-14">
+      <main className="flex-1 pt-2">
+        <div className="mt-4">
+          <p className="text-3xl font-bold">Dashboard</p>
         </div>
-        <div className="flex w-1/2 rounded-sm border-[1px] border-solid border-black p-6">
-          <p className="font-bold">Completed Trades</p>
+
+        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="flex rounded-sm border-[1px] border-solid border-black p-6">
+            <p className="font-bold">Pending Trades</p>
+          </div>
+          <div className="flex rounded-sm border-[1px] border-solid border-black p-6">
+            <p className="font-bold">Completed Trades</p>
+          </div>
+          <div className="rounded-sm border-[1px] border-solid border-black p-6">
+            <p className="font-bold">Public Lists</p>
+            <ul className="list-none">
+              {publicLists.map((l) => (
+                <li key={l.cardListId}>
+                  <Link href={`/dashboard/list/${l.cardListId}`}>{l.name}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-sm border-[1px] border-solid border-black p-6">
+            <p className="font-bold">Private Lists</p>
+            <ul className="list-none">
+              {privateLists.map((l) => (
+                <li key={l.cardListId}>
+                  <Link href={`/dashboard/list/${l.cardListId}`}>{l.name}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </div>
-      <div className="mt-20 flex w-full max-w-[1200px] flex-col gap-8 md:flex-row">
-        <div className="w-1/2 rounded-sm border-[1px] border-solid border-black p-6">
-          <p className="font-bold">Public Lists</p>
-          <ul className="list-none">
-            {publicLists.map((l) => (
-              <li key={l.cardListId}>
-                <Link href={`/dashboard/list/${l.cardListId}`}>{l.name}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="w-1/2 rounded-sm border-[1px] border-solid border-black p-6">
-          <p className="font-bold">Private Lists</p>
-          <ul className="list-none">
-            {privateLists.map((l) => (
-              <li key={l.cardListId}>
-                <Link href={`/dashboard/list/${l.cardListId}`}>{l.name}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      </main>
     </div>
   );
 }

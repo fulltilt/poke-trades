@@ -22,10 +22,6 @@ export const columns: ColumnDef<{
           <div
             className="cursor-pointer font-bold"
             onClick={async () => {
-              //   if (!userId) {
-              //     setOpenDialog(true);
-              //     return;
-              //   }
               if (quantity === 0) return;
               const updateRes = await updateCardList(
                 row?.original.userId ?? "",

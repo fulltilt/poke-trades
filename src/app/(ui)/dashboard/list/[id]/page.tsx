@@ -34,6 +34,7 @@ export default async function ListComponent({
       </ul> */}
 
       <div className="container mx-auto py-10">
+        {/* @ts-expect-error DataTable TypeScript errors */}
         <DataTable columns={columns} data={list} />
       </div>
     </div>

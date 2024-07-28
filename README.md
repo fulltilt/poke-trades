@@ -41,18 +41,14 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Display list of all cards
 [x] Let a user create a collection
 [x] make user create username upon creation (redirect until done)
-[] Let a user propose a trade
-[] Fix set list and card to accommodate api fxn argument update
+[] Let user create a trade list
+[] Find trade
+[x] Fix set list and card to accommodate api fxn argument update
 [x] Add table indexes (Vercel Postgres has it on id by default?)
-[] Wish list to be used to suggest potential trades
 [] Create dashboard
 [] Add top progress bar
-[] Limit the amount of fields returned from card search
 [] Clerk route testing (redirects after auth, redirects after logging out, etc)
 
 Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos
 -English only
-
-Bugs
-sticky nav disappears at bottom of page

@@ -88,10 +88,10 @@ export const user = createTable("user", {
 export const cardList = createTable("card_list", {
   id: serial("id").primaryKey(),
   name: varchar("name").notNull(),
-  userId: varchar("userId")
+  user_id: varchar("user_id")
     .notNull()
     .references(() => user.authId),
-  isPrivate: boolean("isPrivate").default(false),
+  is_private: boolean("is_private").default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -99,8 +99,8 @@ export const cardList = createTable("card_list", {
 
 export const cardListItem = createTable("card_list_item", {
   id: serial("id").primaryKey(),
-  cardListId: integer("cardListId").references(() => cardList.id),
-  cardId: varchar("cardId").references(() => cards.id),
+  card_list_id: integer("card_list_id").references(() => cardList.id),
+  card_id: varchar("card_id").references(() => cards.id),
   tradeItemId: integer("tradeItemId").references(() => tradeItem.id),
   entityType: integer("entityType")
     .default(1)

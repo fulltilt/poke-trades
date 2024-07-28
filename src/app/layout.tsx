@@ -22,7 +22,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body className={`${inter.className} antialiased`}>
-          <div className="grid h-screen grid-rows-[auto,1fr]">
+          <div className="grid min-h-screen grid-rows-[auto,1fr]">
             <TopNav />
             {children}
             <Toaster />

@@ -65,6 +65,7 @@ export function Minus() {
     </svg>
   );
 }
+
 export default function CardComponent({
   card,
   userId,
