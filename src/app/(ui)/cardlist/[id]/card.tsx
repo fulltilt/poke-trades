@@ -12,8 +12,9 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { SignInButton } from "@clerk/nextjs";
+import { fixedTwoDecimals } from "~/app/utils/helpers";
 
-function Favorite({ fill }: { fill: string }) {
+export function Favorite({ fill }: { fill: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -31,7 +32,7 @@ function Favorite({ fill }: { fill: string }) {
   );
 }
 
-function Plus() {
+export function Plus() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +51,7 @@ function Plus() {
   );
 }
 
-function Minus() {
+export function Minus() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -80,37 +81,23 @@ export default function CardComponent({
   const [openDialog, setOpenDialog] = useState(false);
 
   // console.log("quantity", quantity);
-  const unlimitedHolo = card?.tcgplayer?.prices?.unlimitedHolofoil
-    ? (
-        Math.round(card.tcgplayer.prices.unlimitedHolofoil.market * 100) / 100
-      ).toFixed(2)
-    : undefined;
-  const firstEditionHolo = card?.tcgplayer?.prices?.["1stEdition"]
-    ? (
-        Math.round(card.tcgplayer.prices["1stEdition"].market * 100) / 100
-      ).toFixed(2)
-    : undefined;
-  const unlimited = card?.tcgplayer?.prices?.unlimited?.market
-    ? (Math.round(card.tcgplayer.prices.unlimited.market * 100) / 100).toFixed(
-        2,
-      )
-    : undefined;
-  const firstEdition = card?.tcgplayer?.prices?.["1stEdition"]?.market
-    ? (
-        Math.round(card.tcgplayer.prices["1stEdition"].market * 100) / 100
-      ).toFixed(2)
-    : undefined;
-  const holo = card?.tcgplayer?.prices?.holofoil?.market
-    ? (Math.round(card.tcgplayer.prices.holofoil.market * 100) / 100).toFixed(2)
-    : undefined;
-  const reverse = card?.tcgplayer?.prices?.reverseHolofoil?.market
-    ? (
-        Math.round(card.tcgplayer.prices.reverseHolofoil.market * 100) / 100
-      ).toFixed(2)
-    : undefined;
-  const normal = card?.tcgplayer?.prices?.normal?.market
-    ? (Math.round(card.tcgplayer.prices.normal.market * 100) / 100).toFixed(2)
-    : undefined;
+  const unlimitedHolo = fixedTwoDecimals(
+    card?.tcgplayer?.prices?.unlimitedHolofoil?.market,
+  );
+  const firstEditionHolo = fixedTwoDecimals(
+    card?.tcgplayer?.prices?.["1stEdition"]?.market,
+  );
+  const unlimited = fixedTwoDecimals(
+    card?.tcgplayer?.prices?.unlimited?.market,
+  );
+  const firstEdition = fixedTwoDecimals(
+    card?.tcgplayer?.prices?.["1stEdition"]?.market,
+  );
+  const holo = fixedTwoDecimals(card?.tcgplayer?.prices?.holofoil?.market);
+  const reverse = fixedTwoDecimals(
+    card?.tcgplayer?.prices?.reverseHolofoil?.market,
+  );
+  const normal = fixedTwoDecimals(card?.tcgplayer?.prices?.normal?.market);
 
   return (
     <div key={card?.id} className="pb-8">

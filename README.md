@@ -40,8 +40,9 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Clean DB of cards with null data
 [x] Display list of all cards
 [x] Let a user create a collection
-[] make user create username upon creation (redirect until done)
+[x] make user create username upon creation (redirect until done)
 [] Let a user propose a trade
+[] Fix set list and card to accommodate api fxn argument update
 [x] Add table indexes (Vercel Postgres has it on id by default?)
 [] Wish list to be used to suggest potential trades
 [] Create dashboard

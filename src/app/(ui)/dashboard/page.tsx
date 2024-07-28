@@ -3,7 +3,8 @@ import { Suspense } from "react";
 // import { SkeletonCard } from "~/components/skeletonCard";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getUser } from "~/server/queries";
+import { getUser, getUsersCardLists } from "~/server/queries";
+import Link from "next/link";
 
 export default async function Dashboard() {
   const user = auth();
@@ -14,29 +15,41 @@ export default async function Dashboard() {
     redirect("/username");
   }
 
+  const cardLists = await getUsersCardLists(user.userId);
+  const publicLists = cardLists.filter((l) => !l.isPrivate);
+  const privateLists = cardLists.filter((l) => l.isPrivate);
+
   return (
-    <div className="flex flex-col items-center">
-      <div className="mt-20 flex w-full max-w-[1200px] gap-8">
-        <div className="flex w-1/2 rounded-lg border-[1px] border-solid border-black p-8">
-          Pending Trades
+    <div className="flex flex-col md:items-center">
+      <div className="mt-20 flex w-full max-w-[1200px] flex-col gap-8 md:flex-row">
+        <div className="flex w-1/2 rounded-sm border-[1px] border-solid border-black p-6">
+          <p className="font-bold">Pending Trades</p>
         </div>
-        <div className="flex w-1/2 rounded-lg border-[1px] border-solid border-black p-8">
-          Completed Trades
+        <div className="flex w-1/2 rounded-sm border-[1px] border-solid border-black p-6">
+          <p className="font-bold">Completed Trades</p>
         </div>
       </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {/* <Card title="Collected" value={totalPaidInvoices} type="collected" /> */}
-        {/* <Card title="Pending" value={totalPendingInvoices} type="pending" /> */}
-        {/* <Card title="Total Invoices" value={numberOfInvoices} type="invoices" /> */}
-        {/* <Card
-          title="Total Customers"
-          value={numberOfCustomers}
-          type="customers"
-        /> */}
-      </div>
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-        {/* <RevenueChart revenue={revenue}  /> */}
-        {/* <LatestInvoices latestInvoices={latestInvoices} /> */}
+      <div className="mt-20 flex w-full max-w-[1200px] flex-col gap-8 md:flex-row">
+        <div className="w-1/2 rounded-sm border-[1px] border-solid border-black p-6">
+          <p className="font-bold">Public Lists</p>
+          <ul className="list-none">
+            {publicLists.map((l) => (
+              <li key={l.cardListId}>
+                <Link href={`/dashboard/list/${l.cardListId}`}>{l.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="w-1/2 rounded-sm border-[1px] border-solid border-black p-6">
+          <p className="font-bold">Private Lists</p>
+          <ul className="list-none">
+            {privateLists.map((l) => (
+              <li key={l.cardListId}>
+                <Link href={`/dashboard/list/${l.cardListId}`}>{l.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

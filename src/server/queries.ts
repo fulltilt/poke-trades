@@ -323,37 +323,98 @@ export async function createUser(authId: string, email: string) {
 export async function createList(userId: string, name: string) {
   await db
     .insert(cardList)
-    .values({ userId, name, isPrivate: name === "Wish List" ? true : false });
+    .values({ userId, name, isPrivate: name === "Collection" ? true : false });
 }
 
 export async function getCardList(
   userId: string | null,
-  listName: string,
-): Promise<{ cardId: string | null; quantity: number }[] | undefined> {
+  listId: number,
+  page: number,
+  pageSize: number,
+) {
+  // : Promise<{ totalCount: number; data: Card[] }>
+  // : Promise<
+  //   | { cardId: string | null; quantity: number; name: string; data: Card }[]
+  //   | undefined
+  // >
   if (!userId) return; // TODO: have message that user has to be signed in
-
-  const res = await db
+  console.log(userId, listId);
+  const countRes = await db
     .select({
-      cardId: cardListItem.cardId,
-      quantity: cardListItem.quantity,
+      count: count(),
     })
     .from(cardList)
     .innerJoin(
       cardListItem,
       and(
         eq(cardList.userId, userId),
-        eq(cardList.name, listName),
+        eq(cardList.id, Number(listId)),
         eq(cardList.id, cardListItem.cardListId),
       ),
     )
+    .innerJoin(cards, eq(cardListItem.cardId, cards.id))
     .execute();
+  // const countRes = await db
+  //   .select({
+  //     count: count(),
+  //   })
+  //   .from(cardListItem)
+  //   .innerJoin(
+  //     cards,
+  //     and(
+  //       eq(cardListItem.cardListId, Number(listId)),
+  //       eq(cardListItem.cardId, cards.id),
+  //     ),
+  //   )
+  // .innerJoin(cards, eq(cardListItem.cardId, cards.id))
+  // .execute();
+  console.log("countRes", countRes);
 
-  return res;
+  const res = await db
+    .select({
+      userId: cardList.userId,
+      cardId: cardListItem.cardId,
+      cardListId: cardList.id,
+      name: cardList.name,
+      quantity: cardListItem.quantity,
+      data: cards.data,
+    })
+    .from(cardList)
+    .innerJoin(
+      cardListItem,
+      and(
+        eq(cardList.userId, userId),
+        eq(cardList.id, Number(listId)),
+        eq(cardList.id, cardListItem.cardListId),
+      ),
+    )
+    .innerJoin(cards, eq(cardListItem.cardId, cards.id))
+    .limit(pageSize)
+    .offset((page - 1) * pageSize)
+    .execute();
+  console.log("res", res);
+  return {
+    totalCount: countRes[0]?.count ?? 0,
+    data: res ?? [],
+  };
+}
+
+export async function getUsersCardLists(userId: string) {
+  const cardListRes = await db
+    .select({
+      cardListId: cardList.id,
+      name: cardList.name,
+      isPrivate: cardList.isPrivate,
+    })
+    .from(cardList)
+    .where(and(eq(cardList.userId, userId)))
+    .execute();
+  return cardListRes;
 }
 
 export async function updateCardList(
   userId: string,
-  listName: string,
+  cardListId: number,
   cardId: string,
   difference: number,
 ) {
@@ -361,66 +422,52 @@ export async function updateCardList(
     return {
       error: "User not logged in",
     };
-
-  // get CardList id (need to do this step in case the next query results is empty)
-  const cardListRes = await db
-    .select({ cardListId: cardList.id })
-    .from(cardList)
-    .where(and(eq(cardList.userId, userId), eq(cardList.name, listName)))
+  // get CardListItems for User's particular CardList
+  const cardListItemsRes = await db
+    .select({
+      cardListItemId: cardListItem.id,
+      cardId: cardListItem.cardId,
+      quantity: cardListItem.quantity,
+    })
+    .from(cardListItem)
+    .where(eq(cardListItem.cardListId, cardListId))
     .execute();
 
-  const cardListId = cardListRes[0]?.cardListId ?? null;
-
-  if (cardListId) {
-    // get CardListItems for User's particular CardList
-    const cardListItemsRes = await db
-      .select({
+  // check if Card is in CardList
+  const filteredList = cardListItemsRes.filter((el) => el.cardId === cardId);
+  console.log(filteredList);
+  // if Card is not in CardList, add entry
+  if (!filteredList.length) {
+    const cardListItemRes = await db
+      .insert(cardListItem)
+      .values({
+        cardListId,
+        cardId,
+        quantity: 1,
+      })
+      .execute();
+    console.log("cardListItemRes", cardListItemRes);
+  } else {
+    const cardListItemId = filteredList[0]?.cardListItemId ?? 0;
+    const quantity = filteredList[0]?.quantity ?? 0;
+    const cardListItemRes = await db
+      .update(cardListItem)
+      .set({
+        quantity: quantity + difference,
+      })
+      .where(eq(cardListItem.id, cardListItemId))
+      .returning({
         cardListItemId: cardListItem.id,
-        cardId: cardListItem.cardId,
         quantity: cardListItem.quantity,
       })
-      .from(cardListItem)
-      .where(eq(cardListItem.cardListId, cardListId))
       .execute();
 
-    // check if Card is in CardList
-    const filteredList = cardListItemsRes.filter((el) => el.cardId === cardId);
-    console.log(filteredList);
-    // if Card is not in CardList, add entry
-    if (!filteredList.length) {
-      const cardListItemRes = await db
-        .insert(cardListItem)
-        .values({
-          cardListId,
-          cardId,
-          quantity: 1,
-        })
-        .execute();
-      console.log("cardListItemRes", cardListItemRes);
-    } else {
-      const cardListItemId = filteredList[0]?.cardListItemId ?? 0;
-      const quantity = filteredList[0]?.quantity ?? 0;
-      const cardListItemRes = await db
-        .update(cardListItem)
-        .set({
-          quantity: quantity + difference,
-        })
-        .where(eq(cardListItem.id, cardListItemId))
-        .returning({
-          cardListItemId: cardListItem.id,
-          quantity: cardListItem.quantity,
-        })
-        .execute();
-
-      // if resulting quantity is 0, delete row from CardListItem table
-      const newQuantity = cardListItemRes[0]?.quantity;
-      if (newQuantity === 0) {
-        const id = cardListItemRes[0]?.cardListItemId ?? 0;
-        await db.delete(cardListItem).where(eq(cardListItem.id, id));
-      }
+    // if resulting quantity is 0, delete row from CardListItem table
+    const newQuantity = cardListItemRes[0]?.quantity;
+    if (newQuantity === 0) {
+      const id = cardListItemRes[0]?.cardListItemId ?? 0;
+      await db.delete(cardListItem).where(eq(cardListItem.id, id));
     }
-  } else {
-    // TODO: display error message that CardList cannot be found
   }
 }
 

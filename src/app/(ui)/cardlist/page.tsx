@@ -2,7 +2,13 @@ import { Suspense } from "react";
 import PaginationComponent from "~/components/pagination";
 import SearchInput from "~/components/searchInput";
 import { SkeletonCard } from "~/components/skeletonCard";
-import { getAllCards, getCardList, getSet, getUser } from "~/server/queries";
+import {
+  getAllCards,
+  getCardList,
+  getSet,
+  getUser,
+  getUsersCardLists,
+} from "~/server/queries";
 import type { Card } from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./[id]/card";
@@ -28,7 +34,10 @@ export default async function CardList({
     const pageSize = Number(searchParams?.pageSize) ?? 30;
     const search = searchParams?.search ?? "";
 
-    const wishList = (await getCardList(user?.userId, "Wish List"))?.map(
+    const cardLists = await getUsersCardLists(user.userId);
+    const listId =
+      cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
+    const wishList = (await getCardList(user?.userId, listId, 1, 30))?.data.map(
       (a) => a.cardId,
     );
 

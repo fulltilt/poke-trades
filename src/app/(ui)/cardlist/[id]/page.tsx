@@ -27,10 +27,11 @@ export default async function CardList({
       currentPage,
       pageSize,
     );
-    const wishList = (await getCardList(user?.userId, "Wish List"))?.map(
+
+    const wishList = (await getCardList(user?.userId, "Wish List", 1, 30))?.map(
       (a) => a.cardId,
     );
-    const collection = await getCardList(user?.userId, "Collection");
+    const collection = await getCardList(user?.userId, "Collection", 1, 30);
     const collectionCardIds = collection?.map((a) => a.cardId);
 
     return (
