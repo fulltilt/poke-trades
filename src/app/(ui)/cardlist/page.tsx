@@ -34,27 +34,50 @@ export default async function CardList({
     const pageSize = Number(searchParams?.pageSize) ?? 30;
     const search = searchParams?.search ?? "";
 
-    const cardLists = await getUsersCardLists(user.userId);
-    const listId =
-      cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
-    const wishList = (await getCardList(user?.userId, listId, 1, 30))?.data.map(
-      (a) => a.cardId,
-    );
+    // const cardLists = await getUsersCardLists(user.userId);
+    // const listId =
+    //   cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
+    // const wishList = (await getCardList(user?.userId, listId, 1, 30))?.data.map(
+    //   (a) => a.cardId,
+    // );
 
     const cardData = await getAllCards(currentPage, pageSize, search);
+
+    const cardLists = await getUsersCardLists(user.userId);
+    const wishListId =
+      cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
+    const collectionListId =
+      cardLists.filter((l) => l.name === "Collection")[0]?.cardListId ?? 0;
+
+    const wishList = (
+      await getCardList(user?.userId, wishListId, 1, 30)
+    )?.data.map((a) => a.cardId);
+    const collection = await getCardList(user?.userId, collectionListId, 1, 30);
+    const collectionCardIds = collection?.data.map((a) => a.cardId);
 
     return (
       <div className="m-auto flex max-w-[1200px] flex-col">
         <div className="m-auto grid gap-4 md:grid-cols-4 lg:grid-cols-6">
-          {cardData.cards.map((card: Card | null) => (
-            <CardComponent
-              card={card}
-              userId={user.userId}
-              key={card?.id}
-              inWishList={wishList?.includes(card?.id ?? null) ?? false}
-              quantity={0}
-            />
-          ))}
+          {cardData.cards.map((card: Card | null) => {
+            const isCardInCollection = collectionCardIds?.includes(
+              card?.id ?? "",
+            );
+            const quantity =
+              collection?.data.filter((c) => c.cardId === card?.id)[0]
+                ?.quantity ?? 0;
+
+            return (
+              <CardComponent
+                card={card}
+                userId={user.userId}
+                key={card?.id}
+                inWishList={wishList?.includes(card?.id ?? null) ?? false}
+                wishListId={wishListId}
+                collectionListId={collectionListId}
+                quantity={isCardInCollection ? quantity : 0}
+              />
+            );
+          })}
         </div>
         <div className="mt-6">
           <PaginationComponent totalCount={cardData?.totalCount ?? 0} />

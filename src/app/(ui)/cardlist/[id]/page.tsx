@@ -2,10 +2,16 @@ import { Suspense } from "react";
 import PaginationComponent from "~/components/pagination";
 import SearchInput from "~/components/searchInput";
 import { SkeletonCard } from "~/components/skeletonCard";
-import { getCardList, getCardsFromSet, getSet } from "~/server/queries";
+import {
+  getCardList,
+  getCardsFromSet,
+  getSet,
+  getUsersCardLists,
+} from "~/server/queries";
 import type { Card } from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./card";
+import { redirect } from "next/navigation";
 
 export default async function CardList({
   params,
@@ -16,6 +22,7 @@ export default async function CardList({
 }) {
   async function Cards() {
     const user = auth();
+    if (!user.userId) redirect("/");
 
     const currentPage = Number(searchParams?.page) ?? 1;
     const pageSize = Number(searchParams?.pageSize) ?? 30;
@@ -28,11 +35,17 @@ export default async function CardList({
       pageSize,
     );
 
-    const wishList = (await getCardList(user?.userId, "Wish List", 1, 30))?.map(
-      (a) => a.cardId,
-    );
-    const collection = await getCardList(user?.userId, "Collection", 1, 30);
-    const collectionCardIds = collection?.map((a) => a.cardId);
+    const cardLists = await getUsersCardLists(user.userId);
+    const wishListId =
+      cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
+    const collectionListId =
+      cardLists.filter((l) => l.name === "Collection")[0]?.cardListId ?? 0;
+
+    const wishList = (
+      await getCardList(user?.userId, wishListId, 1, 30)
+    )?.data.map((a) => a.cardId);
+    const collection = await getCardList(user?.userId, collectionListId, 1, 30);
+    const collectionCardIds = collection?.data.map((a) => a.cardId);
 
     return (
       <div className="m-auto flex max-w-[1200px] flex-col">
@@ -42,14 +55,16 @@ export default async function CardList({
               card?.id ?? "",
             );
             const quantity =
-              collection?.filter((c) => c.cardId === card?.id)[0]?.quantity ??
-              0;
+              collection?.data.filter((c) => c.cardId === card?.id)[0]
+                ?.quantity ?? 0;
             return (
               <CardComponent
                 card={card}
                 userId={user.userId}
                 key={card?.id}
                 inWishList={wishList?.includes(card?.id ?? null) ?? false}
+                wishListId={wishListId}
+                collectionListId={collectionListId}
                 quantity={isCardInCollection ? quantity : 0}
               />
             );

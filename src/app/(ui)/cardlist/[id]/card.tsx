@@ -69,11 +69,15 @@ export default function CardComponent({
   card,
   userId,
   inWishList,
+  wishListId,
+  collectionListId,
   quantity,
 }: {
   card: Card | null;
   userId: string | null;
   inWishList: boolean;
+  wishListId: number;
+  collectionListId: number;
   quantity: number;
 }) {
   const [isInWishList, setIsInWishList] = useState(inWishList);
@@ -125,7 +129,7 @@ export default function CardComponent({
           onClick={async () => {
             const updateRes = await updateCardList(
               userId ?? "",
-              "Wish List",
+              wishListId,
               card?.id ?? "",
               isInWishList ? -1 : 1,
             );
@@ -151,7 +155,7 @@ export default function CardComponent({
             if (cardQuantity === 0) return;
             const updateRes = await updateCardList(
               userId ?? "",
-              "Collection",
+              collectionListId,
               card?.id ?? "",
               -1,
             );
@@ -176,7 +180,7 @@ export default function CardComponent({
 
             const updateRes = await updateCardList(
               userId ?? "",
-              "Collection",
+              collectionListId,
               card?.id ?? "",
               1,
             );
