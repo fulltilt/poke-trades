@@ -7,6 +7,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { TopNav } from "./_components/topnav";
 import { Footer } from "./_components/footer";
 import { Toaster } from "~/components/ui/toaster";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   title: "PokeTrades",
@@ -21,6 +22,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body className={`${inter.className} antialiased`}>
+          <NextTopLoader />
           <div className="grid min-h-screen grid-rows-[auto,1fr]">
             <TopNav />
             {children}

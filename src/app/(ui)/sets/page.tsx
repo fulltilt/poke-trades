@@ -1,8 +1,8 @@
 import { getSets, getUser } from "~/server/queries";
-import type { SSet } from "~/server/queries";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import type { SSet } from "~/app/types";
 
 const SetDisplay = ({ set }: { set: SSet | null }) => {
   return (

@@ -9,7 +9,7 @@ import {
   getUser,
   getUsersCardLists,
 } from "~/server/queries";
-import type { Card } from "~/server/queries";
+import type { Card } from "~/app/types";
 import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./[id]/card";
 import { redirect } from "next/navigation";

@@ -1,141 +1,9 @@
 "use server";
 
-import { sql, count, like, and, eq } from "drizzle-orm";
+import { sql, count, like, and, eq, ne } from "drizzle-orm";
 import { db } from "./db";
 import { sets, cards, user, cardList, cardListItem } from "./db/schema";
-
-export type SSet = {
-  id: string;
-  name: string;
-  series: string;
-  printedTotal: number;
-  total: number;
-  legalities: {
-    unlimied: string;
-    expanded: string;
-  };
-  ptcgoCode: string;
-  releaseDate: string;
-  updatedAt: string;
-  images: {
-    symbol: string;
-    logo: string;
-  };
-};
-
-export type Card = {
-  id: string;
-  name: string;
-  supertype: string;
-  subtypes: string[];
-  hp: string;
-  types: string[];
-  evolvesFrom: string;
-  //   abilities: any[];
-  //   attacks: any[];
-  //   weaknesses: any[];
-  retreatCost: string[];
-  convertedRetreatCost: number;
-  set: SSet;
-  number: string;
-  artist: string;
-  rarity: string;
-  flavorText: string;
-  nationalPokedexNumbers: string[];
-  legalities: {
-    unlimited: string;
-    standard: string;
-    expanded: string;
-  };
-  images: {
-    small: string;
-    large: string;
-  };
-  tcgplayer: {
-    url: string;
-    updatedAt: string;
-    prices: {
-      normal?: {
-        low: number;
-        mid: number;
-        high: number;
-        market: number;
-        directLow: number;
-      };
-      holofoil?: {
-        low: number;
-        mid: number;
-        high: number;
-        market: number;
-        directLow: number;
-      };
-      reverseHolofoil?: {
-        low: number;
-        mid: number;
-        high: number;
-        market: number;
-        directLow: number;
-      };
-      unlimitedHolofoil?: {
-        low: number;
-        mid: number;
-        high: number;
-        market: number;
-        directLow: number;
-      };
-      "1EditionHolofoil"?: {
-        low: number;
-        mid: number;
-        high: number;
-        market: number;
-        directLow: number;
-      };
-      unlimited?: {
-        low: number;
-        mid: number;
-        high: number;
-        market: number;
-        directLow: number;
-      };
-      "1stEdition"?: {
-        low: number;
-        mid: number;
-        high: number;
-        market: number;
-        directLow: number;
-      };
-    };
-  };
-};
-
-export type TradeObject = {
-  id: string;
-  name: string;
-  price: number;
-};
-
-export type Trade = {
-  user: string;
-  haves: TradeObject[];
-  wants: TradeObject[];
-  partner: string;
-  completed: boolean;
-};
-
-export type List = {
-  id: string;
-  user: string;
-  listName: string;
-  cards: Card[];
-};
-
-export type User = {
-  id: string;
-  email: string;
-  createdAt: Date;
-  cardLists: List[];
-  trades: Trade[];
-};
+import type { Card, SSet } from "~/app/types";
 
 export async function getUser(userId: string) {
   if (!userId) throw new Error("Invalid User");
@@ -143,7 +11,7 @@ export async function getUser(userId: string) {
   const res = await db
     .select()
     .from(user)
-    .where(eq(user.authId, userId))
+    .where(eq(user.auth_id, userId))
     .execute();
 
   return res[0];
@@ -159,7 +27,7 @@ export async function updateUsername(
     const res = await db
       .update(user)
       .set({ username })
-      .where(eq(user.authId, userId))
+      .where(eq(user.auth_id, userId))
       .execute();
     console.log(res);
     return {
@@ -290,8 +158,14 @@ export async function getCardsFromSet(
   );
 }
 
-export async function createUser(authId: string, email: string) {
-  await db.insert(user).values({ authId, email });
+export async function createUser(auth_id: string, email: string) {
+  await db.insert(user).values({ auth_id, email });
+
+  // const cardsData = await cardsPrepared.execute({
+  //   search: `%${search}%`,
+  //   limit: pageSize,
+  //   offset: (page - 1) * pageSize,
+  // });
 }
 
 export async function createList(user_id: string, name: string) {
@@ -458,14 +332,33 @@ export async function updateCardList(
 
 export async function getCardQuantityByList(user_id: string, card_id: string) {
   // TODO: find a way to get all users lists that has a card id and if not, return it anyways with the default quantity of 0
-  const res = await db.execute(sql`
-    SELECT cl.id, cl.name, cli.card_id, cli.quantity
-  FROM poketrades_card_list cl, poketrades_card_list_item cli
-  WHERE cl.name != 'Wish List' AND
-  cl.user_id = ${user_id} AND
-  cl.id = cli.card_list_id AND
-  cli.card_id = ${card_id}
-    `);
+
+  // const res = await db.execute(sql`
+  //   SELECT cl.id, cl.name, cli.card_id, cli.quantity
+  // FROM poketrades_card_list cl, poketrades_card_list_item cli
+  // WHERE cl.name != 'Wish List' AND
+  // cl.user_id = ${user_id} AND
+  // cl.id = cli.card_list_id AND
+  // cli.card_id = ${card_id}
+  //   `);
+
+  const res = await db
+    .select({
+      cardListId: cardList.id,
+      cardId: cardListItem.card_id,
+      quantity: cardListItem.quantity,
+    })
+    .from(cardList)
+    .innerJoin(
+      cardListItem,
+      and(
+        ne(cardList.name, "Wish List"),
+        eq(cardList.user_id, user_id),
+        eq(cardList.id, cardListItem.card_list_id),
+        eq(cardListItem.card_id, card_id),
+      ),
+    )
+    .execute();
 
   // const res2 = await db.execute(sql`
   // SELECT cl.id, cl.name, cli.card_id, coalesce(cli.quantity, 0) quantity
@@ -477,14 +370,15 @@ export async function getCardQuantityByList(user_id: string, card_id: string) {
   // (cli.card_id = ${card_id} OR cli.card_id IS NULL)`);
   // console.log(res2.rows);
 
-  return res.rows;
+  return res;
 }
 
 export async function getTradeLists(userId: string) {
   const res = await db.execute(sql`
-      SELECT DISTINCT cl.id, cl.name 
-      FROM poketrades_card_list cl, poketrades_card_list_item cli
+      SELECT DISTINCT cl.id, cl.name, u.username 
+      FROM poketrades_card_list cl, poketrades_card_list_item cli, poketrades_user u
       WHERE cl.is_private IS NOT TRUE AND 
+      u.
       cl.name != 'Wish List' AND
       cl.user_id != ${userId} AND
       cli.card_id IN 

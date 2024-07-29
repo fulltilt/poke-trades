@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { getCardQuantityByList, updateCardList } from "~/server/queries";
-import type { Card } from "~/server/queries";
+import type { Card } from "~/app/types";
+
 import {
   Dialog,
   DialogContent,

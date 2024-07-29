@@ -11,7 +11,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import type { Card, SSet } from "../queries";
+import type { Card, SSet } from "~/app/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -77,7 +77,7 @@ export const statusType = createTable("status_type", {
 
 export const user = createTable("user", {
   id: serial("id").primaryKey(),
-  authId: varchar("authId").unique().notNull(),
+  auth_id: varchar("auth_id").unique().notNull(),
   username: varchar("username").unique(),
   email: varchar("email").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -90,7 +90,7 @@ export const cardList = createTable("card_list", {
   name: varchar("name").notNull(),
   user_id: varchar("user_id")
     .notNull()
-    .references(() => user.authId),
+    .references(() => user.auth_id),
   is_private: boolean("is_private").default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
