@@ -44,10 +44,13 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Fix set list and card to accommodate api fxn argument update
 [x] Add table indexes (Vercel Postgres has it on id by default?)
 [x] Create dashboard
-[] Let user create a trade list
+[x] Let user create a trade list
 [] Find trade
 [] Add top progress bar
 [] Convert queries to prepared statements
+[] Seperate types to seperate file
+[] Proper error handling on the database side with respective messages on the UI
+[] Figure out Clerk middleware to redirect user when not logged in or doesn't have a username set
 [] Clerk route testing (redirects after auth, redirects after logging out, etc)
 
 Shortcomings

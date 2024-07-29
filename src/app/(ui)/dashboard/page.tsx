@@ -1,11 +1,10 @@
-import { Suspense } from "react";
+// import { Suspense } from "react";
 
 // import { SkeletonCard } from "~/components/skeletonCard";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getUser, getUsersCardLists } from "~/server/queries";
 import Link from "next/link";
-import { Button } from "~/components/ui/button";
 
 export default async function Dashboard() {
   const user = auth();

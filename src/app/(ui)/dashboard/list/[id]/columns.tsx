@@ -1,10 +1,11 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { Minus, Plus } from "~/app/(ui)/cardlist/[id]/card";
 import { fixedTwoDecimals } from "~/app/utils/helpers";
-import { Card, updateCardList } from "~/server/queries";
+import { updateCardList } from "~/server/queries";
+import type { Card } from "~/server/queries";
+import type { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<{
   userId: string;

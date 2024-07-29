@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { Card, getCardList, getUser } from "~/server/queries";
+import { getCardList, getUser } from "~/server/queries";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 

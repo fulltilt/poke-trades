@@ -11,7 +11,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { Card, SSet } from "../queries";
+import type { Card, SSet } from "../queries";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same

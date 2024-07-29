@@ -414,18 +414,21 @@ export async function updateCardList(
 
   // check if Card is in CardList
   const filteredList = cardListItemsRes.filter((el) => el.cardId === cardId);
-  console.log(filteredList);
+
   // if Card is not in CardList, add entry
   if (!filteredList.length) {
-    const cardListItemRes = await db
-      .insert(cardListItem)
-      .values({
-        card_list_id: cardListId,
-        card_id: cardId,
-        quantity: 1,
-      })
-      .execute();
-    console.log("cardListItemRes", cardListItemRes);
+    try {
+      await db
+        .insert(cardListItem)
+        .values({
+          card_list_id: cardListId,
+          card_id: cardId,
+          quantity: 1,
+        })
+        .execute();
+    } catch (err) {
+      console.log("Error adding entry to CardListItem");
+    }
   } else {
     const cardListItemId = filteredList[0]?.cardListItemId ?? 0;
     const quantity = filteredList[0]?.quantity ?? 0;
@@ -450,6 +453,30 @@ export async function updateCardList(
   }
 }
 
+export async function getCardQuantityByList(user_id: string, card_id: string) {
+  // TODO: find a way to get all users lists that has a card id and if not, return it anyways with the default quantity of 0
+  const res = await db.execute(sql`
+    SELECT cl.id, cl.name, cli.card_id, cli.quantity
+  FROM poketrades_card_list cl, poketrades_card_list_item cli
+  WHERE cl.name != 'Wish List' AND
+  cl.user_id = ${user_id} AND
+  cl.id = cli.card_list_id AND
+  cli.card_id = ${card_id}
+    `);
+
+  // const res2 = await db.execute(sql`
+  // SELECT cl.id, cl.name, cli.card_id, coalesce(cli.quantity, 0) quantity
+  // FROM poketrades_card_list cl
+  // LEFT JOIN poketrades_card_list_item cli
+  //   ON cl.id = cli.card_list_id
+  // WHERE cl.name != 'Wish List' AND
+  // cl.user_id = ${user_id} AND
+  // (cli.card_id = ${card_id} OR cli.card_id IS NULL)`);
+  // console.log(res2.rows);
+
+  return res.rows;
+}
+
 export async function getTradeLists(userId: string) {
   const res = await db.execute(sql`
       SELECT DISTINCT cl.id 
@@ -465,19 +492,6 @@ export async function getTradeLists(userId: string) {
          icl.id = icli.card_list_id)
       `);
   console.log(res.rows);
-}
-
-export async function getCardQuantityByList(user_id: string, card_id: string) {
-  const res = await db.execute(sql`
-    SELECT cl.id, cl.name, cli.card_id, cli.quantity 
-    FROM poketrades_card_list cl, poketrades_card_list_item cli
-    WHERE cl.name != 'Wish List' AND
-    cl.user_id = ${user_id} AND
-    cl.id = cli.card_list_id AND
-    cli.card_id = ${card_id}
-    `);
-
-  return res.rows;
 }
 // export async function getSets(): Promise<Map<string, SSet[]>> {
 //   const res = await fetch("https://api.pokemontcg.io/v2/sets", {

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Card, getCardQuantityByList, updateCardList } from "~/server/queries";
+import { getCardQuantityByList, updateCardList } from "~/server/queries";
+import type { Card } from "~/server/queries";
 import {
   Dialog,
   DialogContent,
@@ -85,23 +86,40 @@ export default function CardComponent({
   card,
   userId,
   inWishList,
-  // wishListId,
-  // collectionListId,
   cardLists,
-  quantity,
 }: {
   card: Card | null;
   userId: string | null;
   inWishList: boolean;
   cardLists: { cardListId: number; name: string; is_private: boolean | null }[];
-  // wishListId: number;
-  // collectionListId: number;
-  quantity: number;
 }) {
   const [isInWishList, setIsInWishList] = useState(inWishList);
-  const [cardQuantity, setCardQuantity] = useState(quantity);
   const [openDialog, setOpenDialog] = useState(false);
   const [lists, setLists] = useState<List[]>([]);
+
+  async function updateLists() {
+    const res = (await getCardQuantityByList(
+      userId ?? "",
+      card?.id ?? "",
+    )) as List[];
+    const resListIds = res.map((l) => l.id);
+    // if result length doesn't match the users card lists length, fill in missing list entries with quantity set to 0
+    if (res.length !== cardLists.length) {
+      cardLists
+        .filter((l) => l.name !== "Wish List")
+        .forEach((list) => {
+          if (!resListIds.includes(list.cardListId)) {
+            res.push({
+              id: list.cardListId,
+              name: list.name,
+              card_id: card?.id ?? "",
+              quantity: 0,
+            });
+          }
+        });
+    }
+    setLists(res.sort((a, b) => a.id - b.id));
+  }
 
   const wishListId =
     cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
@@ -178,12 +196,12 @@ export default function CardComponent({
         <Button
           variant="outline"
           onClick={async () => {
-            const res = await getCardQuantityByList(
-              userId ?? "",
-              card?.id ?? "",
-            );
+            if (!userId) {
+              setOpenDialog(true);
+              return;
+            }
+            await updateLists();
 
-            setLists(res as List[]);
             setOpenDialog(true);
           }}
         >
@@ -220,7 +238,6 @@ export default function CardComponent({
                   {lists
                     .filter((l) => l.name !== "Wish List")
                     .map((list) => {
-                      console.log(list);
                       return (
                         <div className="flex justify-between" key={list.id}>
                           <p>{list.name}</p>
@@ -228,46 +245,41 @@ export default function CardComponent({
                             <div
                               className="cursor-pointer font-bold"
                               onClick={async () => {
-                                console.log(lists);
-                                // await getCardQuantityByList(
-                                //   userId ?? "",
-                                //   card?.id ?? "",
-                                // );
-                                // if (cardQuantity === 0) return;
-                                // const updateRes = await updateCardList(
-                                //   userId ?? "",
-                                //   collectionListId,
-                                //   card?.id ?? "",
-                                //   -1,
-                                // );
-                                // if (updateRes?.error) {
-                                //   // TODO: display error message
-                                //   return;
-                                // }
-                                // setCardQuantity(cardQuantity - 1);
+                                if (list.quantity === 0) return;
+                                const updateRes = await updateCardList(
+                                  userId ?? "",
+                                  list.id,
+                                  card?.id ?? "",
+                                  -1,
+                                );
+                                if (updateRes?.error) {
+                                  // TODO: display error message
+                                  return;
+                                }
+
+                                await updateLists();
                               }}
                             >
                               <Minus />
                             </div>
-                            <div className="bold ml-4 mr-4">{cardQuantity}</div>
+                            <div className="bold ml-4 mr-4">
+                              {list.quantity}
+                            </div>
                             <div
                               className="cursor-pointer font-bold"
                               onClick={async () => {
-                                // if (!userId) {
-                                //   setOpenDialog(true);
-                                //   return;
-                                // }
-                                // const updateRes = await updateCardList(
-                                //   userId ?? "",
-                                //   collectionListId,
-                                //   card?.id ?? "",
-                                //   1,
-                                // );
-                                // if (updateRes?.error) {
-                                //   // TODO: display error message
-                                //   return;
-                                // }
-                                // setCardQuantity(cardQuantity + 1);
+                                const updateRes = await updateCardList(
+                                  userId ?? "",
+                                  list.id,
+                                  card?.id ?? "",
+                                  1,
+                                );
+                                if (updateRes?.error) {
+                                  // TODO: display error message
+                                  return;
+                                }
+
+                                await updateLists();
                               }}
                             >
                               <Plus />

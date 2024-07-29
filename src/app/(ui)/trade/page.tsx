@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+// import { Suspense } from "react";
 
 // import { SkeletonCard } from "~/components/skeletonCard";
 import { auth } from "@clerk/nextjs/server";
