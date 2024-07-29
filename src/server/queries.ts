@@ -333,6 +333,9 @@ export async function getCardList(
       ),
     )
     .innerJoin(cards, eq(cardListItem.card_id, cards.id))
+    // .orderBy(
+    //   sql`data->'set'->>'releaseDate' DESC, CAST(DATA->>'number' AS INTEGER)`,
+    // )
     .execute();
   // const countRes = await db
   //   .select({
@@ -479,7 +482,7 @@ export async function getCardQuantityByList(user_id: string, card_id: string) {
 
 export async function getTradeLists(userId: string) {
   const res = await db.execute(sql`
-      SELECT DISTINCT cl.id 
+      SELECT DISTINCT cl.id, cl.name 
       FROM poketrades_card_list cl, poketrades_card_list_item cli
       WHERE cl.is_private IS NOT TRUE AND 
       cl.name != 'Wish List' AND

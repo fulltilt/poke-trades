@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getUser, getUsersCardLists } from "~/server/queries";
 import Link from "next/link";
+import NewTradeComponent from "./newList";
 
 export default async function Dashboard() {
   const user = auth();
@@ -24,15 +25,10 @@ export default async function Dashboard() {
       <main className="flex-1 pt-2">
         <div className="mt-4">
           <p className="text-3xl font-bold">Dashboard</p>
+          <NewTradeComponent user={user.userId} />
         </div>
 
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div className="flex rounded-sm border-[1px] border-solid border-black p-6">
-            <p className="font-bold">Pending Trades</p>
-          </div>
-          <div className="flex rounded-sm border-[1px] border-solid border-black p-6">
-            <p className="font-bold">Completed Trades</p>
-          </div>
           <div className="rounded-sm border-[1px] border-solid border-black p-6">
             <p className="font-bold">Public Lists</p>
             <ul className="list-none">
@@ -56,6 +52,12 @@ export default async function Dashboard() {
                 </li>
               ))}
             </ul>
+          </div>
+          <div className="flex rounded-sm border-[1px] border-solid border-black p-6">
+            <p className="font-bold">Pending Trades</p>
+          </div>
+          <div className="flex rounded-sm border-[1px] border-solid border-black p-6">
+            <p className="font-bold">Completed Trades</p>
           </div>
         </div>
       </main>

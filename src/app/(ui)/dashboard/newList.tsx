@@ -15,7 +15,7 @@ import { Input } from "~/components/ui/input";
 import { createList } from "~/server/queries";
 import { useToast } from "~/components/ui/use-toast";
 
-export default function NewTradeComponent({ user }: { user: string }) {
+export default function NewListComponent({ user }: { user: string }) {
   const { toast } = useToast();
 
   const [openDialog, setOpenDialog] = useState(false);

@@ -44,7 +44,11 @@ export const columns: ColumnDef<{
           <div
             className="cursor-pointer font-bold"
             onClick={async () => {
-              console.log();
+              if (
+                row?.original.name === "Wish List" &&
+                row?.original.quantity === 1
+              )
+                return;
               const updateRes = await updateCardList(
                 row?.original.userId ?? "",
                 row?.original.cardListId ?? 0,

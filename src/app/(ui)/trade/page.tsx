@@ -4,7 +4,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getTradeLists, getUser, getUsersCardLists } from "~/server/queries";
-import NewTradeComponent from "./newTrade";
 
 export default async function TradeComponent() {
   const user = auth();
@@ -16,8 +15,6 @@ export default async function TradeComponent() {
   }
 
   const cardLists = await getTradeLists(user.userId);
-  //   const publicLists = cardLists.filter((l) => !l.isPrivate);
-  //   const privateLists = cardLists.filter((l) => l.isPrivate);
 
   return (
     <div className="flex-colrounded-md flex max-h-full flex-1 pl-14 pr-14">
@@ -25,7 +22,10 @@ export default async function TradeComponent() {
         <div className="mt-4">
           <p className="text-3xl font-bold">Trades</p>
         </div>
-        <NewTradeComponent user={user.userId} />
+
+        <p className="text-l font-bold">
+          Public trade lists with cards in your Wish List
+        </p>
       </main>
     </div>
   );
