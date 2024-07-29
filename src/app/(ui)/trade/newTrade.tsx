@@ -11,9 +11,15 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { createList } from "~/server/queries";
+import { useToast } from "~/components/ui/use-toast";
 
-export default function NewTradeComponent() {
+export default function NewTradeComponent({ user }: { user: string }) {
+  const { toast } = useToast();
+
   const [openDialog, setOpenDialog] = useState(false);
+  const [listName, setListName] = useState("");
 
   return (
     <div>
@@ -28,9 +34,35 @@ export default function NewTradeComponent() {
           onInteractOutside={() => setOpenDialog(false)}
         >
           <DialogHeader>
-            <DialogTitle>Please log in</DialogTitle>
-            <DialogDescription></DialogDescription>
+            <DialogTitle>New Trade List</DialogTitle>
           </DialogHeader>
+          <DialogDescription></DialogDescription>
+          <div className="mt-8 flex w-full max-w-sm items-center space-x-6">
+            <Input
+              value={listName}
+              onChange={(evt) => setListName(evt.target.value)}
+              minLength={6}
+            />
+            <Button
+              onClick={async () => {
+                const res = await createList(user, listName);
+                if (!res.error) {
+                  toast({
+                    title: "Success",
+                    description: res.success,
+                  });
+                  setOpenDialog(false);
+                } else {
+                  toast({
+                    title: "Error",
+                    description: res.success,
+                  });
+                }
+              }}
+            >
+              Submit
+            </Button>
+          </div>
           <DialogFooter></DialogFooter>
         </DialogContent>
       </Dialog>

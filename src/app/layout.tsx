@@ -6,7 +6,6 @@ import { type Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { TopNav } from "./_components/topnav";
 import { Footer } from "./_components/footer";
-// import { Toaster } from "~/components/ui/sonner";
 import { Toaster } from "~/components/ui/toaster";
 
 export const metadata: Metadata = {

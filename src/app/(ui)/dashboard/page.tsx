@@ -39,7 +39,9 @@ export default async function Dashboard() {
             <ul className="list-none">
               {publicLists.map((l) => (
                 <li key={l.cardListId}>
-                  <Link href={`/dashboard/list/${l.cardListId}`}>{l.name}</Link>
+                  <Link href={`/dashboard/list/${l.cardListId}?name=${l.name}`}>
+                    {l.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -49,7 +51,9 @@ export default async function Dashboard() {
             <ul className="list-none">
               {privateLists.map((l) => (
                 <li key={l.cardListId}>
-                  <Link href={`/dashboard/list/${l.cardListId}`}>{l.name}</Link>
+                  <Link href={`/dashboard/list/${l.cardListId}?name=${l.name}`}>
+                    {l.name}
+                  </Link>
                 </li>
               ))}
             </ul>

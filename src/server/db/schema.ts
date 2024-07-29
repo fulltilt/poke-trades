@@ -55,17 +55,17 @@ export const tradeItem = createTable("trade_item", {
 
 export const trade = createTable("trade", {
   id: serial("id").primaryKey(),
-  userId: integer("user")
+  user_id: integer("user_id")
     .references(() => user.id)
     .notNull(),
-  cardListId: integer("cardListId").references(() => cardList.id),
-  otherPartyCardListId: integer("otherPartyCardListId").references(
+  card_list_id: integer("card_list_id").references(() => cardList.id),
+  other_party_card_list_id: integer("other_party_card_list_id").references(
     () => cardList.id,
   ),
   status: integer("status")
     .references(() => statusType.id)
     .notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
+  created_at: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });

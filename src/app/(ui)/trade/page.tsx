@@ -25,7 +25,7 @@ export default async function TradeComponent() {
         <div className="mt-4">
           <p className="text-3xl font-bold">Trades</p>
         </div>
-        <NewTradeComponent />
+        <NewTradeComponent user={user.userId} />
       </main>
     </div>
   );

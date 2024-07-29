@@ -15,7 +15,7 @@ export const columns: ColumnDef<{
   data: Card;
 }>[] = [
   {
-    cell: ({ row }) => {
+    cell: function Cell({ row }) {
       const [quantity, setQuantity] = useState(row?.original.quantity);
       return (
         <div className="flex">

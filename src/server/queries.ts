@@ -23,14 +23,6 @@ export type SSet = {
   };
 };
 
-// type SSetData = {
-//   data: SSet[];
-//   page: number;
-//   pageSize: number;
-//   count: number;
-//   totalCount: number;
-// };
-
 export type Card = {
   id: string;
   name: string;
@@ -115,14 +107,6 @@ export type Card = {
     };
   };
 };
-
-// type CardData = {
-//   cards: Card[];
-//   // page: number;
-//   // pageSize: number;
-//   // count: number;
-//   totalCount: number;
-// };
 
 export type TradeObject = {
   id: string;
@@ -209,7 +193,6 @@ export async function getSets() {
 }
 
 export async function getSet(id: string) {
-  //: {id: string, data: SSet}[]
   const res = await db.select().from(sets).where(eq(sets.id, id));
   return res[0];
 }
@@ -278,15 +261,6 @@ export async function getCardsFromSet(
     search: `%${search}%`,
   });
 
-  // const prepared = db.query.cards
-  //   .findMany({
-  //     limit: sql.placeholder("limit"),
-  //     offset: sql.placeholder("offset"),
-  //     orderBy: sql`CAST(DATA->>'number' AS INTEGER)`,
-  //     where: (model, { like }) => like(model.id, sql.placeholder("searchterm")),
-  //   })
-  //   .prepare("query_name");
-
   const cardsPrepared = db
     .select()
     .from(cards)
@@ -320,26 +294,31 @@ export async function createUser(authId: string, email: string) {
   await db.insert(user).values({ authId, email });
 }
 
-export async function createList(userId: string, name: string) {
-  await db.insert(cardList).values({
-    user_id: userId,
-    name,
-    is_private: name === "Collection" ? true : false,
-  });
+export async function createList(user_id: string, name: string) {
+  try {
+    await db.insert(cardList).values({
+      user_id,
+      name,
+      is_private: name === "Collection" ? true : false,
+    });
+    return {
+      success: `Created list: ${name}`,
+    };
+  } catch (err) {
+    console.log("err", err);
+    return {
+      error: "Error creating list",
+    };
+  }
 }
 
 export async function getCardList(
-  userId: string | null,
+  user_id: string | null,
   listId: number,
   page: number,
   pageSize: number,
 ) {
-  // : Promise<{ totalCount: number; data: Card[] }>
-  // : Promise<
-  //   | { cardId: string | null; quantity: number; name: string; data: Card }[]
-  //   | undefined
-  // >
-  if (!userId) return; // TODO: have message that user has to be signed in
+  if (!user_id) return; // TODO: have message that user has to be signed in
   const countRes = await db
     .select({
       count: count(),
@@ -348,7 +327,7 @@ export async function getCardList(
     .innerJoin(
       cardListItem,
       and(
-        eq(cardList.user_id, userId),
+        eq(cardList.user_id, user_id),
         eq(cardList.id, Number(listId)),
         eq(cardList.id, cardListItem.card_list_id),
       ),
@@ -369,7 +348,6 @@ export async function getCardList(
   //   )
   // .innerJoin(cards, eq(cardListItem.cardId, cards.id))
   // .execute();
-  console.log("countRes", countRes);
 
   const res = await db
     .select({
@@ -384,7 +362,7 @@ export async function getCardList(
     .innerJoin(
       cardListItem,
       and(
-        eq(cardList.user_id, userId),
+        eq(cardList.user_id, user_id),
         eq(cardList.id, Number(listId)),
         eq(cardList.id, cardListItem.card_list_id),
       ),
@@ -393,7 +371,7 @@ export async function getCardList(
     .limit(pageSize)
     .offset((page - 1) * pageSize)
     .execute();
-  console.log("res", res);
+
   return {
     totalCount: countRes[0]?.count ?? 0,
     data: res ?? [],
@@ -487,6 +465,19 @@ export async function getTradeLists(userId: string) {
          icl.id = icli.card_list_id)
       `);
   console.log(res.rows);
+}
+
+export async function getCardQuantityByList(user_id: string, card_id: string) {
+  const res = await db.execute(sql`
+    SELECT cl.id, cl.name, cli.card_id, cli.quantity 
+    FROM poketrades_card_list cl, poketrades_card_list_item cli
+    WHERE cl.name != 'Wish List' AND
+    cl.user_id = ${user_id} AND
+    cl.id = cli.card_list_id AND
+    cli.card_id = ${card_id}
+    `);
+
+  return res.rows;
 }
 // export async function getSets(): Promise<Map<string, SSet[]>> {
 //   const res = await fetch("https://api.pokemontcg.io/v2/sets", {

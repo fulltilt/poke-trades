@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card, updateCardList } from "~/server/queries";
+import { Card, getCardQuantityByList, updateCardList } from "~/server/queries";
 import {
   Dialog,
   DialogContent,
@@ -11,8 +11,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+
 import { SignInButton } from "@clerk/nextjs";
 import { fixedTwoDecimals } from "~/app/utils/helpers";
+import { Button } from "~/components/ui/button";
 
 export function Favorite({ fill }: { fill: string }) {
   return (
@@ -66,26 +74,38 @@ export function Minus() {
   );
 }
 
+type List = {
+  id: number;
+  name: string;
+  card_id: string;
+  quantity: number;
+};
+
 export default function CardComponent({
   card,
   userId,
   inWishList,
-  wishListId,
-  collectionListId,
+  // wishListId,
+  // collectionListId,
+  cardLists,
   quantity,
 }: {
   card: Card | null;
   userId: string | null;
   inWishList: boolean;
-  wishListId: number;
-  collectionListId: number;
+  cardLists: { cardListId: number; name: string; is_private: boolean | null }[];
+  // wishListId: number;
+  // collectionListId: number;
   quantity: number;
 }) {
   const [isInWishList, setIsInWishList] = useState(inWishList);
   const [cardQuantity, setCardQuantity] = useState(quantity);
   const [openDialog, setOpenDialog] = useState(false);
+  const [lists, setLists] = useState<List[]>([]);
 
-  // console.log("quantity", quantity);
+  const wishListId =
+    cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
+
   const unlimitedHolo = fixedTwoDecimals(
     card?.tcgplayer?.prices?.unlimitedHolofoil?.market,
   );
@@ -142,58 +162,33 @@ export default function CardComponent({
             setIsInWishList(!isInWishList);
           }}
         >
-          <Favorite fill={isInWishList ? "red" : "#b6b6b6"} />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Favorite fill={isInWishList ? "red" : "#b6b6b6"} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Add/Remove from your Wish List</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       <div className="flex justify-center">
-        <div
-          className="cursor-pointer font-bold"
+        <Button
+          variant="outline"
           onClick={async () => {
-            if (!userId) {
-              setOpenDialog(true);
-              return;
-            }
-            if (cardQuantity === 0) return;
-            const updateRes = await updateCardList(
+            const res = await getCardQuantityByList(
               userId ?? "",
-              collectionListId,
               card?.id ?? "",
-              -1,
             );
-            if (updateRes?.error) {
-              // TODO: display error message
-              return;
-            }
 
-            setCardQuantity(cardQuantity - 1);
+            setLists(res as List[]);
+            setOpenDialog(true);
           }}
         >
-          <Minus />
-        </div>
-        <div className="bold ml-4 mr-4">{cardQuantity}</div>
-        <div
-          className="cursor-pointer font-bold"
-          onClick={async () => {
-            if (!userId) {
-              setOpenDialog(true);
-              return;
-            }
-
-            const updateRes = await updateCardList(
-              userId ?? "",
-              collectionListId,
-              card?.id ?? "",
-              1,
-            );
-            if (updateRes?.error) {
-              // TODO: display error message
-              return;
-            }
-            setCardQuantity(cardQuantity + 1);
-          }}
-        >
-          <Plus />
-        </div>
+          Update Qty
+        </Button>
       </div>
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild></DialogTrigger>
@@ -203,16 +198,87 @@ export default function CardComponent({
           onInteractOutside={() => setOpenDialog(false)}
         >
           <DialogHeader>
-            <DialogTitle>Please log in</DialogTitle>
-            <DialogDescription>
-              Please{" "}
-              <SignInButton>
-                <span className="cursor-pointer underline focus:outline-none">
-                  Sign In
-                </span>
-              </SignInButton>{" "}
-              or create an account to access functionality
-            </DialogDescription>
+            <DialogTitle>
+              {!userId ? "Please log in" : "Add Card to list"}
+            </DialogTitle>
+            <DialogDescription></DialogDescription>
+            {!userId ? (
+              <p>
+                Please{" "}
+                <SignInButton>
+                  <span className="cursor-pointer underline focus:outline-none">
+                    Sign In
+                  </span>
+                </SignInButton>{" "}
+                or create an account to access functionality
+              </p>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <p className="font-semibild text-lg">{`${card?.name} - ${card?.set.name} - ${card?.number}/${card?.set.printedTotal}`}</p>
+                <label htmlFor="lists">Update quantities:</label>
+                <div id="lists">
+                  {lists
+                    .filter((l) => l.name !== "Wish List")
+                    .map((list) => {
+                      console.log(list);
+                      return (
+                        <div className="flex justify-between" key={list.id}>
+                          <p>{list.name}</p>
+                          <div className="flex">
+                            <div
+                              className="cursor-pointer font-bold"
+                              onClick={async () => {
+                                console.log(lists);
+                                // await getCardQuantityByList(
+                                //   userId ?? "",
+                                //   card?.id ?? "",
+                                // );
+                                // if (cardQuantity === 0) return;
+                                // const updateRes = await updateCardList(
+                                //   userId ?? "",
+                                //   collectionListId,
+                                //   card?.id ?? "",
+                                //   -1,
+                                // );
+                                // if (updateRes?.error) {
+                                //   // TODO: display error message
+                                //   return;
+                                // }
+                                // setCardQuantity(cardQuantity - 1);
+                              }}
+                            >
+                              <Minus />
+                            </div>
+                            <div className="bold ml-4 mr-4">{cardQuantity}</div>
+                            <div
+                              className="cursor-pointer font-bold"
+                              onClick={async () => {
+                                // if (!userId) {
+                                //   setOpenDialog(true);
+                                //   return;
+                                // }
+                                // const updateRes = await updateCardList(
+                                //   userId ?? "",
+                                //   collectionListId,
+                                //   card?.id ?? "",
+                                //   1,
+                                // );
+                                // if (updateRes?.error) {
+                                //   // TODO: display error message
+                                //   return;
+                                // }
+                                // setCardQuantity(cardQuantity + 1);
+                              }}
+                            >
+                              <Plus />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
           </DialogHeader>
           <DialogFooter></DialogFooter>
         </DialogContent>

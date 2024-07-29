@@ -41,12 +41,13 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Display list of all cards
 [x] Let a user create a collection
 [x] make user create username upon creation (redirect until done)
-[] Let user create a trade list
-[] Find trade
 [x] Fix set list and card to accommodate api fxn argument update
 [x] Add table indexes (Vercel Postgres has it on id by default?)
-[] Create dashboard
+[x] Create dashboard
+[] Let user create a trade list
+[] Find trade
 [] Add top progress bar
+[] Convert queries to prepared statements
 [] Clerk route testing (redirects after auth, redirects after logging out, etc)
 
 Shortcomings

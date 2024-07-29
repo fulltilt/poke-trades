@@ -72,8 +72,9 @@ export default async function CardList({
                 userId={user.userId}
                 key={card?.id}
                 inWishList={wishList?.includes(card?.id ?? null) ?? false}
-                wishListId={wishListId}
-                collectionListId={collectionListId}
+                // wishListId={wishListId}
+                // collectionListId={collectionListId}
+                cardLists={cardLists}
                 quantity={isCardInCollection ? quantity : 0}
               />
             );
