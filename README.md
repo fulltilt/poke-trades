@@ -50,6 +50,7 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [] Find trade
 [] Convert queries to prepared statements
 [] Proper error handling on the database side with respective messages on the UI
+[] Optimize trade search
 [] Figure out Clerk middleware to redirect user when not logged in or doesn't have a username set
 [] Clerk route testing (redirects after auth, redirects after logging out, etc)
 

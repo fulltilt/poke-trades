@@ -1,6 +1,6 @@
 "use server";
 
-import { sql, count, like, and, eq, ne } from "drizzle-orm";
+import { sql, count, like, and, eq, ne, isNotNull, inArray } from "drizzle-orm";
 import { db } from "./db";
 import { sets, cards, user, cardList, cardListItem } from "./db/schema";
 import type { Card, SSet } from "~/app/types";
@@ -344,9 +344,10 @@ export async function getCardQuantityByList(user_id: string, card_id: string) {
 
   const res = await db
     .select({
-      cardListId: cardList.id,
-      cardId: cardListItem.card_id,
+      id: cardList.id,
+      card_id: cardListItem.card_id,
       quantity: cardListItem.quantity,
+      name: cardList.name,
     })
     .from(cardList)
     .innerJoin(
@@ -373,22 +374,63 @@ export async function getCardQuantityByList(user_id: string, card_id: string) {
   return res;
 }
 
-export async function getTradeLists(userId: string) {
+export async function getTradeLists(user_id: string) {
   const res = await db.execute(sql`
-      SELECT DISTINCT cl.id, cl.name, u.username 
-      FROM poketrades_card_list cl, poketrades_card_list_item cli, poketrades_user u
-      WHERE cl.is_private IS NOT TRUE AND 
-      u.
-      cl.name != 'Wish List' AND
-      cl.user_id != ${userId} AND
-      cli.card_id IN 
-        (SELECT icli.card_id 
-         FROM poketrades_card_list icl, poketrades_card_list_item icli
-         WHERE icl.user_id = ${userId} AND 
-         icl.name = 'Wish List' AND 
-         icl.id = icli.card_list_id)
-      `);
-  console.log(res.rows);
+  SELECT DISTINCT 
+    cl.id, cl.name, u.username, cli.card_id
+  FROM 
+    poketrades_card_list cl, poketrades_card_list_item cli, poketrades_user u
+  WHERE 
+    u.auth_id = cl.user_id AND
+    cl.is_private IS NOT TRUE AND
+    cl.name != 'Wish List' AND
+    cl.user_id != ${user_id} AND
+    cl.id = cli.card_list_id AND
+    cli.card_id IN
+      (SELECT 
+        icli.card_id
+       FROM 
+        poketrades_card_list icl, poketrades_card_list_item icli
+       WHERE 
+        icl.user_id = ${user_id} AND
+        icl.name = 'Wish List' AND
+        icl.id = icli.card_list_id)
+  `);
+  // console.log(res.rows);
+  return res.rows;
+
+  // const subquery = db
+  //   .select({ id: cardListItem.card_id })
+  //   .from(cardList)
+  //   .innerJoin(
+  //     cardListItem,
+  //     and(
+  //       eq(cardList.user_id, user_id),
+  //       eq(cardList.name, "Wish List"),
+  //       eq(cardList.id, cardListItem.card_list_id),
+  //     ),
+  //   )
+  //   .as("subquery");
+
+  // const res = await db
+  //   .selectDistinctOn([cardList.id], {
+  //     id: cardList.id,
+  //     name: cardList.name,
+  //     username: user.username,
+  //   })
+  //   .from(cardList)
+  //   .innerJoin(user, eq(user.auth_id, cardList.user_id))
+  //   .innerJoin(
+  //     cardListItem,
+  //     and(
+  //       ne(cardList.name, "Wish List"),
+  //       eq(cardList.user_id, user_id),
+  //       isNotNull(cardList.is_private),
+  //       inArray(cardListItem.card_id, subquery),
+  //     ),
+  //   )
+  //   .execute();
+  // console.log(res);
 }
 // export async function getSets(): Promise<Map<string, SSet[]>> {
 //   const res = await fetch("https://api.pokemontcg.io/v2/sets", {

@@ -14,6 +14,12 @@ export function TopNav() {
         <Link href="/trade" className="text-sm">
           Trades
         </Link>
+        <Link href="/sets" className="text-sm">
+          Sets
+        </Link>
+        <Link href="/cardlist" className="text-sm">
+          Cards
+        </Link>
       </div>
       <div className="flex flex-row items-center gap-4">
         <SignedOut>

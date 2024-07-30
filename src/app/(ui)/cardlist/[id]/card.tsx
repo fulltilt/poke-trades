@@ -79,7 +79,7 @@ export function Minus() {
 type List = {
   id: number;
   name: string;
-  card_id: string;
+  card_id: string | null;
   quantity: number;
 };
 
@@ -96,13 +96,10 @@ export default function CardComponent({
 }) {
   const [isInWishList, setIsInWishList] = useState(inWishList);
   const [openDialog, setOpenDialog] = useState(false);
-  const [lists, setLists] = useState<List[]>([]);
+  const [lists, setLists] = useState<List[]>();
 
   async function updateLists() {
-    const res = (await getCardQuantityByList(
-      userId ?? "",
-      card?.id ?? "",
-    )) as List[];
+    const res = await getCardQuantityByList(userId ?? "", card?.id ?? "");
     const resListIds = res.map((l) => l.id);
     // if result length doesn't match the users card lists length, fill in missing list entries with quantity set to 0
     if (res.length !== cardLists.length) {
@@ -237,7 +234,7 @@ export default function CardComponent({
                 <label htmlFor="lists">Update quantities:</label>
                 <div id="lists">
                   {lists
-                    .filter((l) => l.name !== "Wish List")
+                    ?.filter((l) => l.name !== "Wish List")
                     .map((list) => {
                       return (
                         <div className="flex justify-between" key={list.id}>
