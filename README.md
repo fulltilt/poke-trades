@@ -47,12 +47,17 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Let user create a trade list
 [x] Add top progress bar
 [x] Seperate types to seperate file
-[] Find trade
+[x] Find trade
+[] Send trade request
+[] Show UI notification/send email
+[] Add trade stats
 [] Convert queries to prepared statements
 [] Proper error handling on the database side with respective messages on the UI
 [] Optimize trade search
 [] Figure out Clerk middleware to redirect user when not logged in or doesn't have a username set
 [] Clerk route testing (redirects after auth, redirects after logging out, etc)
+
+[] Upon creation of list, new list doesn't show up in Dashboard until refresh
 
 Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos

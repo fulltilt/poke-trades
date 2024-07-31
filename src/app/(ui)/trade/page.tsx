@@ -3,6 +3,7 @@
 // import { SkeletonCard } from "~/components/skeletonCard";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { Button } from "~/components/ui/button";
 import {
   getCardList,
   getTradeLists,
@@ -34,11 +35,20 @@ export default async function TradeComponent() {
       (list) => list.name === "Wish List",
     )[0]?.cardListId ?? 0;
   const cardsInWishList = await getCardList(user.userId, wishListId, 1, 30);
-  const wishListCardIds = cardsInWishList?.data.map((l) => l.cardId);
+  // const wishListCardIds = cardsInWishList?.data.map((l) => l.cardId);
   console.log(cardsInWishList);
 
   // aggregate other users trade lists that contain Cards in Wish List
   const otherUsersTradeLists = (await getTradeLists(user.userId)) as List[];
+  const aggregatedListData = otherUsersTradeLists.reduce<
+    Map<number, { username: string; listname: string }>
+  >((acc, curr) => {
+    acc.set(curr.id, {
+      username: curr.username,
+      listname: curr.name,
+    });
+    return acc;
+  }, new Map());
   const tradeListsMap = otherUsersTradeLists.reduce<Map<number, string[]>>(
     (lists, current) => {
       if (!lists.has(current.id)) lists.set(current.id, []);
@@ -75,13 +85,41 @@ export default async function TradeComponent() {
         <dl className="-my-3 divide-y divide-gray-100 text-sm">
           {Array.from(tradeListsMap.entries()).map((list) => {
             const [id, cardList] = [list[0], list[1]];
+            const username = aggregatedListData.get(id)?.username;
+            const listname = aggregatedListData.get(id)?.listname;
+            const cardData = cardList.map((cardId) => {
+              const cardData = cardsInWishList?.data?.filter(
+                (c) => c.cardId === cardId,
+              )[0]?.data;
+
+              return {
+                id: cardId,
+                name: cardData?.name,
+                set: cardData?.set.name,
+                number: cardData?.number,
+                printedTotal: cardData?.set.printedTotal,
+              };
+            });
             return (
               <div
                 key={id}
                 className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4"
               >
-                {/* <dt className="font-medium text-gray-900">{list.name}</dt>
-                <dd className="text-gray-700 sm:col-span-2">{list.username}</dd> */}
+                <dt className="font-medium text-gray-900">{listname}</dt>
+                <dd className="text-gray-700 sm:col-span-2">{username}</dd>
+                <dd className="text-gray-700 sm:col-span-2">
+                  <ul>
+                    {cardData.map((card) => (
+                      <li>
+                        {card?.name} - {card?.set} - {card?.number}/
+                        {card?.printedTotal}
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+                <dd>
+                  <Button>Request Trade</Button>
+                </dd>
               </div>
             );
           })}

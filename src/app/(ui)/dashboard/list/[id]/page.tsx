@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getCardList, getUser } from "~/server/queries";
 import { columns } from "./columns";
-import { DataTable } from "./data-table";
+import { DataTable } from "../../../../../components/data-table";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 

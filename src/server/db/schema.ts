@@ -115,3 +115,12 @@ export const entityType = createTable("entity_type", {
   id: serial("id").primaryKey(),
   name: varchar("name").notNull(),
 });
+
+export const notification = createTable("notification", {
+  id: serial("id").primaryKey(),
+  user_id: varchar("user_id")
+    .notNull()
+    .references(() => user.auth_id),
+  message: varchar("message").notNull(),
+  viewed: boolean("viewed").default(false),
+});
