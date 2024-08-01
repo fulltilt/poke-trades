@@ -2,6 +2,8 @@
 
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { useAppContext } from "./reducer";
+import { Badge } from "~/components/ui/badge";
 
 function NotificationBell() {
   return (
@@ -23,6 +25,8 @@ function NotificationBell() {
 }
 
 export function TopNav() {
+  const { state } = useAppContext();
+  console.log("topnav", state.count);
   return (
     <nav className="sticky top-0 z-50 flex w-full items-center justify-between bg-black p-4 text-xl font-semibold text-white">
       <div className="flex items-center gap-8">
@@ -41,7 +45,15 @@ export function TopNav() {
         </Link>
       </div>
       <div className="flex flex-row items-center gap-4">
-        <NotificationBell />
+        <Link href={"/notifications"} className="relative">
+          <NotificationBell />
+          {state.count > 0 && (
+            <Badge variant="destructive" className="absolute left-2 top-2">
+              {state.count}
+            </Badge>
+          )}
+        </Link>
+
         <SignedOut>
           <SignInButton />
         </SignedOut>

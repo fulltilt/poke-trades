@@ -8,6 +8,7 @@ import { TopNav } from "./_components/topnav";
 import { Footer } from "./_components/footer";
 import { Toaster } from "~/components/ui/toaster";
 import NextTopLoader from "nextjs-toploader";
+import { AppContextProvider } from "./_components/reducer";
 
 export const metadata: Metadata = {
   title: "PokeTrades",
@@ -24,8 +25,11 @@ export default function RootLayout({
         <body className={`${inter.className} antialiased`}>
           <NextTopLoader />
           <div className="grid min-h-screen grid-rows-[auto,1fr]">
-            <TopNav />
-            {children}
+            <AppContextProvider>
+              <TopNav />
+
+              {children}
+            </AppContextProvider>
             <Toaster />
             <Footer />
           </div>
