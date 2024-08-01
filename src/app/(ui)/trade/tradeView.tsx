@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useCounter } from "~/app/_components/reducers";
+import { ActionTypes, useAppContext } from "~/app/_components/reducers";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -25,7 +25,7 @@ export default function TradeViewComponent({
   wishListId: number;
   otherUserListId: number;
 }) {
-  //   const { dispatch } = useCounter();
+  const { dispatch } = useAppContext();
 
   const [openDialog, setOpenDialog] = useState(false);
   const [tradeExists, setTradeExists] = useState(false);
@@ -78,16 +78,13 @@ export default function TradeViewComponent({
                 >
                   Request Trade
                 </Button>
-                {/* <Button
+                <Button
                   onClick={() =>
-                    dispatch((prev) => {
-                      console.log(prev);
-                      return prev;
-                    })
+                    dispatch({ type: ActionTypes.INCREMENT, payload: 8 })
                   }
                 >
                   Here
-                </Button> */}
+                </Button>
               </div>
             )}
           </div>

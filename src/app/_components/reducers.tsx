@@ -63,6 +63,7 @@ export const initialState: State = {
 export function reducer(state: State, action: Actions) {
   switch (action.type) {
     case ActionTypes.INCREMENT:
+      console.log(state, action);
       return {
         ...state,
         count: action.payload,

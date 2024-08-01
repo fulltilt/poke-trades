@@ -32,9 +32,7 @@ const SetDisplay = ({ set }: { set: SSet | null }) => {
 
 export default async function Series() {
   const user = auth();
-  if (!user.userId) redirect("/");
-
-  const loggedInUser = await getUser(user.userId);
+  const loggedInUser = await getUser(user?.userId ?? "");
   if (!loggedInUser?.username) {
     redirect("/username");
   }
