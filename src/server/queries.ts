@@ -1,8 +1,16 @@
 "use server";
 
-import { sql, count, like, and, eq, ne, isNotNull, inArray } from "drizzle-orm";
+import { sql, count, like, and, eq, ne } from "drizzle-orm";
 import { db } from "./db";
-import { sets, cards, user, cardList, cardListItem } from "./db/schema";
+import {
+  sets,
+  cards,
+  user,
+  cardList,
+  cardListItem,
+  trade,
+  notification,
+} from "./db/schema";
 import type { Card, SSet } from "~/app/types";
 
 export async function getUser(userId: string) {
@@ -377,7 +385,7 @@ export async function getCardQuantityByList(user_id: string, card_id: string) {
 export async function getTradeLists(user_id: string) {
   const res = await db.execute(sql`
   SELECT DISTINCT 
-    cl.id, cl.name, u.username, cli.card_id
+    cl.id, cl.name, cli.card_id, u.auth_id, u.username
   FROM 
     poketrades_card_list cl, poketrades_card_list_item cli, poketrades_user u
   WHERE 
@@ -432,39 +440,59 @@ export async function getTradeLists(user_id: string) {
   //   .execute();
   // console.log(res);
 }
-// export async function getSets(): Promise<Map<string, SSet[]>> {
-//   const res = await fetch("https://api.pokemontcg.io/v2/sets", {
-//     method: "GET",
-//     headers: {
-//       "X-Api-Key": process.env.XAPIKEY!,
-//     },
-//   });
 
-//   const data = (await res.json()) as SSetData;
+export async function createTrade(
+  user_id: string,
+  other_user_id: string,
+  card_list_id: number,
+  other_user_card_list_id: number,
+) {
+  await db
+    .insert(trade)
+    .values({
+      user_id,
+      other_user_id,
+      card_list_id,
+      other_user_card_list_id,
+    })
+    .execute();
+  // return res;
+}
 
-//   return data.data.reduce((allSets: Map<string, SSet[]>, set: SSet) => {
-//     const series = set.series;
-//     if (!allSets.has(series)) allSets.set(series, []);
-//     allSets.get(series)?.push(set);
-//     return allSets;
-//   }, new Map());
-// }
+export async function searchTrades(
+  user_id: string,
+  other_user_id: string,
+  card_list_id: number,
+  other_user_card_list_id: number,
+) {
+  const res = await db
+    .select()
+    .from(trade)
+    .where(
+      and(
+        eq(trade.user_id, user_id),
+        eq(trade.other_user_id, other_user_id),
+        eq(trade.card_list_id, card_list_id),
+        eq(trade.other_user_card_list_id, other_user_card_list_id),
+      ),
+    )
+    .execute();
+  return res;
+}
 
-// export async function getCardsFromSet(query: string): Promise<CardData> {
-//   console.log(query);
-//   //   if (query.indexOf("pageSize") === -1) return;
-
-//   const res = await fetch(`https://api.pokemontcg.io/v2/cards?${query}`, {
-//     method: "GET",
-//     headers: {
-//       "X-Api-Key": process.env.XAPIKEY!,
-//     },
-//   });
-
-//   const data = (await res.json()) as CardData;
-
-//   return data;
-// }
+export async function getNotifications(user_id: string) {
+  const res = await db
+    .select()
+    .from(notification)
+    .where(
+      and(
+        eq(notification.recipient_id, user_id),
+        eq(notification.viewed, false),
+      ),
+    )
+    .execute();
+  return res;
+}
 
 export async function seedData() {
   // const dat = ;

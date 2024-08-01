@@ -53,28 +53,6 @@ export const tradeItem = createTable("trade_item", {
   data: jsonb("data"),
 });
 
-export const trade = createTable("trade", {
-  id: serial("id").primaryKey(),
-  user_id: integer("user_id")
-    .references(() => user.id)
-    .notNull(),
-  card_list_id: integer("card_list_id").references(() => cardList.id),
-  other_party_card_list_id: integer("other_party_card_list_id").references(
-    () => cardList.id,
-  ),
-  status: integer("status")
-    .references(() => statusType.id)
-    .notNull(),
-  created_at: timestamp("created_at", { withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-});
-
-export const statusType = createTable("status_type", {
-  id: serial("id").primaryKey(),
-  name: varchar("name").notNull(),
-});
-
 export const user = createTable("user", {
   id: serial("id").primaryKey(),
   auth_id: varchar("auth_id").unique().notNull(),
@@ -116,9 +94,37 @@ export const entityType = createTable("entity_type", {
   name: varchar("name").notNull(),
 });
 
-export const notification = createTable("notification", {
+export const trade = createTable("trade", {
   id: serial("id").primaryKey(),
   user_id: varchar("user_id")
+    .references(() => user.auth_id)
+    .notNull(),
+  other_user_id: varchar("other_user_id")
+    .references(() => user.auth_id)
+    .notNull(),
+  card_list_id: integer("card_list_id").references(() => cardList.id),
+  other_user_card_list_id: integer("other_user_card_list_id").references(
+    () => cardList.id,
+  ),
+  status: integer("status")
+    .references(() => statusType.id)
+    .default(1),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});
+
+export const statusType = createTable("status_type", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+});
+
+export const notification = createTable("notification", {
+  id: serial("id").primaryKey(),
+  sender_id: varchar("sender_id")
+    .notNull()
+    .references(() => user.auth_id),
+  recipient_id: varchar("recipient_id")
     .notNull()
     .references(() => user.auth_id),
   message: varchar("message").notNull(),

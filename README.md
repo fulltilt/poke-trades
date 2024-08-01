@@ -48,11 +48,12 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Add top progress bar
 [x] Seperate types to seperate file
 [x] Find trade
-[] Send trade request
-[] Show UI notification/send email
+[x] Send trade request
+[] Show UI notification
 [] Add trade stats
 [] Convert queries to prepared statements
 [] Proper error handling on the database side with respective messages on the UI
+[] Send notification email
 [] Optimize trade search
 [] Figure out Clerk middleware to redirect user when not logged in or doesn't have a username set
 [] Clerk route testing (redirects after auth, redirects after logging out, etc)
@@ -62,3 +63,6 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos
 -English only
+
+https://dev.to/muhammadazfaraslam/managing-global-state-with-usereducer-and-context-api-in-next-js-14-2m17
+https://jamiehaywood.medium.com/typesafe-global-state-with-typescript-react-react-context-c2df743f3ce

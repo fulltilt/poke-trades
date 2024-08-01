@@ -3,19 +3,20 @@
 // import { SkeletonCard } from "~/components/skeletonCard";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { Button } from "~/components/ui/button";
 import {
   getCardList,
   getTradeLists,
   getUser,
   getUsersCardLists,
 } from "~/server/queries";
+import TradeViewComponent from "./tradeView";
 
 type List = {
   id: number;
   name: string;
   username: string;
   card_id: string;
+  auth_id: string;
 };
 // tradelist1(23 hotmail) 205,206,207,208.209.211
 // wish list(20 gmail) 205,206 swsh12pt5-160
@@ -35,15 +36,14 @@ export default async function TradeComponent() {
       (list) => list.name === "Wish List",
     )[0]?.cardListId ?? 0;
   const cardsInWishList = await getCardList(user.userId, wishListId, 1, 30);
-  // const wishListCardIds = cardsInWishList?.data.map((l) => l.cardId);
-  console.log(cardsInWishList);
 
   // aggregate other users trade lists that contain Cards in Wish List
   const otherUsersTradeLists = (await getTradeLists(user.userId)) as List[];
   const aggregatedListData = otherUsersTradeLists.reduce<
-    Map<number, { username: string; listname: string }>
+    Map<number, { username: string; listname: string; other_user_id: string }>
   >((acc, curr) => {
     acc.set(curr.id, {
+      other_user_id: curr.auth_id,
       username: curr.username,
       listname: curr.name,
     });
@@ -57,12 +57,6 @@ export default async function TradeComponent() {
     },
     new Map(),
   );
-  // console.log(tradeListsMap);
-  // tradeListsMap.forEach((value) => {
-  //   console.log(value.filter((val) => wishListCardIds?.includes(val)));
-  // });
-
-  // Array.from(tradeListsMap.entries()).map((l) => console.log(l));
 
   return (
     <div className="flex max-h-full flex-1 flex-col rounded-md pl-14 pr-14">
@@ -81,49 +75,75 @@ export default async function TradeComponent() {
           <div className="flex items-center gap-4"></div>
         </div>
       </div>
-      <div className="flow-root">
-        <dl className="-my-3 divide-y divide-gray-100 text-sm">
-          {Array.from(tradeListsMap.entries()).map((list) => {
-            const [id, cardList] = [list[0], list[1]];
-            const username = aggregatedListData.get(id)?.username;
-            const listname = aggregatedListData.get(id)?.listname;
-            const cardData = cardList.map((cardId) => {
-              const cardData = cardsInWishList?.data?.filter(
-                (c) => c.cardId === cardId,
-              )[0]?.data;
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+          <thead>
+            <tr>
+              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                List Name
+              </th>
+              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                User
+              </th>
+              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                Cards in Wish List
+              </th>
+              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900"></th>
+              <th className="px-4 py-2"></th>
+            </tr>
+          </thead>
 
-              return {
-                id: cardId,
-                name: cardData?.name,
-                set: cardData?.set.name,
-                number: cardData?.number,
-                printedTotal: cardData?.set.printedTotal,
-              };
-            });
-            return (
-              <div
-                key={id}
-                className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4"
-              >
-                <dt className="font-medium text-gray-900">{listname}</dt>
-                <dd className="text-gray-700 sm:col-span-2">{username}</dd>
-                <dd className="text-gray-700 sm:col-span-2">
-                  <ul>
-                    {cardData.map((card) => (
-                      <li>
-                        {card?.name} - {card?.set} - {card?.number}/
-                        {card?.printedTotal}
-                      </li>
-                    ))}
-                  </ul>
-                </dd>
-                <dd>
-                  <Button>Request Trade</Button>
-                </dd>
-              </div>
-            );
-          })}
-        </dl>
+          <tbody className="divide-y divide-gray-200">
+            {Array.from(tradeListsMap.entries()).map((list) => {
+              const [id, cardList] = [list[0], list[1]];
+              const username = aggregatedListData.get(id)?.username;
+              const listname = aggregatedListData.get(id)?.listname;
+              const otherUserId =
+                aggregatedListData.get(id)?.other_user_id ?? "";
+              const cardData = cardList.map((cardId) => {
+                const cardData = cardsInWishList?.data?.filter(
+                  (c) => c.cardId === cardId,
+                )[0]?.data;
+
+                return {
+                  id: cardId,
+                  name: cardData?.name,
+                  set: cardData?.set.name,
+                  number: cardData?.number,
+                  printedTotal: cardData?.set.printedTotal,
+                };
+              });
+              return (
+                <tr key={id}>
+                  <td className="whitespace-nowrap px-4 py-2 text-center font-medium text-gray-900">
+                    {listname}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-2 text-center text-gray-700">
+                    {username}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-2 text-center text-gray-700">
+                    <ul>
+                      {cardData.map((card) => (
+                        <li key={card.id}>
+                          {card?.name} - {card?.set} - {card?.number}/
+                          {card?.printedTotal}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-2 text-center text-gray-700">
+                    <TradeViewComponent
+                      userId={user.userId}
+                      otherUserId={otherUserId}
+                      wishListId={wishListId}
+                      otherUserListId={id}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );
