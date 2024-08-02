@@ -1,6 +1,6 @@
 "use server";
 
-import { sql, count, like, and, eq, ne } from "drizzle-orm";
+import { sql, count, like, and, eq, ne, or, inArray } from "drizzle-orm";
 import { db } from "./db";
 import {
   sets,
@@ -263,6 +263,8 @@ export async function getCardList(
   };
 }
 
+// Get Card Lists that belong to a particular User
+// Used in Dashboard
 export async function getUsersCardLists(userId: string) {
   const cardListRes = await db
     .select({
@@ -274,6 +276,18 @@ export async function getUsersCardLists(userId: string) {
     .where(and(eq(cardList.user_id, userId)))
     .execute();
   return cardListRes;
+}
+
+// Get Card data given a list of Card ids
+// Used in trade/[id] page
+export async function getCardsInList(card_list: string[]) {
+  return await db
+    .select({
+      data: cards.data,
+    })
+    .from(cards)
+    .where(inArray(cards.id, card_list))
+    .execute();
 }
 
 export async function updateCardList(
@@ -441,24 +455,112 @@ export async function getTradeLists(user_id: string) {
   // console.log(res);
 }
 
+export async function getPublicCardLists(user_id: string) {
+  return await db
+    .select()
+    .from(cardList)
+    .where(
+      and(
+        eq(cardList.user_id, user_id),
+        eq(cardList.is_private, false),
+        ne(cardList.name, "Wish List"),
+      ),
+    )
+    .execute();
+}
+
+export async function getTradeListCards(
+  card_list_id: number,
+  other_user_card_list_id: number,
+) {
+  return await db
+    .select({
+      card_list_id: cardListItem.card_list_id,
+      card_id: cardListItem.card_id,
+    })
+    .from(cardListItem)
+    .where(
+      inArray(cardListItem.card_list_id, [
+        card_list_id,
+        other_user_card_list_id,
+      ]),
+    )
+    .execute();
+}
+
 export async function createTrade(
   user_id: string,
   other_user_id: string,
   card_list_id: number,
   other_user_card_list_id: number,
+  username: string,
+  other_user_name: string,
 ) {
-  await db
-    .insert(trade)
-    .values({
-      user_id,
-      other_user_id,
-      card_list_id,
-      other_user_card_list_id,
-    })
-    .execute();
-  // return res;
+  /*
+    Transaction:
+    Create new trade
+    Create two new card lists and update trade with the card list ids
+  */
+  const res = await db.transaction(async (tx) => {
+    const [td] = await tx
+      .insert(trade)
+      .values({
+        user_id,
+        other_user_id,
+        card_list_id,
+        other_user_card_list_id,
+        username,
+        other_user_name,
+      })
+      .returning();
+
+    const [l1] = await tx
+      .insert(cardList)
+      .values({ user_id, name: `${username}-${td?.id}`, is_private: false })
+      .returning();
+    const [l2] = await tx
+      .insert(cardList)
+      .values({
+        user_id: other_user_id,
+        name: `${other_user_name}-${td?.id}`,
+        is_private: false,
+      })
+      .returning();
+
+    const [td2] = await tx
+      .update(trade)
+      .set({
+        user_sub_card_list_id: l1?.id,
+        other_user_sub_card_list_id: l2?.id,
+      })
+      .where(eq(trade.id, td?.id ?? 0))
+      .returning();
+
+    return td2;
+  });
+  console.log(res);
 }
 
+export async function getTrade(trade_id: number) {
+  const res = await db
+    .select()
+    .from(trade)
+    .where(eq(trade.id, trade_id))
+    .execute();
+  return res;
+}
+
+// get trades involving a particular user
+export async function getTrades(user_id: string) {
+  const res = await db
+    .select()
+    .from(trade)
+    .where(or(eq(trade.user_id, user_id), eq(trade.other_user_id, user_id)))
+    .execute();
+  return res;
+}
+
+// get a more specific trade
 export async function searchTrades(
   user_id: string,
   other_user_id: string,

@@ -51,11 +51,18 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Send trade request
 [x] Show UI notification
 [] Build trade flow
+[] Have new trade list show up when creating new trade list
+[] Update Trade page when a trade request is made
+[] Add confirmation toast after user requests trade
 [] Add trade stats
+[] Redo pagination
 [] Convert queries to prepared statements
 [] Proper error handling on the database side with respective messages on the UI
 [] Send notification email
+[] autogenerate public tradelist after user enters username
 [] Optimize trade search
+[] Realtime updates on trade page
+[x] Consider how to deal with deletions when there's foreign keys (ie trade table relies on trade lists which user may want to delete (update: don't let them delete but hide trades after a certain time))
 [] Figure out Clerk middleware to redirect user when doesn't have a username set
 [] Clerk route testing (redirects after auth, redirects after logging out, etc)
 
@@ -65,5 +72,5 @@ Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos
 -English only
 
-https://dev.to/muhammadazfaraslam/managing-global-state-with-usereducer-and-context-api-in-next-js-14-2m17
-https://jamiehaywood.medium.com/typesafe-global-state-with-typescript-react-react-context-c2df743f3ce
+Trades you sent
+Trade requests

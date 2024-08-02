@@ -145,7 +145,7 @@ export default function CardComponent({
       <img
         src={card?.images.small}
         alt={`${card?.name}`}
-        className="cursor-pointer transition-all duration-200 hover:scale-105"
+        className="cursor-pointer opacity-50 transition-all duration-200 hover:opacity-100"
       />
       <div className="flex justify-between p-2">
         <div>

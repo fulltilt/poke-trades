@@ -106,6 +106,14 @@ export const trade = createTable("trade", {
   other_user_card_list_id: integer("other_user_card_list_id").references(
     () => cardList.id,
   ),
+  user_sub_card_list_id: integer("user_sub_card_list_id").references(
+    () => cardList.id,
+  ),
+  other_user_sub_card_list_id: integer(
+    "other_user_sub_card_list_id",
+  ).references(() => cardList.id),
+  username: varchar("username").references(() => user.username),
+  other_user_name: varchar("other_user_name").references(() => user.username),
   status: integer("status")
     .references(() => statusType.id)
     .default(1),
