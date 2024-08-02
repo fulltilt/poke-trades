@@ -9,7 +9,13 @@ import type { Card } from "~/app/types";
 import { fixedTwoDecimals } from "~/app/utils/helpers";
 // import { Favorite } from "../../cardlist/[id]/card";
 
-export default function CardTradeComponent({ cards }: { cards: Card[] }) {
+export default function CardTradeComponent({
+  cards,
+  list_id,
+}: {
+  cards: Card[];
+  list_id: number;
+}) {
   return (
     <div>
       <div className="m-auto flex max-w-[1200px] flex-col">

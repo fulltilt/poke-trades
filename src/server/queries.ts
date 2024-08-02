@@ -290,6 +290,22 @@ export async function getCardsInList(card_list: string[]) {
     .execute();
 }
 
+// Given a Card List id, return all Card data associated with that list
+// Used in Trade page to retrieve sub card lists for actual trade
+export async function getCardsInCardList(card_list_id: number) {
+  const res = await db
+    .select({ data: cards.data })
+    .from(cardListItem)
+    .innerJoin(
+      cards,
+      and(
+        eq(cardListItem.card_list_id, card_list_id),
+        eq(cardListItem.card_id, cards.id),
+      ),
+    );
+  return res.map((r) => r.data);
+}
+
 export async function updateCardList(
   userId: string,
   cardListId: number,
@@ -396,6 +412,7 @@ export async function getCardQuantityByList(user_id: string, card_id: string) {
   return res;
 }
 
+// Find all other Users Cards that are in their public Trade Lists that contain Cards in Users Wish List
 export async function getTradeLists(user_id: string) {
   const res = await db.execute(sql`
   SELECT DISTINCT 
