@@ -271,6 +271,7 @@ export async function getUsersCardLists(userId: string) {
       cardListId: cardList.id,
       name: cardList.name,
       is_private: cardList.is_private,
+      is_sub_list: cardList.is_sub_list,
     })
     .from(cardList)
     .where(and(eq(cardList.user_id, userId)))
@@ -386,6 +387,7 @@ export async function getCardQuantityByList(user_id: string, card_id: string) {
       card_id: cardListItem.card_id,
       quantity: cardListItem.quantity,
       name: cardList.name,
+      is_sub_list: cardList.is_sub_list,
     })
     .from(cardList)
     .innerJoin(
@@ -533,7 +535,12 @@ export async function createTrade(
 
     const [l1] = await tx
       .insert(cardList)
-      .values({ user_id, name: `${username}-${td?.id}`, is_private: false })
+      .values({
+        user_id,
+        name: `${username}-${td?.id}`,
+        is_private: false,
+        is_sub_list: true,
+      })
       .returning();
     const [l2] = await tx
       .insert(cardList)
@@ -541,6 +548,7 @@ export async function createTrade(
         user_id: other_user_id,
         name: `${other_user_name}-${td?.id}`,
         is_private: false,
+        is_sub_list: true,
       })
       .returning();
 
@@ -597,6 +605,20 @@ export async function searchTrades(
     )
     .execute();
   return res;
+}
+
+export async function updateTradeStatus(
+  trade_id: number,
+  tableField: string,
+  status: number,
+) {
+  await db
+    .update(trade)
+    .set({
+      [tableField]: status,
+    })
+    .where(eq(trade.id, trade_id))
+    .execute();
 }
 
 export async function getNotifications(user_id: string) {

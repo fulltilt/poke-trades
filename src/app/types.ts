@@ -100,6 +100,7 @@ export type Card = {
       };
     };
   };
+  price?: number;
 };
 
 export type TradeObject = {

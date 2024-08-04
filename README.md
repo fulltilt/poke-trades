@@ -50,12 +50,20 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Find trade
 [x] Send trade request
 [x] Show UI notification
-[] Build trade flow
+[x] Build trade flow
+[] View options for cards (sort, list/pics, show 30/60/120)
 [] Have new trade list show up when creating new trade list
 [] Update Trade page when a trade request is made
+[] Update buttons on Trade list once status is changed
 [] Add confirmation toast after user requests trade
+[x] Sub Lists show up in normal Sets/Cards popups. Probably don't want that
+[] Build out Notifications page
 [] Add trade stats
-[] Redo pagination
+[] Refactor into one Card component to handle sets and trades?
+[x] Redo pagination
+[x] tooltip doesn't overflow modal
+[] make mobile friendly
+[] Dashboard list pagination not hooked up to db
 [] Convert queries to prepared statements
 [] Proper error handling on the database side with respective messages on the UI
 [] Send notification email

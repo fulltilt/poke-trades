@@ -1,69 +1,97 @@
 "use client";
-// import {
-//   Tooltip,
-//   TooltipContent,
-//   TooltipProvider,
-//   TooltipTrigger,
-// } from "~/components/ui/tooltip";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import type { Card } from "~/app/types";
-import { fixedTwoDecimals } from "~/app/utils/helpers";
-// import { Favorite } from "../../cardlist/[id]/card";
+import { getPrice } from "~/app/utils/helpers";
+import { Favorite } from "../../cardlist/[id]/card";
+import { updateCardList } from "~/server/queries";
 
 export default function CardTradeComponent({
   cards,
+  user_id,
   list_id,
+  tradeList,
+  updateList,
 }: {
   cards: Card[];
+  user_id: string;
   list_id: number;
+  tradeList: Card[];
+  updateList: (cards: Card[]) => void;
 }) {
   return (
     <div>
       <div className="m-auto flex max-w-[1200px] flex-col">
         <div className="m-auto grid gap-4 md:grid-cols-4 lg:grid-cols-6">
           {cards.map((card) => {
-            const unlimitedHolo = fixedTwoDecimals(
-              card?.tcgplayer?.prices?.unlimitedHolofoil?.market,
-            );
-            const firstEditionHolo = fixedTwoDecimals(
-              card?.tcgplayer?.prices?.["1stEdition"]?.market,
-            );
-            const unlimited = fixedTwoDecimals(
-              card?.tcgplayer?.prices?.unlimited?.market,
-            );
-            const firstEdition = fixedTwoDecimals(
-              card?.tcgplayer?.prices?.["1stEdition"]?.market,
-            );
-            const holo = fixedTwoDecimals(
-              card?.tcgplayer?.prices?.holofoil?.market,
-            );
-            const reverse = fixedTwoDecimals(
-              card?.tcgplayer?.prices?.reverseHolofoil?.market,
-            );
-            const normal = fixedTwoDecimals(
-              card?.tcgplayer?.prices?.normal?.market,
-            );
+            const isCardInTradeList = tradeList.some((c) => c.id === card.id);
+            const cardPrice = getPrice(card);
 
             return (
               <div key={card?.id} className="pb-8">
-                <img
-                  src={card?.images.small}
-                  alt={`${card?.name}`}
-                  className="cursor-pointer opacity-50 transition-all duration-200 hover:opacity-100"
-                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <div className="relative">
+                        <img
+                          src={card?.images.small}
+                          alt={`${card?.name}`}
+                          className="cursor-pointer opacity-50 transition-all duration-200 hover:opacity-100"
+                        />
+                        <p className="absolute bottom-0 left-0 rounded-sm bg-white p-1 text-[12px] font-semibold">
+                          {card?.number}/{card?.set?.printedTotal}
+                        </p>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {card?.name} - {card?.set?.name} - {card?.number}/
+                        {card?.set?.printedTotal}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <div className="flex justify-between p-2">
-                  <div>
-                    {card?.number}/{card?.set?.printedTotal}
-                  </div>
-                  <div>
-                    $
-                    {firstEditionHolo ??
-                      unlimitedHolo ??
-                      firstEdition ??
-                      unlimited ??
-                      holo ??
-                      reverse ??
-                      normal ??
-                      "-"}
+                  <div className="text-[#106bc5]">${cardPrice}</div>
+                  <div
+                    onClick={async () => {
+                      const updateRes = await updateCardList(
+                        user_id ?? "",
+                        list_id,
+                        card?.id ?? "",
+                        isCardInTradeList ? -1 : 1,
+                      );
+                      if (updateRes?.error) {
+                        return;
+                      } else {
+                        if (isCardInTradeList)
+                          updateList(tradeList.filter((c) => c.id !== card.id));
+                        else
+                          updateList(
+                            tradeList.concat(
+                              Object.assign({}, card, { price: cardPrice }),
+                            ),
+                          );
+                      }
+                    }}
+                  >
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Favorite
+                            fill={isCardInTradeList ? "red" : "#b6b6b6"}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Add/Remove from Trade</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
               </div>

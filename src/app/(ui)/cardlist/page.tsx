@@ -34,13 +34,6 @@ export default async function CardList({
     const pageSize = Number(searchParams?.pageSize) ?? 30;
     const search = searchParams?.search ?? "";
 
-    // const cardLists = await getUsersCardLists(user.userId);
-    // const listId =
-    //   cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
-    // const wishList = (await getCardList(user?.userId, listId, 1, 30))?.data.map(
-    //   (a) => a.cardId,
-    // );
-
     const cardData = await getAllCards(currentPage, pageSize, search);
 
     const cardLists = await getUsersCardLists(user.userId);

@@ -21,8 +21,8 @@ import {
 } from "~/components/ui/tooltip";
 
 import { SignInButton } from "@clerk/nextjs";
-import { fixedTwoDecimals } from "~/app/utils/helpers";
 import { Button } from "~/components/ui/button";
+import { getPrice } from "~/app/utils/helpers";
 
 export function Favorite({ fill }: { fill: string }) {
   return (
@@ -92,7 +92,12 @@ export default function CardComponent({
   card: Card | null;
   userId: string | null;
   inWishList: boolean;
-  cardLists: { cardListId: number; name: string; is_private: boolean | null }[];
+  cardLists: {
+    cardListId: number;
+    name: string;
+    is_private: boolean | null;
+    is_sub_list: boolean | null;
+  }[];
 }) {
   const [isInWishList, setIsInWishList] = useState(inWishList);
   const [openDialog, setOpenDialog] = useState(false);
@@ -104,7 +109,7 @@ export default function CardComponent({
     // if result length doesn't match the users card lists length, fill in missing list entries with quantity set to 0
     if (res.length !== cardLists.length) {
       cardLists
-        .filter((l) => l.name !== "Wish List")
+        .filter((l) => l.name !== "Wish List" && !l.is_sub_list)
         .forEach((list) => {
           if (!resListIds.includes(list.cardListId)) {
             res.push({
@@ -112,6 +117,7 @@ export default function CardComponent({
               name: list.name,
               card_id: card?.id ?? "",
               quantity: 0,
+              is_sub_list: false,
             });
           }
         });
@@ -121,46 +127,47 @@ export default function CardComponent({
 
   const wishListId =
     cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
-
-  const unlimitedHolo = fixedTwoDecimals(
-    card?.tcgplayer?.prices?.unlimitedHolofoil?.market,
-  );
-  const firstEditionHolo = fixedTwoDecimals(
-    card?.tcgplayer?.prices?.["1stEdition"]?.market,
-  );
-  const unlimited = fixedTwoDecimals(
-    card?.tcgplayer?.prices?.unlimited?.market,
-  );
-  const firstEdition = fixedTwoDecimals(
-    card?.tcgplayer?.prices?.["1stEdition"]?.market,
-  );
-  const holo = fixedTwoDecimals(card?.tcgplayer?.prices?.holofoil?.market);
-  const reverse = fixedTwoDecimals(
-    card?.tcgplayer?.prices?.reverseHolofoil?.market,
-  );
-  const normal = fixedTwoDecimals(card?.tcgplayer?.prices?.normal?.market);
-
   return (
     <div key={card?.id} className="pb-8">
-      <img
-        src={card?.images.small}
-        alt={`${card?.name}`}
-        className="cursor-pointer opacity-50 transition-all duration-200 hover:opacity-100"
-      />
-      <div className="flex justify-between p-2">
-        <div>
-          {card?.number}/{card?.set?.printedTotal}
-        </div>
-        <div>
-          $
-          {firstEditionHolo ??
-            unlimitedHolo ??
-            firstEdition ??
-            unlimited ??
-            holo ??
-            reverse ??
-            normal ??
-            "-"}
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="relative">
+              <img
+                src={card?.images.small}
+                alt={`${card?.name}`}
+                className="cursor-pointer opacity-50 transition-all duration-200 hover:opacity-100"
+              />
+              <p className="absolute bottom-0 left-0 rounded-sm bg-white p-1 text-[12px] font-semibold">
+                {card?.number}/{card?.set?.printedTotal}
+              </p>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>
+              {card?.name} - {card?.set?.name} - {card?.number}/
+              {card?.set?.printedTotal}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <div className="flex items-center justify-between p-2">
+        <div className="text-[#106bc5]">${getPrice(card!)}</div>
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            onClick={async () => {
+              if (!userId) {
+                setOpenDialog(true);
+                return;
+              }
+              await updateLists();
+
+              setOpenDialog(true);
+            }}
+          >
+            +&nbsp;-
+          </Button>
         </div>
         <div
           onClick={async () => {
@@ -190,22 +197,7 @@ export default function CardComponent({
           </TooltipProvider>
         </div>
       </div>
-      <div className="flex justify-center">
-        <Button
-          variant="outline"
-          onClick={async () => {
-            if (!userId) {
-              setOpenDialog(true);
-              return;
-            }
-            await updateLists();
 
-            setOpenDialog(true);
-          }}
-        >
-          Update Qty
-        </Button>
-      </div>
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogTrigger asChild></DialogTrigger>
         <DialogContent
@@ -215,7 +207,7 @@ export default function CardComponent({
         >
           <DialogHeader>
             <DialogTitle>
-              {!userId ? "Please log in" : "Add Card to list"}
+              {!userId ? "Please log in" : "Update Card list quantity"}
             </DialogTitle>
             <DialogDescription></DialogDescription>
             {!userId ? (

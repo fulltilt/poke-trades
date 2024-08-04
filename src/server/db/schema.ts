@@ -70,6 +70,7 @@ export const cardList = createTable("card_list", {
     .notNull()
     .references(() => user.auth_id),
   is_private: boolean("is_private").default(false),
+  is_sub_list: boolean("is_sub_list").default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -114,9 +115,15 @@ export const trade = createTable("trade", {
   ).references(() => cardList.id),
   username: varchar("username").references(() => user.username),
   other_user_name: varchar("other_user_name").references(() => user.username),
+  user_status: integer("user_status")
+    .references(() => statusType.id)
+    .default(2),
+  other_user_status: integer("other_user_status")
+    .references(() => statusType.id)
+    .default(2),
   status: integer("status")
     .references(() => statusType.id)
-    .default(1),
+    .default(2),
   created_at: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

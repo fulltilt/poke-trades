@@ -17,8 +17,8 @@ export default async function Dashboard() {
   }
 
   const cardLists = await getUsersCardLists(user.userId);
-  const publicLists = cardLists.filter((l) => !l.is_private);
-  const privateLists = cardLists.filter((l) => l.is_private);
+  const publicLists = cardLists.filter((l) => !l.is_private && !l.is_sub_list);
+  const privateLists = cardLists.filter((l) => l.is_private && !l.is_sub_list);
 
   return (
     <div className="flex max-h-full flex-1 flex-col rounded-md pl-14 pr-14">

@@ -5,6 +5,7 @@ import { columns } from "./columns";
 import { DataTable } from "../../../../../components/data-table";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
+import { sortByDateAndThenNumber } from "~/app/utils/helpers";
 
 export default async function ListComponent({
   params,
@@ -25,21 +26,7 @@ export default async function ListComponent({
   const listRes = await getCardList(user.userId, Number(listId), 1, 30);
 
   // sort List by dates descending then Card numbers ascending
-  listRes?.data?.sort((a, b) => {
-    let d1;
-    let d2;
-    if (a.data?.set?.releaseDate !== undefined)
-      d1 = new Date(a.data.set.releaseDate);
-    else d1 = new Date();
-    if (b.data?.set?.releaseDate !== undefined)
-      d2 = new Date(b.data.set.releaseDate);
-    else d2 = new Date();
-
-    const n1 = parseInt(a?.data?.number ?? "0");
-    const n2 = parseInt(b?.data?.number ?? "0");
-
-    return d2.valueOf() - d1.valueOf() || n1 - n2;
-  });
+  listRes?.data?.sort((a, b) => sortByDateAndThenNumber(a.data!, b.data!));
   const list = listRes?.data;
 
   return (

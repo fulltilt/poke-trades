@@ -35,7 +35,7 @@ export default function PaginationComponent({
     pageNumbers.push(i);
   }
 
-  const maxPageNum = 5; // Maximum page numbers to display at once
+  const maxPageNum = 7; // Maximum page numbers to display at once
   const pageNumLimit = Math.floor(maxPageNum / 2); // Current page should be in the middle if possible
 
   const activePages = pageNumbers.slice(
@@ -73,8 +73,7 @@ export default function PaginationComponent({
     ));
 
     // Add ellipsis at the start if necessary
-    if (activePages ?? activePages[0] ?? activePages[0] > 1) {
-      // if (activePages?.[0] ?? -Infinity > 1) {
+    if ((activePages?.[0] ?? -Infinity) > 1) {
       renderedPages.unshift(
         <PaginationEllipsis
           key="ellipsis-start"
@@ -86,10 +85,8 @@ export default function PaginationComponent({
 
     // Add ellipsis at the end if necessary
     if (
-      activePages?.[activePages.length - 1] ??
-      +Infinity < pageNumbers.length
+      (activePages?.[activePages.length - 1] ?? +Infinity) < pageNumbers.length
     ) {
-      // if (activePages?.[activePages.length - 1]! < pageNumbers.length) {
       renderedPages.push(
         <PaginationEllipsis
           key="ellipsis-end"

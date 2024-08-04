@@ -21,8 +21,6 @@ type List = {
   card_id: string;
   auth_id: string;
 };
-// tradelist1(23 hotmail) 205,206,207,208.209.211
-// wish list(20 gmail) 205,206 swsh12pt5-160
 
 export default async function TradeComponent() {
   const user = auth();
@@ -62,7 +60,6 @@ export default async function TradeComponent() {
   );
 
   const trades = await getTrades(user.userId);
-  console.log(trades, tradeListsMap);
 
   return (
     <div className="flex max-h-full flex-1 flex-col rounded-md pl-14 pr-14">
