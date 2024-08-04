@@ -51,19 +51,19 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Send trade request
 [x] Show UI notification
 [x] Build trade flow
-[] View options for cards (sort, list/pics, show 30/60/120)
-[] Have new trade list show up when creating new trade list
-[] Update Trade page when a trade request is made
-[] Update buttons on Trade list once status is changed
-[] Add confirmation toast after user requests trade
-[x] Sub Lists show up in normal Sets/Cards popups. Probably don't want that
+[] View options for cards (sort, list/pics)
+[] Dashboard list pagination not hooked up to db
+[x] Have new trade list show up when creating new trade list
+[x] Update Trade page when a trade request is made
+[x] Update buttons on Trade list once status is changed
+[x] Add confirmation toast after user requests trade
 [] Build out Notifications page
 [] Add trade stats
 [] Refactor into one Card component to handle sets and trades?
+[] make mobile friendly
+[x] Sub Lists show up in normal Sets/Cards popups. Probably don't want that
 [x] Redo pagination
 [x] tooltip doesn't overflow modal
-[] make mobile friendly
-[] Dashboard list pagination not hooked up to db
 [] Convert queries to prepared statements
 [] Proper error handling on the database side with respective messages on the UI
 [] Send notification email
@@ -73,8 +73,6 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Consider how to deal with deletions when there's foreign keys (ie trade table relies on trade lists which user may want to delete (update: don't let them delete but hide trades after a certain time))
 [] Figure out Clerk middleware to redirect user when doesn't have a username set
 [] Clerk route testing (redirects after auth, redirects after logging out, etc)
-
-[] Upon creation of list, new list doesn't show up in Dashboard until refresh
 
 Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos

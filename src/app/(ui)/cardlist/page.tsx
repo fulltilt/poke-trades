@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import PaginationComponent from "~/components/pagination";
 import SearchInput from "~/components/searchInput";
 import { SkeletonCard } from "~/components/skeletonCard";
+
 import {
   getAllCards,
   getCardList,
@@ -13,13 +14,19 @@ import type { Card } from "~/app/types";
 import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./[id]/card";
 import { redirect } from "next/navigation";
+import CardListOptions from "./cardListOptions";
 
 export default async function CardList({
   params,
   searchParams,
 }: {
   params?: { id: string };
-  searchParams?: { search?: string; page?: string; pageSize?: string };
+  searchParams?: {
+    search?: string;
+    page?: string;
+    pageSize?: string;
+    orderBy?: string;
+  };
 }) {
   async function Cards() {
     const user = auth();
@@ -32,6 +39,7 @@ export default async function CardList({
 
     const currentPage = Number(searchParams?.page) ?? 1;
     const pageSize = Number(searchParams?.pageSize) ?? 30;
+    // const orderBy = Number(searchParams?.orderBy) ?? "number";
     const search = searchParams?.search ?? "";
 
     const cardData = await getAllCards(currentPage, pageSize, search);
@@ -45,6 +53,10 @@ export default async function CardList({
 
     return (
       <div className="m-auto flex max-w-[1200px] flex-col">
+        <p className="font-semibold">
+          {cardData.totalCount} card{cardData.totalCount === 1 ? "" : "s"} found
+        </p>
+        <CardListOptions />
         <div className="m-auto grid gap-4 md:grid-cols-4 lg:grid-cols-6">
           {cardData.cards.map((card: Card | null) => {
             return (

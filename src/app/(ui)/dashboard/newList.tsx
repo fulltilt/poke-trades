@@ -14,10 +14,9 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { createList } from "~/server/queries";
 import { useToast } from "~/components/ui/use-toast";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function NewListComponent({ user }: { user: string }) {
-  const pathname = usePathname();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -55,11 +54,11 @@ export default function NewListComponent({ user }: { user: string }) {
                     description: res.success,
                   });
                   setOpenDialog(false);
-                  router.replace(`${pathname}`);
+                  router.refresh();
                 } else {
                   toast({
                     title: "Error",
-                    description: res.success,
+                    description: res.error,
                   });
                 }
               }}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
@@ -20,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { useToast } from "~/components/ui/use-toast";
 import {
   createTrade,
   getPublicCardLists,
@@ -34,7 +36,7 @@ type List = {
   is_private: boolean | null;
 }[];
 
-export default function TradeConfirmComponent({
+export default function TradeRequest({
   userId,
   otherUserId,
   wishListId,
@@ -49,6 +51,9 @@ export default function TradeConfirmComponent({
   username: string;
   otherUsername: string;
 }) {
+  const router = useRouter();
+  const { toast } = useToast();
+
   const [openDialog, setOpenDialog] = useState(false);
   const [tradeExists, setTradeExists] = useState(false);
   const [tradeLists, setTradeLists] = useState<List>();
@@ -121,11 +126,21 @@ export default function TradeConfirmComponent({
                       username,
                       otherUsername,
                     )
-                      .then((res) => {
-                        console.log(res);
+                      .then(() => {
+                        toast({
+                          title: "Success",
+                          description: `Requested trade with user ${otherUsername}`,
+                        });
                         setOpenDialog(false);
+                        router.refresh();
                       })
-                      .catch((err) => console.log(err))
+                      .catch((err) => {
+                        console.log(err);
+                        toast({
+                          title: "Error",
+                          description: "Error requesting trade",
+                        });
+                      })
                   }
                 >
                   Request Trade

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -13,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useToast } from "~/components/ui/use-toast";
 import { updateTradeStatus } from "~/server/queries";
 
 export function InfoCircle() {
@@ -43,6 +45,9 @@ export default function TradeStatusUpdate({
   tradeUserStatusField: string;
   userStatus: number | null;
 }) {
+  const router = useRouter();
+  const { toast } = useToast();
+
   return (
     <div className="flex gap-4">
       <TooltipProvider>
@@ -73,9 +78,25 @@ export default function TradeStatusUpdate({
 
       <Select
         defaultValue={String(userStatus)}
-        onValueChange={async (val) =>
-          await updateTradeStatus(tradeId, tradeUserStatusField, Number(val))
-        }
+        onValueChange={async (val) => {
+          const res = await updateTradeStatus(
+            tradeId,
+            tradeUserStatusField,
+            Number(val),
+          );
+          if (res.success) {
+            toast({
+              title: "Success",
+              description: res.success,
+            });
+            router.refresh();
+          } else {
+            toast({
+              title: "Error",
+              description: res.error,
+            });
+          }
+        }}
       >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Trade Status" />

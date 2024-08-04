@@ -82,6 +82,7 @@ export async function getAllCards(
     pageSize = 30;
     page = 1;
   }
+
   const countPrepared = db.select({ count: count() }).from(cards);
   const countData = await countPrepared.execute();
 
@@ -483,6 +484,7 @@ export async function getPublicCardLists(user_id: string) {
         eq(cardList.user_id, user_id),
         eq(cardList.is_private, false),
         ne(cardList.name, "Wish List"),
+        ne(cardList.is_sub_list, true),
       ),
     )
     .execute();
@@ -612,31 +614,49 @@ export async function updateTradeStatus(
   tableField: string,
   status: number,
 ) {
-  await db
-    .update(trade)
-    .set({
-      [tableField]: status,
-    })
-    .where(eq(trade.id, trade_id))
-    .execute();
+  try {
+    const res = await db
+      .update(trade)
+      .set({
+        [tableField]: status,
+      })
+      .where(eq(trade.id, trade_id))
+      .returning()
+      .execute();
+    const newStatus = res[0]?.user_status;
+    let message = "";
+    if (newStatus === 3) {
+      message =
+        "Status is now Pending. You will be unable to change the lists unless you set status to In Progress";
+    } else {
+      message = "Status updated";
+    }
+    return { success: message };
+  } catch {
+    return { error: "Error updating Trade status" };
+  }
 }
 
 export async function getNotifications(user_id: string) {
-  const res = await db
-    .select()
-    .from(notification)
-    .where(
-      and(
-        eq(notification.recipient_id, user_id),
-        eq(notification.viewed, false),
-      ),
-    )
-    .execute();
-  return res;
+  try {
+    await db
+      .select()
+      .from(notification)
+      .where(
+        and(
+          eq(notification.recipient_id, user_id),
+          eq(notification.viewed, false),
+        ),
+      )
+      .execute();
+    return { success: "Retrieved notifications" };
+  } catch (err) {
+    return { error: "Error retrieving notifications" };
+  }
 }
 
 export async function seedData() {
-  // const dat = ;
+  // const dat = [];
   // await db.insert(cards).values(
   //   dat.map((d: any) => ({
   //     id: sql`${d.id}::text`,

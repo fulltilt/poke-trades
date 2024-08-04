@@ -40,34 +40,40 @@ export default async function Dashboard() {
 
       <main className="max-w-screen-xl flex-1 pt-2">
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div className="rounded-sm border-[1px] border-solid border-black p-6">
+          <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
             <p className="font-bold">Public Lists</p>
             <ul className="list-none">
               {publicLists.map((l) => (
                 <li key={l.cardListId}>
-                  <Link href={`/dashboard/list/${l.cardListId}?name=${l.name}`}>
+                  <Link
+                    className="text-[#106bc5]"
+                    href={`/dashboard/list/${l.cardListId}?name=${l.name}`}
+                  >
                     {l.name}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="rounded-sm border-[1px] border-solid border-black p-6">
+          <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
             <p className="font-bold">Private Lists</p>
             <ul className="list-none">
               {privateLists.map((l) => (
                 <li key={l.cardListId}>
-                  <Link href={`/dashboard/list/${l.cardListId}?name=${l.name}`}>
+                  <Link
+                    className="text-[#106bc5]"
+                    href={`/dashboard/list/${l.cardListId}?name=${l.name}`}
+                  >
                     {l.name}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="flex rounded-sm border-[1px] border-solid border-black p-6">
+          <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
             <p className="font-bold">Pending Trades</p>
           </div>
-          <div className="flex rounded-sm border-[1px] border-solid border-black p-6">
+          <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
             <p className="font-bold">Completed Trades</p>
           </div>
         </div>

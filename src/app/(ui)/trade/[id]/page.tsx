@@ -10,7 +10,7 @@ import type { Card } from "~/app/types";
 import { sortByDateAndThenNumber } from "~/app/utils/helpers";
 import TradeUpdate from "./tradeUpdate";
 import { Suspense } from "react";
-import TradeStatusUpdate from "./updateStatus";
+import TradeStatusUpdate from "./statusUpdate";
 
 export default async function Trade({ params }: { params?: { id: string } }) {
   const user = auth();
