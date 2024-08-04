@@ -57,7 +57,7 @@ export default async function CardList({
           {cardData.totalCount} card{cardData.totalCount === 1 ? "" : "s"} found
         </p>
         <CardListOptions />
-        <div className="m-auto grid gap-4 md:grid-cols-4 lg:grid-cols-6">
+        <div className="m-auto grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
           {cardData.cards.map((card: Card | null) => {
             return (
               <CardComponent

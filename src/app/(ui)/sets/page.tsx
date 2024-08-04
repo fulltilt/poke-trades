@@ -40,13 +40,16 @@ export default async function Series() {
   const sets = await getSets();
 
   return (
-    <div className="ml-12 flex flex-col">
+    <div className="flex flex-col">
       {Array.from(sets.keys())
         .reverse()
         .map((seriesName: string) => {
           const series = sets.get(seriesName);
           return (
-            <div className="mt-8 flex flex-col gap-4 p-4" key={seriesName}>
+            <div
+              className="mt-12 flex flex-col items-center gap-4"
+              key={seriesName}
+            >
               <div className="text-lg font-bold">{seriesName}</div>
               <div className="grid max-w-[1000px] gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {series?.reverse().map((set: SSet | null) => (

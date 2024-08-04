@@ -56,21 +56,29 @@ export default function Logins() {
   useEffect(() => setCount(state.count), [state]);
 
   return (
-    <div className="flex flex-row items-center gap-4">
-      <Link href={"/notifications"} className="relative">
-        <NotificationBell />
-        {count > 0 && (
-          <Badge variant="destructive" className="absolute left-2 top-2">
-            {count}
-          </Badge>
-        )}
-      </Link>
-      <SignedOut>
-        <SignInButton />
-      </SignedOut>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
+    <div className="items-center gap-4 sm:flex sm:flex-row">
+      <div className="hidden sm:block">
+        <Link href={"/notifications"} className="relative">
+          <NotificationBell />
+          {count > 0 && (
+            <Badge variant="destructive" className="absolute left-2 top-2">
+              {count}
+            </Badge>
+          )}
+        </Link>
+      </div>
+      <div className="sm:hidden">
+        <Link href={"/notifications"}>Notifications</Link>
+      </div>
+      {/* <div className="sm:hidden">Login</div> */}
+      <div className="mt-4 sm:mt-2">
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+      </div>
     </div>
   );
 }

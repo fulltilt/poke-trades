@@ -44,7 +44,7 @@ export default async function CardList({
 
     return (
       <div className="m-auto flex max-w-[1200px] flex-col">
-        <div className="m-auto grid gap-4 md:grid-cols-4 lg:grid-cols-6">
+        <div className="m-auto grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
           {cardData.cards.map((card: Card | null) => {
             return (
               <CardComponent
