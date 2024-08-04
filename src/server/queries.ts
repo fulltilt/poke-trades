@@ -639,7 +639,7 @@ export async function updateTradeStatus(
 
 export async function getNotifications(user_id: string) {
   try {
-    await db
+    const res = await db
       .select()
       .from(notification)
       .where(
@@ -649,7 +649,7 @@ export async function getNotifications(user_id: string) {
         ),
       )
       .execute();
-    return { success: "Retrieved notifications" };
+    return { notifications: res };
   } catch (err) {
     return { error: "Error retrieving notifications" };
   }

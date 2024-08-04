@@ -7,6 +7,7 @@ import { Badge } from "~/components/ui/badge";
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { getNotifications } from "~/server/queries";
+import { useToast } from "~/components/ui/use-toast";
 
 function NotificationBell() {
   return (
@@ -30,19 +31,27 @@ function NotificationBell() {
 export default function Logins() {
   const { userId } = useAuth();
   const { state } = useAppContext();
+  const { toast } = useToast();
 
-  const [count, setCount] = useState(state.count);
+  const [count, setCount] = useState<number>(state.count);
 
   useEffect(() => {
     async function fetchNotifications() {
-      const res = await getNotifications(userId!);
-      setCount(res.length);
+      try {
+        const res = await getNotifications(userId!);
+        setCount(res.notifications!.length);
+      } catch {
+        toast({
+          title: "Error",
+          description: "Error retrieving notifications",
+        });
+      }
     }
 
     fetchNotifications()
       .then((res) => res)
       .catch((err) => console.log(err));
-  }, [userId]);
+  }, [userId, toast]);
 
   useEffect(() => setCount(state.count), [state]);
 

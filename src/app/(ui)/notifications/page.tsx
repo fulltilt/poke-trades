@@ -7,7 +7,6 @@ export default async function Notifications() {
   if (!user.userId) redirect("/");
 
   const currentUser = await getUser(user.userId);
-  console.log(currentUser);
   if (!currentUser?.username) redirect("/dashboard");
 
   return (
