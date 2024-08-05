@@ -42,7 +42,7 @@ export default function TradeUpdate({
     getCardsInCardList(sub_card_list_id)
       .then((res) => {
         res = res.map((card) =>
-          Object.assign({}, card, { price: getPrice(card!) }),
+          Object.assign({}, card, { price: getPrice(card) }),
         );
         setUserList(res as Card[]);
       })
@@ -51,7 +51,7 @@ export default function TradeUpdate({
     getCardsInCardList(other_sub_card_list_id)
       .then((res) => {
         res = res.map((card) =>
-          Object.assign({}, card, { price: getPrice(card!) }),
+          Object.assign({}, card, { price: getPrice(card) }),
         );
         setOtherUserList(res as Card[]);
       })

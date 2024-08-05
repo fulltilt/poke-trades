@@ -152,7 +152,7 @@ export default function CardComponent({
         </Tooltip>
       </TooltipProvider>
       <div className="flex items-center justify-between p-2">
-        <div className="text-[#106bc5]">${getPrice(card!)}</div>
+        <div className="text-[#106bc5]">${getPrice(card)}</div>
         <div className="flex justify-center">
           <Button
             variant="outline"

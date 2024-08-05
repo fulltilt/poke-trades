@@ -6,6 +6,7 @@ import { SkeletonCard } from "~/components/skeletonCard";
 import {
   getAllCards,
   getCardList,
+  getCardsInCardList,
   getSet,
   getUser,
   getUsersCardLists,
@@ -38,17 +39,30 @@ export default async function CardList({
     const pageSize = Number(searchParams?.pageSize) ?? 30;
     const displayAs = searchParams?.displayAs ?? "images";
     // const orderBy = Number(searchParams?.orderBy) ?? "number";
+    const source = searchParams?.source ?? "all";
     const search = searchParams?.search ?? "";
 
-    const cardData = await getAllCards(currentPage, pageSize, search);
-
     const cardLists = await getUsersCardLists(user.userId);
+    const collectionId =
+      cardLists.filter((l) => l.name === "Collection")[0]?.cardListId ?? 0;
     const wishListId =
       cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
+
+    const cardData =
+      source === "all"
+        ? await getAllCards(currentPage, pageSize, search)
+        : await getCardsInCardList(
+            source === "collection" ? collectionId : wishListId,
+            currentPage,
+            pageSize,
+            search,
+          );
+    const pageCount = Math.ceil(cardData?.totalCount / Number(pageSize));
+
     const wishList = (
       await getCardList(user?.userId, wishListId, 1, 30)
     )?.data.map((a) => a.cardId);
-    const pageCount = Math.ceil(cardData.totalCount / Number(pageSize));
+    console.log(cardLists);
 
     return (
       <div className="m-4 flex max-w-[1200px] flex-col items-center sm:items-start">

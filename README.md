@@ -81,3 +81,4 @@ Shortcomings
 -English only
 
 https://tocalai.medium.com/pagination-on-tanstack-table-under-next-js-787ed03198a3
+https://medium.com/@ctrlaltmonique/how-to-use-usecontext-and-usereducer-with-typescript-in-react-735f6c5f27ba

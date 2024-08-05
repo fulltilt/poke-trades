@@ -298,8 +298,28 @@ export async function getCardsInList(card_list: string[]) {
 
 // Given a Card List id, return all Card data associated with that list
 // Used in Trade page to retrieve sub card lists for actual trade
-export async function getCardsInCardList(card_list_id: number) {
-  const res = await db
+export async function getCardsInCardList(
+  card_list_id: number,
+  page: number,
+  pageSize: number,
+  search: string,
+) {
+  const countPrepared = db
+    .select({ count: count() })
+    .from(cardListItem)
+    .innerJoin(
+      cards,
+      and(
+        eq(cardListItem.card_list_id, card_list_id),
+        eq(cardListItem.card_id, cards.id),
+        search !== ""
+          ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
+          : undefined,
+      ),
+    );
+  const countData = await countPrepared.execute({ search: `%${search}%` });
+
+  const cardsPrepared = db
     .select({ data: cards.data })
     .from(cardListItem)
     .innerJoin(
@@ -307,9 +327,25 @@ export async function getCardsInCardList(card_list_id: number) {
       and(
         eq(cardListItem.card_list_id, card_list_id),
         eq(cardListItem.card_id, cards.id),
+        search !== ""
+          ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
+          : undefined,
       ),
-    );
-  return res.map((r) => r.data);
+    )
+    .limit(pageSize)
+    .offset((page - 1) * pageSize);
+
+  const res = await cardsPrepared.execute({
+    search: `%${search}%`,
+    limit: pageSize,
+    offset: (page - 1) * pageSize,
+  });
+
+  return Object.assign(
+    {},
+    { cards: res.map((r) => r.data) },
+    { totalCount: countData[0]?.count ?? 0 },
+  );
 }
 
 export async function updateCardList(

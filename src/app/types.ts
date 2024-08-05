@@ -138,4 +138,5 @@ export type SearchParams = {
   pageSize?: string;
   displayAs?: string;
   orderBy?: string;
+  source?: string;
 };

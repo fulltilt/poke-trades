@@ -2,6 +2,7 @@
 
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
+import { createQueryString } from "~/app/utils/helpers";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 
 export default function SearchInput({ placeholder }: { placeholder: string }) {
@@ -24,7 +25,7 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
   }, 600);
 
   return (
-    <div className="mb-4 ml-4 flex items-center gap-16">
+    <div className="mb-4 ml-4 flex flex-col items-center gap-8 sm:flex-row sm:gap-16">
       <div>
         <label htmlFor="search" className="sr-only">
           Search
@@ -39,7 +40,17 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
         />
       </div>
       <div>
-        <RadioGroup defaultValue="all" className="flex gap-4">
+        <RadioGroup
+          defaultValue="all"
+          className="flex gap-4"
+          onValueChange={(val) => {
+            const urlParams = createQueryString(
+              { source: val },
+              searchParams.toString(),
+            );
+            router.push(`${pathname}?${urlParams}`);
+          }}
+        >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="all" id="all" />
             <label htmlFor="all">All</label>
