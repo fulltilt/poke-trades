@@ -15,6 +15,8 @@ import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./[id]/card";
 import { redirect } from "next/navigation";
 import CardListOptions from "./cardListOptions";
+import { DataTable } from "~/components/data-table";
+import { columns } from "./columns";
 
 export default async function CardList({
   params,
@@ -46,6 +48,7 @@ export default async function CardList({
     const wishList = (
       await getCardList(user?.userId, wishListId, 1, 30)
     )?.data.map((a) => a.cardId);
+    console.log(cardData);
 
     return (
       <div className="m-auto flex max-w-[1200px] flex-col">
@@ -67,6 +70,13 @@ export default async function CardList({
           })}
         </div>
         <div>
+          <div className="container mx-auto py-10">
+            <DataTable
+              columns={columns}
+              data={cardData.cards.map((d) => ({ data: d }))}
+              pageCount={cardData.totalCount}
+            />
+          </div>
           {/* {cardData.cards.map((card: Card | null) => {
           console.log(card)
             return (

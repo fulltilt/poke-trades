@@ -2,65 +2,64 @@
 
 import { useState } from "react";
 import { Minus, Plus } from "~/app/(ui)/cardlist/[id]/card";
-import { fixedTwoDecimals, getPrice } from "~/app/utils/helpers";
+import { getPrice } from "~/app/utils/helpers";
 import { updateCardList } from "~/server/queries";
 import type { Card } from "~/app/types";
 import type { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
 export const columns: ColumnDef<{
-  userId: string;
-  cardId: string | null;
-  cardListId: number;
-  name: string;
-  quantity: number;
+  userId?: string;
+  cardId?: string | null;
+  cardListId?: number;
+  name?: string;
+  quantity?: number;
   data: Card | null;
 }>[] = [
   {
     cell: function Cell({ row }) {
-      const [quantity, setQuantity] = useState(row?.original.quantity);
+      //   const [quantity, setQuantity] = useState(row?.original.quantity);
       return (
         <div className="flex">
           <div
             className="cursor-pointer font-bold"
             onClick={async () => {
-              if (quantity === 0) return;
-              const updateRes = await updateCardList(
-                row?.original.userId ?? "",
-                row?.original.cardListId ?? 0,
-                row?.original.cardId ?? "",
-                -1,
-              );
-              if (updateRes?.error) {
-                // TODO: display error message
-                return;
-              }
-
-              setQuantity(quantity - 1);
+              //   if (quantity === 0) return;
+              //   const updateRes = await updateCardList(
+              //     row?.original.userId ?? "",
+              //     row?.original.cardListId ?? 0,
+              //     row?.original.cardId ?? "",
+              //     -1,
+              //   );
+              //   if (updateRes?.error) {
+              //     // TODO: display error message
+              //     return;
+              //   }
+              //   setQuantity(quantity - 1);
             }}
           >
             <Minus />
           </div>
-          <div className="bold ml-4 mr-4">{quantity}</div>
+          <div className="bold ml-4 mr-4">1</div>
           <div
             className="cursor-pointer font-bold"
             onClick={async () => {
-              if (
-                row?.original.name === "Wish List" &&
-                row?.original.quantity === 1
-              )
-                return;
-              const updateRes = await updateCardList(
-                row?.original.userId ?? "",
-                row?.original.cardListId ?? 0,
-                row?.original.cardId ?? "",
-                1,
-              );
-              if (updateRes?.error) {
-                // TODO: display error message
-                return;
-              }
-              setQuantity(quantity + 1);
+              //   if (
+              //     row?.original.name === "Wish List" &&
+              //     row?.original.quantity === 1
+              //   )
+              //     return;
+              //   const updateRes = await updateCardList(
+              //     row?.original.userId ?? "",
+              //     row?.original.cardListId ?? 0,
+              //     row?.original.cardId ?? "",
+              //     1,
+              //   );
+              //   if (updateRes?.error) {
+              //     // TODO: display error message
+              //     return;
+              //   }
+              //   setQuantity(quantity + 1);
             }}
           >
             <Plus />

@@ -1,5 +1,12 @@
 import { type Table } from "@tanstack/react-table";
 import { Button } from "~/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 
 export function ChevronLeftIcon() {
   return (
@@ -79,12 +86,12 @@ export function DoubleArrowRightIcon() {
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
-  pageSizeOptions?: number[];
+  updateRoute: (key: string | null, val: string | null) => void;
 }
 
 export function DataTablePagination<TData>({
   table,
-  pageSizeOptions = [30, 120],
+  updateRoute,
 }: DataTablePaginationProps<TData>) {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-4 overflow-auto px-2 py-1 sm:flex-row sm:gap-8">
@@ -130,6 +137,18 @@ export function DataTablePagination<TData>({
           >
             <DoubleArrowRightIcon aria-hidden="true" />
           </Button>
+          <div className="flex items-center space-x-2">
+            <Select onValueChange={(val) => updateRoute("per_page", val)}>
+              <SelectTrigger className="w-[70px]">
+                <SelectValue placeholder="30" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="30">30</SelectItem>
+                <SelectItem value="120">120</SelectItem>
+              </SelectContent>
+            </Select>
+            <p>per page</p>
+          </div>
         </div>
       </div>
     </div>

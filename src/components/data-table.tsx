@@ -77,14 +77,18 @@ export function DataTable<TData, TValue>({
     });
   }, [page, per_page]);
 
+  function updateRoute(key: string | null, value: string | null) {
+    let obj = {
+      page: pageIndex + 1,
+      per_page: pageSize,
+    };
+    if (key) obj = Object.assign({}, obj, { [key]: value });
+    router.push(`${pathname}?${createQueryString(obj)}`);
+  }
+
   // changed the route as well
   useEffect(() => {
-    router.push(
-      `${pathname}?${createQueryString({
-        page: pageIndex + 1,
-        per_page: pageSize,
-      })}`,
-    );
+    updateRoute(null, null);
   }, [pageIndex, pageSize, createQueryString, pathname, router]);
 
   const table = useReactTable({
@@ -142,7 +146,7 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-      <DataTablePagination table={table} />
+      <DataTablePagination table={table} updateRoute={updateRoute} />
     </div>
   );
 }

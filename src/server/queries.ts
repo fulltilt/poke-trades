@@ -201,7 +201,6 @@ export async function getCardList(
   page: number,
   pageSize: number,
 ) {
-  console.log(page, pageSize);
   if (!user_id) return; // TODO: have message that user has to be signed in
   const countRes = await db
     .select({
