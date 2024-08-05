@@ -39,21 +39,21 @@ export default function TradeUpdate({
   const [currentList, setCurrentList] = useState(0);
 
   useEffect(() => {
-    getCardsInCardList(sub_card_list_id)
+    getCardsInCardList(sub_card_list_id, 1, 30, "")
       .then((res) => {
-        res = res.map((card) =>
+        const cards = res.cards.map((card) =>
           Object.assign({}, card, { price: getPrice(card) }),
         );
-        setUserList(res as Card[]);
+        setUserList(cards as Card[]);
       })
       .catch((err) => console.log(err));
 
-    getCardsInCardList(other_sub_card_list_id)
+    getCardsInCardList(other_sub_card_list_id, 1, 30, "")
       .then((res) => {
-        res = res.map((card) =>
+        const cards = res.cards.map((card) =>
           Object.assign({}, card, { price: getPrice(card) }),
         );
-        setOtherUserList(res as Card[]);
+        setOtherUserList(cards as Card[]);
       })
       .catch((err) => console.log(err));
   }, [sub_card_list_id, other_sub_card_list_id]);

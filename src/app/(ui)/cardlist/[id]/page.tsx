@@ -4,21 +4,25 @@ import SearchInput from "~/components/searchInput";
 import { SkeletonCard } from "~/components/skeletonCard";
 import {
   getCardList,
-  getCardsFromSet,
+  getCardsInSet,
+  getCardsInCardList,
   getSet,
   getUsersCardLists,
 } from "~/server/queries";
-import type { Card } from "~/app/types";
+import type { Card, SearchParams } from "~/app/types";
 import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./card";
 import { redirect } from "next/navigation";
+import CardListOptions from "../cardListOptions";
+import { DataTable } from "~/components/data-table";
+import { columns } from "../columns";
 
 export default async function CardList({
   params,
   searchParams,
 }: {
   params?: { id: string };
-  searchParams?: { search?: string; page?: string; pageSize?: string };
+  searchParams?: SearchParams;
 }) {
   async function Cards() {
     const user = auth();
@@ -26,40 +30,68 @@ export default async function CardList({
 
     const currentPage = Number(searchParams?.page) ?? 1;
     const pageSize = Number(searchParams?.pageSize) ?? 30;
+    const displayAs = searchParams?.displayAs ?? "images";
+    // const orderBy = Number(searchParams?.orderBy) ?? "number";
+    const source = searchParams?.source ?? "all";
     const search = searchParams?.search ?? "";
 
-    const cardData = await getCardsFromSet(
-      search,
-      params?.id ?? "",
-      currentPage,
-      pageSize,
-    );
-
     const cardLists = await getUsersCardLists(user.userId);
+    const collectionId =
+      cardLists.filter((l) => l.name === "Collection")[0]?.cardListId ?? 0;
     const wishListId =
       cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
+
+    const cardData =
+      source === "all"
+        ? await getCardsInSet(params?.id ?? "", currentPage, pageSize, search)
+        : await getCardsInCardList(
+            source === "collection" ? collectionId : wishListId,
+            currentPage,
+            pageSize,
+            search,
+            params?.id ?? "",
+          );
+    const pageCount = Math.ceil((cardData?.totalCount ?? 0) / Number(pageSize));
+
     const wishList = (
       await getCardList(user?.userId, wishListId, 1, 30)
     )?.data.map((a) => a.cardId);
 
     return (
-      <div className="m-auto flex max-w-[1200px] flex-col">
-        <div className="m-auto grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-          {cardData.cards.map((card: Card | null) => {
-            return (
-              <CardComponent
-                card={card}
-                userId={user.userId}
-                key={card?.id}
-                inWishList={wishList?.includes(card?.id ?? null) ?? false}
-                cardLists={cardLists}
-              />
-            );
-          })}
-        </div>
-        <div className="mt-6">
-          <PaginationComponent totalCount={cardData?.totalCount ?? 0} />
-        </div>
+      <div className="m-4 flex max-w-[1200px] flex-col items-center sm:items-start">
+        <p className="font-semibold">
+          {cardData.totalCount} card{cardData.totalCount === 1 ? "" : "s"} found
+        </p>
+        <CardListOptions />
+        {displayAs === "images" ? (
+          <div>
+            <div className="grid w-full auto-cols-auto grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
+              {cardData.cards.map((card: Card | null) => {
+                return (
+                  <CardComponent
+                    card={card}
+                    userId={user.userId}
+                    key={card?.id}
+                    inWishList={wishList?.includes(card?.id ?? null) ?? false}
+                    cardLists={cardLists}
+                  />
+                );
+              })}
+              {cardData.totalCount === 0 && <p>No matching results</p>}
+            </div>
+            <div className="mt-6">
+              <PaginationComponent totalCount={cardData?.totalCount ?? 0} />
+            </div>
+          </div>
+        ) : (
+          <div className="py-10 lg:min-w-[1200px]">
+            <DataTable
+              columns={columns}
+              data={cardData.cards.map((d) => ({ data: d }))}
+              pageCount={pageCount}
+            />
+          </div>
+        )}
       </div>
     );
   }
@@ -74,7 +106,7 @@ export default async function CardList({
 
   return (
     <div className="m-auto mt-6 flex max-w-[1200px] flex-col items-center sm:items-start">
-      <div className="text-4xl font-bold">{setInfo?.data?.name ?? ""}</div>
+      <div className="ml-4 text-4xl font-bold">{setInfo?.data?.name ?? ""}</div>
       <div className="mb-4 mt-6">
         <SearchInput placeholder={"Search cards..."} />
       </div>

@@ -115,11 +115,11 @@ export async function getAllCards(
   );
 }
 
-export async function getCardsFromSet(
-  search: string,
+export async function getCardsInSet(
   id: string,
   page: number,
   pageSize: number,
+  search: string,
 ) {
   if (![30, 60, 90, 120].includes(Number(pageSize))) {
     pageSize = 30;
@@ -303,6 +303,7 @@ export async function getCardsInCardList(
   page: number,
   pageSize: number,
   search: string,
+  set_id?: string,
 ) {
   const countPrepared = db
     .select({ count: count() })
@@ -312,12 +313,16 @@ export async function getCardsInCardList(
       and(
         eq(cardListItem.card_list_id, card_list_id),
         eq(cardListItem.card_id, cards.id),
+        set_id ? like(cards.id, sql.placeholder("set_id")) : undefined,
         search !== ""
           ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
           : undefined,
       ),
     );
-  const countData = await countPrepared.execute({ search: `%${search}%` });
+  const countData = await countPrepared.execute({
+    set_id: `${set_id}-%`,
+    search: `%${search}%,`,
+  });
 
   const cardsPrepared = db
     .select({ data: cards.data })
@@ -327,6 +332,7 @@ export async function getCardsInCardList(
       and(
         eq(cardListItem.card_list_id, card_list_id),
         eq(cardListItem.card_id, cards.id),
+        set_id ? like(cards.id, sql.placeholder("set_id")) : undefined,
         search !== ""
           ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
           : undefined,
@@ -336,6 +342,7 @@ export async function getCardsInCardList(
     .offset((page - 1) * pageSize);
 
   const res = await cardsPrepared.execute({
+    set_id: `${set_id}-%`,
     search: `%${search}%`,
     limit: pageSize,
     offset: (page - 1) * pageSize,

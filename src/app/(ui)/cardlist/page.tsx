@@ -62,7 +62,6 @@ export default async function CardList({
     const wishList = (
       await getCardList(user?.userId, wishListId, 1, 30)
     )?.data.map((a) => a.cardId);
-    console.log(cardLists);
 
     return (
       <div className="m-4 flex max-w-[1200px] flex-col items-center sm:items-start">
