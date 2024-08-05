@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { createQueryString } from "~/app/utils/helpers";
 import {
   Select,
   SelectContent,
@@ -14,22 +15,24 @@ export default function CardListOptions() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const currentPage = Number(searchParams.get("page")) || 1;
-  const pageSize = Number(searchParams.get("pageSize")) || 30;
+  const pageSize = searchParams.get("pageSize") ?? "30";
+  const displayAs = searchParams.get("displayAs") ?? "images";
+  const orderBy = searchParams.get("orderBy") ?? "number";
 
   return (
     <div className="mb-4 mt-4 flex gap-8">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col items-center gap-2 sm:flex-row">
         <label htmlFor="order">Order By</label>
         <Select
           name="order"
           onValueChange={(val) => {
-            const params = new URLSearchParams(searchParams);
-            params.set("page", currentPage.toString());
-            params.set("pageSize", pageSize.toString());
-            params.set("orderBy", val);
-            router.replace(`${pathname}?${params.toString()}`);
+            const urlParams = createQueryString(
+              { orderBy: val },
+              searchParams.toString(),
+            );
+            router.push(`${pathname}?${urlParams}`);
           }}
+          defaultValue={orderBy}
         >
           <SelectTrigger className="w-[120px]">
             <SelectValue placeholder="Number" />
@@ -41,17 +44,18 @@ export default function CardListOptions() {
           </SelectContent>
         </Select>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col items-center gap-2 sm:flex-row">
         <label htmlFor="pageSize">Show</label>
         <Select
           name="pageSize"
           onValueChange={(val) => {
-            const params = new URLSearchParams(searchParams);
-            params.set("page", currentPage.toString());
-            params.set("pageSize", val);
-            params.set("displayAs", currentPage.toString());
-            router.replace(`${pathname}?${params.toString()}`);
+            const urlParams = createQueryString(
+              { pageSize: val },
+              searchParams.toString(),
+            );
+            router.push(`${pathname}?${urlParams}`);
           }}
+          defaultValue={pageSize}
         >
           <SelectTrigger className="w-[120px]">
             <SelectValue placeholder="30 cards" />
@@ -62,17 +66,18 @@ export default function CardListOptions() {
           </SelectContent>
         </Select>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col items-center gap-2 sm:flex-row">
         <label htmlFor="pageSize">Display as</label>
         <Select
           name="pageSize"
           onValueChange={(val) => {
-            const params = new URLSearchParams(searchParams);
-            params.set("page", currentPage.toString());
-            params.set("pageSize", pageSize.toString());
-            params.set("displayAs", val);
-            router.replace(`${pathname}?${params.toString()}`);
+            const urlParams = createQueryString(
+              { displayAs: val },
+              searchParams.toString(),
+            );
+            router.push(`${pathname}?${urlParams}`);
           }}
+          defaultValue={displayAs}
         >
           <SelectTrigger className="w-[120px]">
             <SelectValue placeholder="Images" />

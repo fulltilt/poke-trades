@@ -9,11 +9,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
 export const columns: ColumnDef<{
-  userId?: string;
-  cardId?: string | null;
-  cardListId?: number;
-  name?: string;
-  quantity?: number;
   data: Card | null;
 }>[] = [
   {

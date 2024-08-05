@@ -36,7 +36,8 @@ export function DataTable<TData, TValue>({
 
   // search params
   const page = searchParams?.get("page") ?? "1"; // default is page: 1
-  const per_page = searchParams?.get("per_page") ?? "30"; // default 30 record per page
+  const per_page = searchParams?.get("pageSize") ?? "30"; // default 30 record per page
+  const displayAs = searchParams?.get("displayAs") ?? "images";
 
   // create query string
   const createQueryString = useCallback(
@@ -80,7 +81,8 @@ export function DataTable<TData, TValue>({
   function updateRoute(key: string | null, value: string | null) {
     let obj = {
       page: pageIndex + 1,
-      per_page: pageSize,
+      pageSize: pageSize,
+      displayAs,
     };
     if (key) obj = Object.assign({}, obj, { [key]: value });
     router.push(`${pathname}?${createQueryString(obj)}`);

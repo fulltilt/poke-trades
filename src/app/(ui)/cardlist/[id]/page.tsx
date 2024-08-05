@@ -73,7 +73,7 @@ export default async function CardList({
   const setInfo = await getSet(params?.id ?? "");
 
   return (
-    <div className="m-auto mt-6 flex max-w-[1200px] flex-col">
+    <div className="m-auto mt-6 flex max-w-[1200px] flex-col items-center sm:items-start">
       <div className="text-4xl font-bold">{setInfo?.data?.name ?? ""}</div>
       <div className="mb-4 mt-6 max-w-[300px]">
         <SearchInput placeholder={"Search cards..."} />

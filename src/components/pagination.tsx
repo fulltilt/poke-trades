@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { createQueryString } from "~/app/utils/helpers";
 import {
   Pagination,
   PaginationContent,
@@ -24,10 +25,11 @@ export default function PaginationComponent({
   const pageSize = Number(searchParams.get("pageSize")) || 30;
 
   const createPageURL = (pageNumber: number | string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", pageNumber.toString());
-    params.set("pageSize", pageSize.toString());
-    router.replace(`${pathname}?${params.toString()}`);
+    const urlParams = createQueryString(
+      { page: pageNumber.toString() },
+      searchParams.toString(),
+    );
+    router.push(`${pathname}?${urlParams}`);
   };
 
   const pageNumbers = [];

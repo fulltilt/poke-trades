@@ -61,6 +61,7 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [] View options for cards (sort, list/pics)
 [] View Collection/Wish List
 [x] Dashboard list pagination not hooked up to db
+[] handle when adding variations of same card
 [] Build out Notifications page
 [] Add trade stats
 [] Refactor into one Card component to handle sets and trades?

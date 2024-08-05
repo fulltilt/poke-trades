@@ -36,7 +36,7 @@ export default async function CardList({
 
     const currentPage = Number(searchParams?.page) ?? 1;
     const pageSize = Number(searchParams?.pageSize) ?? 30;
-    // const displayAs = searchParams?.displayAs ?? "images";
+    const displayAs = searchParams?.displayAs ?? "images";
     // const orderBy = Number(searchParams?.orderBy) ?? "number";
     const search = searchParams?.search ?? "";
 
@@ -48,51 +48,42 @@ export default async function CardList({
     const wishList = (
       await getCardList(user?.userId, wishListId, 1, 30)
     )?.data.map((a) => a.cardId);
-    console.log(cardData);
+    const pageCount = Math.ceil(cardData.totalCount / Number(pageSize));
 
     return (
-      <div className="m-auto flex max-w-[1200px] flex-col">
+      <div className="m-4 flex max-w-[1200px] flex-col items-center sm:items-start">
         <p className="font-semibold">
           {cardData.totalCount} card{cardData.totalCount === 1 ? "" : "s"} found
         </p>
         <CardListOptions />
-        <div className="m-auto grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-          {cardData.cards.map((card: Card | null) => {
-            return (
-              <CardComponent
-                card={card}
-                userId={user.userId}
-                key={card?.id}
-                inWishList={wishList?.includes(card?.id ?? null) ?? false}
-                cardLists={cardLists}
-              />
-            );
-          })}
-        </div>
-        <div>
-          <div className="container mx-auto py-10">
+        {displayAs === "images" ? (
+          <div>
+            <div className="grid w-full auto-cols-auto grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
+              {cardData.cards.map((card: Card | null) => {
+                return (
+                  <CardComponent
+                    card={card}
+                    userId={user.userId}
+                    key={card?.id}
+                    inWishList={wishList?.includes(card?.id ?? null) ?? false}
+                    cardLists={cardLists}
+                  />
+                );
+              })}
+            </div>
+            <div className="mt-6">
+              <PaginationComponent totalCount={cardData?.totalCount ?? 0} />
+            </div>
+          </div>
+        ) : (
+          <div className="py-10 lg:min-w-[1200px]">
             <DataTable
               columns={columns}
               data={cardData.cards.map((d) => ({ data: d }))}
-              pageCount={cardData.totalCount}
+              pageCount={pageCount}
             />
           </div>
-          {/* {cardData.cards.map((card: Card | null) => {
-          console.log(card)
-            return (
-              <CardComponent
-                card={card}
-                userId={user.userId}
-                key={card?.id}
-                inWishList={wishList?.includes(card?.id ?? null) ?? false}
-                cardLists={cardLists}
-              />
-            );
-          })} */}
-        </div>
-        <div className="mt-6">
-          <PaginationComponent totalCount={cardData?.totalCount ?? 0} />
-        </div>
+        )}
       </div>
     );
   }
@@ -106,7 +97,7 @@ export default async function CardList({
   const setInfo = await getSet(params?.id ?? "");
 
   return (
-    <div className="m-auto mt-6 flex max-w-[1200px] flex-col">
+    <div className="m-auto mt-6 flex max-w-[1200px] flex-col items-center sm:items-start">
       <div className="text-4xl font-bold">{setInfo?.data?.name ?? ""}</div>
       <div className="mb-4 mt-6 max-w-[300px]">
         <SearchInput placeholder={"Search cards..."} />

@@ -12,7 +12,7 @@ export default async function ListComponent({
   searchParams,
 }: {
   params?: { id: string };
-  searchParams?: { name: string; page: string; per_page: string };
+  searchParams?: { name: string; page: string; pageSize: string };
 }) {
   const user = auth();
   if (!user.userId) redirect("/");
@@ -22,7 +22,7 @@ export default async function ListComponent({
 
   const name = searchParams?.name ?? "";
   const page = searchParams?.page ?? "1";
-  const offset = searchParams?.per_page ?? "30";
+  const offset = searchParams?.pageSize ?? "30";
 
   const listId = params?.id ?? 0;
   const listRes = await getCardList(

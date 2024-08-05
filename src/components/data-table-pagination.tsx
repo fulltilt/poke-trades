@@ -138,7 +138,7 @@ export function DataTablePagination<TData>({
             <DoubleArrowRightIcon aria-hidden="true" />
           </Button>
           <div className="flex items-center space-x-2">
-            <Select onValueChange={(val) => updateRoute("per_page", val)}>
+            <Select onValueChange={(val) => updateRoute("pageSize", val)}>
               <SelectTrigger className="w-[70px]">
                 <SelectValue placeholder="30" />
               </SelectTrigger>
