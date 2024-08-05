@@ -99,7 +99,7 @@ export default async function CardList({
   return (
     <div className="m-auto mt-6 flex max-w-[1200px] flex-col items-center sm:items-start">
       <div className="text-4xl font-bold">{setInfo?.data?.name ?? ""}</div>
-      <div className="mb-4 mt-6 max-w-[300px]">
+      <div className="mb-4 mt-6">
         <SearchInput placeholder={"Search cards..."} />
       </div>
       <Suspense

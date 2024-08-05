@@ -83,8 +83,12 @@ export async function getAllCards(
     page = 1;
   }
 
-  const countPrepared = db.select({ count: count() }).from(cards);
-  const countData = await countPrepared.execute();
+  const countPrepared = db
+    .select({ count: count() })
+    .from(cards)
+    .where(sql`data->>'name' ILIKE ${sql.placeholder("search")}`);
+
+  const countData = await countPrepared.execute({ search: `%${search}%` });
 
   const cardsPrepared = db
     .select()
