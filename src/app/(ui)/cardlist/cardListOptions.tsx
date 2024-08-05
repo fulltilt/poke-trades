@@ -18,7 +18,7 @@ export default function CardListOptions() {
   const pageSize = Number(searchParams.get("pageSize")) || 30;
 
   return (
-    <div className="flex gap-8">
+    <div className="mb-4 mt-4 flex gap-8">
       <div className="flex items-center gap-2">
         <label htmlFor="order">Order By</label>
         <Select
@@ -49,6 +49,7 @@ export default function CardListOptions() {
             const params = new URLSearchParams(searchParams);
             params.set("page", currentPage.toString());
             params.set("pageSize", val);
+            params.set("displayAs", currentPage.toString());
             router.replace(`${pathname}?${params.toString()}`);
           }}
         >
@@ -58,6 +59,27 @@ export default function CardListOptions() {
           <SelectContent>
             <SelectItem value="30">30 cards</SelectItem>
             <SelectItem value="120">120 cards</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="flex items-center gap-2">
+        <label htmlFor="pageSize">Display as</label>
+        <Select
+          name="pageSize"
+          onValueChange={(val) => {
+            const params = new URLSearchParams(searchParams);
+            params.set("page", currentPage.toString());
+            params.set("pageSize", pageSize.toString());
+            params.set("displayAs", val);
+            router.replace(`${pathname}?${params.toString()}`);
+          }}
+        >
+          <SelectTrigger className="w-[120px]">
+            <SelectValue placeholder="Images" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="images">Images</SelectItem>
+            <SelectItem value="list">List</SelectItem>
           </SelectContent>
         </Select>
       </div>

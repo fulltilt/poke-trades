@@ -23,7 +23,7 @@ export default async function Trade({ params }: { params?: { id: string } }) {
 
   const tradeId = Number(params?.id) ?? 0;
   const trade = (await getTrade(tradeId))[0];
-  console.log(trade);
+
   const [currentUserListId, otherUserListId] =
     user.userId === trade?.user_id
       ? [trade?.card_list_id, trade?.other_user_card_list_id]

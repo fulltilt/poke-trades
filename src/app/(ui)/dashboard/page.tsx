@@ -38,7 +38,7 @@ export default async function Dashboard() {
         </div>
       </div>
 
-      <main className="max-w-screen-xl flex-1 pt-2">
+      <main className="mb-12 max-w-screen-xl flex-1 pt-2">
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
             <p className="font-bold">Public Lists</p>

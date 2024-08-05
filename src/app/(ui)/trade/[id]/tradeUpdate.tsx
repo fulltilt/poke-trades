@@ -113,7 +113,7 @@ export default function TradeUpdate({
             <tbody>
               {userList.map((card) => {
                 return (
-                  <tr key={card.id}>
+                  <tr key={card.id} className="p-2">
                     <td className="text-center">
                       {card?.name} - {card?.set?.name} - {card?.number}/
                       {card?.set?.printedTotal}

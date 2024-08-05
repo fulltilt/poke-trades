@@ -9,11 +9,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<{
   userId: string;
-  cardId: string;
+  cardId: string | null;
   cardListId: number;
   name: string;
   quantity: number;
-  data: Card;
+  data: Card | null;
 }>[] = [
   {
     cell: function Cell({ row }) {

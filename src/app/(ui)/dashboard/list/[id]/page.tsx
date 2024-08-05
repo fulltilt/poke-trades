@@ -12,7 +12,7 @@ export default async function ListComponent({
   searchParams,
 }: {
   params?: { id: string };
-  searchParams?: { name: string };
+  searchParams?: { name: string; page: string; per_page: string };
 }) {
   const user = auth();
   if (!user.userId) redirect("/");
@@ -21,13 +21,23 @@ export default async function ListComponent({
   if (!currentUser?.username) redirect("/dashboard");
 
   const name = searchParams?.name ?? "";
+  const page = searchParams?.page ?? "1";
+  const offset = searchParams?.per_page ?? "30";
 
   const listId = params?.id ?? 0;
-  const listRes = await getCardList(user.userId, Number(listId), 1, 30);
+  const listRes = await getCardList(
+    user.userId,
+    Number(listId),
+    Number(page),
+    Number(offset),
+  );
+
+  const count = listRes?.totalCount ?? 0;
+  const pageCount = Math.ceil(count / Number(offset));
 
   // sort List by dates descending then Card numbers ascending
   listRes?.data?.sort((a, b) => sortByDateAndThenNumber(a.data!, b.data!));
-  const list = listRes?.data;
+  const list = listRes?.data ?? [];
 
   return (
     <div className="m-20 flex flex-col">
@@ -40,8 +50,7 @@ export default async function ListComponent({
       <p>List size: {listRes?.totalCount}</p>
 
       <div className="container mx-auto py-10">
-        {/* @ts-expect-error DataTable TypeScript errors */}
-        <DataTable columns={columns} data={list} />
+        <DataTable columns={columns} data={list} pageCount={pageCount} />
       </div>
     </div>
   );

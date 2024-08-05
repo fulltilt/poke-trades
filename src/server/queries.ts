@@ -32,12 +32,12 @@ export async function updateUsername(
   if (!userId) throw new Error("Invalid User");
 
   try {
-    const res = await db
+    await db
       .update(user)
       .set({ username })
       .where(eq(user.auth_id, userId))
       .execute();
-    console.log(res);
+
     return {
       success: "Updated username",
     };
@@ -201,6 +201,7 @@ export async function getCardList(
   page: number,
   pageSize: number,
 ) {
+  console.log(page, pageSize);
   if (!user_id) return; // TODO: have message that user has to be signed in
   const countRes = await db
     .select({
@@ -522,7 +523,7 @@ export async function createTrade(
     Create new trade
     Create two new card lists and update trade with the card list ids
   */
-  const res = await db.transaction(async (tx) => {
+  await db.transaction(async (tx) => {
     const [td] = await tx
       .insert(trade)
       .values({
@@ -565,7 +566,6 @@ export async function createTrade(
 
     return td2;
   });
-  console.log(res);
 }
 
 export async function getTrade(trade_id: number) {

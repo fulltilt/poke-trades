@@ -93,13 +93,13 @@ export default async function TradeComponent() {
           <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
             <thead>
               <tr>
-                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-900">
                   Requester
                 </th>
-                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-900">
                   Other User
                 </th>
-                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-900">
                   Date
                 </th>
                 <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900"></th>
@@ -109,13 +109,13 @@ export default async function TradeComponent() {
             <tbody className="divide-y divide-gray-200">
               {inProgressTrades.map((trade) => (
                 <tr key={trade.id}>
-                  <td className="whitespace-nowrap px-4 py-2 text-center font-medium text-gray-900">
+                  <td className="whitespace-nowrap px-4 py-2 text-center text-gray-900">
                     {trade.username}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-2 text-center font-medium text-gray-900">
+                  <td className="whitespace-nowrap px-4 py-2 text-center text-gray-900">
                     {trade.other_user_name}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-2 text-center font-medium text-gray-900">
+                  <td className="whitespace-nowrap px-4 py-2 text-center text-gray-900">
                     {new Date(trade.created_at).toLocaleDateString()}
                   </td>
                   <td className="whitespace-nowrap px-4 py-2 text-center font-medium text-gray-900">
@@ -139,10 +139,10 @@ export default async function TradeComponent() {
           <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
             <thead>
               <tr>
-                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-900">
                   List Name
                 </th>
-                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-900">
                   User
                 </th>
                 <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
@@ -184,7 +184,7 @@ export default async function TradeComponent() {
 
                 return (
                   <tr key={id}>
-                    <td className="whitespace-nowrap px-4 py-2 text-center font-medium text-gray-900">
+                    <td className="whitespace-nowrap px-4 py-2 text-center text-gray-900">
                       {listname}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-center text-gray-700">

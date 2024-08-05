@@ -131,3 +131,11 @@ export type User = {
   cardLists: List[];
   trades: Trade[];
 };
+
+export type SearchParams = {
+  search?: string;
+  page?: string;
+  pageSize?: string;
+  displayAs?: string;
+  orderBy?: string;
+};

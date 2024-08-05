@@ -10,7 +10,7 @@ import {
   getUser,
   getUsersCardLists,
 } from "~/server/queries";
-import type { Card } from "~/app/types";
+import type { Card, SearchParams } from "~/app/types";
 import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./[id]/card";
 import { redirect } from "next/navigation";
@@ -21,12 +21,7 @@ export default async function CardList({
   searchParams,
 }: {
   params?: { id: string };
-  searchParams?: {
-    search?: string;
-    page?: string;
-    pageSize?: string;
-    orderBy?: string;
-  };
+  searchParams?: SearchParams;
 }) {
   async function Cards() {
     const user = auth();
@@ -39,6 +34,7 @@ export default async function CardList({
 
     const currentPage = Number(searchParams?.page) ?? 1;
     const pageSize = Number(searchParams?.pageSize) ?? 30;
+    // const displayAs = searchParams?.displayAs ?? "images";
     // const orderBy = Number(searchParams?.orderBy) ?? "number";
     const search = searchParams?.search ?? "";
 
@@ -69,6 +65,20 @@ export default async function CardList({
               />
             );
           })}
+        </div>
+        <div>
+          {/* {cardData.cards.map((card: Card | null) => {
+          console.log(card)
+            return (
+              <CardComponent
+                card={card}
+                userId={user.userId}
+                key={card?.id}
+                inWishList={wishList?.includes(card?.id ?? null) ?? false}
+                cardLists={cardLists}
+              />
+            );
+          })} */}
         </div>
         <div className="mt-6">
           <PaginationComponent totalCount={cardData?.totalCount ?? 0} />

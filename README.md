@@ -50,20 +50,21 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Find trade
 [x] Send trade request
 [x] Show UI notification
-[x] Build trade flow
-[] View options for cards (sort, list/pics)
-[] Dashboard list pagination not hooked up to db
 [x] Have new trade list show up when creating new trade list
 [x] Update Trade page when a trade request is made
 [x] Update buttons on Trade list once status is changed
 [x] Add confirmation toast after user requests trade
-[] Build out Notifications page
-[] Add trade stats
-[] Refactor into one Card component to handle sets and trades?
-[] make mobile friendly
 [x] Sub Lists show up in normal Sets/Cards popups. Probably don't want that
 [x] Redo pagination
 [x] tooltip doesn't overflow modal
+[] Build trade flow
+[] View options for cards (sort, list/pics)
+[x] Dashboard list pagination not hooked up to db
+[] View Collection/Wish List
+[] Build out Notifications page
+[] Add trade stats
+[] Refactor into one Card component to handle sets and trades?
+[] make mobile friendly (responsive tables)
 [] Convert queries to prepared statements
 [] Proper error handling on the database side with respective messages on the UI
 [] Send notification email
@@ -78,5 +79,4 @@ Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos
 -English only
 
-Trades you sent
-Trade requests
+https://tocalai.medium.com/pagination-on-tanstack-table-under-next-js-787ed03198a3
