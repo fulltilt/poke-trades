@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Minus, Plus } from "~/app/(ui)/cardlist/[id]/card";
-import { fixedTwoDecimals, getPrice } from "~/app/utils/helpers";
+import { getPrice } from "~/app/utils/helpers";
 import { updateCardList } from "~/server/queries";
 import type { Card } from "~/app/types";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -93,7 +93,7 @@ export const columns: ColumnDef<{
   {
     cell: function Cell({ row }) {
       return (
-        <p className="text-[#106bc5]">{`$${getPrice(row?.original.data!)}`}</p>
+        <p className="text-[#106bc5]">{`$${getPrice(row?.original?.data)}`}</p>
       );
     },
     header: "Price",

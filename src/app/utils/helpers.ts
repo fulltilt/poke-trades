@@ -20,7 +20,9 @@ export function sortByDateAndThenNumber(a: Card, b: Card) {
   return d2.valueOf() - d1.valueOf() || n1 - n2;
 }
 
-export function getPrice(card: Card) {
+export function getPrice(card: Card | null) {
+  if (card === null) return "-";
+
   const unlimitedHolo = fixedTwoDecimals(
     card?.tcgplayer?.prices?.unlimitedHolofoil?.market,
   );

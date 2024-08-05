@@ -78,20 +78,23 @@ export function DataTable<TData, TValue>({
     });
   }, [page, per_page]);
 
-  function updateRoute(key: string | null, value: string | null) {
-    let obj = {
-      page: pageIndex + 1,
-      pageSize: pageSize,
-      displayAs,
-    };
-    if (key) obj = Object.assign({}, obj, { [key]: value });
-    router.push(`${pathname}?${createQueryString(obj)}`);
-  }
+  const updateRoute = useCallback(
+    (key: string | null, value: string | null) => {
+      let obj = {
+        page: pageIndex + 1,
+        pageSize: pageSize,
+        displayAs,
+      };
+      if (key) obj = Object.assign({}, obj, { [key]: value });
+      router.push(`${pathname}?${createQueryString(obj)}`);
+    },
+    [createQueryString, pathname, router, displayAs, pageIndex, pageSize],
+  );
 
   // changed the route as well
   useEffect(() => {
     updateRoute(null, null);
-  }, [pageIndex, pageSize, createQueryString, pathname, router]);
+  }, [pageIndex, pageSize, updateRoute]);
 
   const table = useReactTable({
     data,

@@ -87,7 +87,7 @@ export const columns: ColumnDef<{
   {
     cell: function Cell({ row }) {
       return (
-        <p className="text-[#106bc5]">{`$${getPrice(row?.original.data!)}`}</p>
+        <p className="text-[#106bc5]">{`$${getPrice(row?.original?.data)}`}</p>
       );
     },
     header: "Price",
