@@ -70,3 +70,10 @@ export function createQueryString(
 
   return newSearchParams.toString();
 }
+
+export function formatType(type: string) {
+  if (type === "normal") return "Normal";
+  if (type === "reverseHolofoil") return "Reverse Holofoil";
+  if (type === "holofoil") return "Holofoil";
+  return type;
+}

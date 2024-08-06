@@ -69,11 +69,13 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [] Refactor into one Card component to handle sets and trades?
 [] make mobile friendly (responsive tables)
 [] Convert queries to prepared statements
+[] Currently doesn't differentiate between holo/normal/reverse/etc
 [] Proper error handling on the database side with respective messages on the UI
 [] Send notification email
 [] autogenerate public tradelist after user enters username
 [] Optimize trade search
 [] Realtime updates on trade page
+[] Go through all sets to make sure cards are in order and all show up
 [x] Consider how to deal with deletions when there's foreign keys (ie trade table relies on trade lists which user may want to delete (update: don't let them delete but hide trades after a certain time))
 [] Figure out Clerk middleware to redirect user when doesn't have a username set
 [] Clerk route testing (redirects after auth, redirects after logging out, etc)

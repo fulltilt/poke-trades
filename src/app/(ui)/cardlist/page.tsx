@@ -92,7 +92,11 @@ export default async function CardList({
           <div className="py-10 lg:min-w-[1200px]">
             <DataTable
               columns={columns}
-              data={cardData.cards.map((d) => ({ data: d }))}
+              data={cardData.cards.map((d) => ({
+                card: d,
+                userId: user.userId,
+                cardLists,
+              }))}
               pageCount={pageCount}
             />
           </div>

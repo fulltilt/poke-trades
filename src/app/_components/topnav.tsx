@@ -41,7 +41,7 @@ export function TopNav() {
           <Link href="/sets" className="text-sm">
             Sets
           </Link>
-          <Link href="/cardlist" className="text-sm">
+          <Link href="/cardlist?page=1&pageSize=30" className="text-sm">
             Cards
           </Link>
         </div>

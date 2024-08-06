@@ -32,11 +32,16 @@ export async function updateUsername(
   if (!userId) throw new Error("Invalid User");
 
   try {
-    const usernamePrepared = db
+    // const usernamePrepared = db
+    //   .update(user)
+    //   .set({ username: sql.placeholder("username") })
+    //   .where(eq(user.auth_id, userId));
+    // await usernamePrepared.execute({ username: `${username}` });
+    await db
       .update(user)
-      .set({ username: `${sql.placeholder("search")}` })
-      .where(eq(user.auth_id, userId));
-    await usernamePrepared.execute({ search: `%${username}%` });
+      .set({ username })
+      .where(eq(user.auth_id, userId))
+      .execute();
 
     return {
       success: "Updated username",

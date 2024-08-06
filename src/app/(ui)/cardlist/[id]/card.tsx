@@ -22,7 +22,7 @@ import {
 
 import { SignInButton } from "@clerk/nextjs";
 import { Button } from "~/components/ui/button";
-import { getPrice } from "~/app/utils/helpers";
+import { formatType, getPrice } from "~/app/utils/helpers";
 
 export function Favorite({ fill }: { fill: string }) {
   return (
@@ -225,59 +225,68 @@ export default function CardComponent({
                 <p className="font-semibild text-lg">{`${card?.name} - ${card?.set.name} - ${card?.number}/${card?.set.printedTotal}`}</p>
                 <label htmlFor="lists">Update quantities:</label>
                 <div id="lists">
-                  {lists
-                    ?.filter((l) => l.name !== "Wish List")
-                    .map((list) => {
-                      return (
-                        <div className="flex justify-between" key={list.id}>
-                          <p>{list.name}</p>
-                          <div className="flex">
-                            <div
-                              className="cursor-pointer font-bold"
-                              onClick={async () => {
-                                if (list.quantity === 0) return;
-                                const updateRes = await updateCardList(
-                                  userId ?? "",
-                                  list.id,
-                                  card?.id ?? "",
-                                  -1,
-                                );
-                                if (updateRes?.error) {
-                                  // TODO: display error message
-                                  return;
-                                }
+                  {card?.tcgplayer?.prices &&
+                    Object.keys(card.tcgplayer.prices).map((key) => (
+                      <div className="mb-6" key={key}>
+                        <p>{formatType(key)}</p>
+                        {lists
+                          ?.filter((l) => l.name !== "Wish List")
+                          .map((list) => {
+                            return (
+                              <div
+                                className="ml-2 flex justify-between"
+                                key={list.id}
+                              >
+                                <p>{list.name}</p>
+                                <div className="flex">
+                                  <div
+                                    className="cursor-pointer font-bold"
+                                    onClick={async () => {
+                                      if (list.quantity === 0) return;
+                                      const updateRes = await updateCardList(
+                                        userId ?? "",
+                                        list.id,
+                                        card?.id ?? "",
+                                        -1,
+                                      );
+                                      if (updateRes?.error) {
+                                        // TODO: display error message
+                                        return;
+                                      }
 
-                                await updateLists();
-                              }}
-                            >
-                              <Minus />
-                            </div>
-                            <div className="bold ml-4 mr-4">
-                              {list.quantity}
-                            </div>
-                            <div
-                              className="cursor-pointer font-bold"
-                              onClick={async () => {
-                                const updateRes = await updateCardList(
-                                  userId ?? "",
-                                  list.id,
-                                  card?.id ?? "",
-                                  1,
-                                );
-                                if (updateRes?.error) {
-                                  // TODO: display error message
-                                  return;
-                                }
+                                      await updateLists();
+                                    }}
+                                  >
+                                    <Minus />
+                                  </div>
+                                  <div className="bold ml-4 mr-4">
+                                    {list.quantity}
+                                  </div>
+                                  <div
+                                    className="cursor-pointer font-bold"
+                                    onClick={async () => {
+                                      const updateRes = await updateCardList(
+                                        userId ?? "",
+                                        list.id,
+                                        card?.id ?? "",
+                                        1,
+                                      );
+                                      if (updateRes?.error) {
+                                        // TODO: display error message
+                                        return;
+                                      }
 
-                                await updateLists();
-                              }}
-                            >
-                              <Plus />
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                                      await updateLists();
+                                    }}
+                                  >
+                                    <Plus />
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    ))}
                 </div>
               </div>
             )}
