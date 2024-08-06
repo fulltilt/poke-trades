@@ -32,11 +32,11 @@ export async function updateUsername(
   if (!userId) throw new Error("Invalid User");
 
   try {
-    await db
+    const usernamePrepared = db
       .update(user)
-      .set({ username })
-      .where(eq(user.auth_id, userId))
-      .execute();
+      .set({ username: `${sql.placeholder("search")}` })
+      .where(eq(user.auth_id, userId));
+    await usernamePrepared.execute({ search: `%${username}%` });
 
     return {
       success: "Updated username",
@@ -69,7 +69,13 @@ export async function getSets() {
 }
 
 export async function getSet(id: string) {
-  const res = await db.select().from(sets).where(eq(sets.id, id));
+  const setPrepared = db
+    .select()
+    .from(sets)
+    .where(eq(sets.id, sql.placeholder("id")));
+
+  const res = await setPrepared.execute({ id });
+
   return res[0];
 }
 
@@ -87,7 +93,6 @@ export async function getAllCards(
     .select({ count: count() })
     .from(cards)
     .where(sql`data->>'name' ILIKE ${sql.placeholder("search")}`);
-
   const countData = await countPrepared.execute({ search: `%${search}%` });
 
   const cardsPrepared = db

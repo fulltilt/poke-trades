@@ -57,10 +57,12 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Sub Lists show up in normal Sets/Cards popups. Probably don't want that
 [x] Redo pagination
 [x] tooltip doesn't overflow modal
-[] Build trade flow
-[] View options for cards (sort, list/pics)
-[] View Collection/Wish List
+[x] View options for cards (sort, list/pics)
+[x] View Collection/Wish List
 [x] Dashboard list pagination not hooked up to db
+[] Correct +/- on card list tables
+[] Finish trade flow
+[] Add sort by price
 [] handle when adding variations of same card
 [] Build out Notifications page
 [] Add trade stats
