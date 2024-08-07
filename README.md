@@ -60,19 +60,18 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] View options for cards (sort, list/pics)
 [x] View Collection/Wish List
 [x] Dashboard list pagination not hooked up to db
-[] Correct +/- on card list tables
-[] Finish trade flow
+[x] Correct +/- on card list tables
+[x] make mobile friendly (responsive tables)
+[x] Finish trade flow (paginate lists, +- on table)
 [] Add sort by price
-[] handle when adding variations of same card
+[] Lock trade on Complete and +1 trade to each user
 [] Build out Notifications page
 [] Add trade stats
-[] Refactor into one Card component to handle sets and trades?
-[] make mobile friendly (responsive tables)
-[] Convert queries to prepared statements
-[] Currently doesn't differentiate between holo/normal/reverse/etc
-[] Proper error handling on the database side with respective messages on the UI
-[] Send notification email
 [] autogenerate public tradelist after user enters username
+[] Convert queries to prepared statements
+[] Proper error handling on the database side with respective messages on the UI
+[] handle when adding variations of same card. Currently doesn't differentiate between holo/normal/reverse/etc
+[] Send notification email
 [] Optimize trade search
 [] Realtime updates on trade page
 [] Go through all sets to make sure cards are in order and all show up
@@ -82,6 +81,7 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 
 Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos
+-the prices are by TCGPlayer market but sometimes those fields are null. Tried to go by low but there are some entries that are obviously off so sticking to market. If price is null, check eBay last solds for comps
 -English only
 
 https://tocalai.medium.com/pagination-on-tanstack-table-under-next-js-787ed03198a3

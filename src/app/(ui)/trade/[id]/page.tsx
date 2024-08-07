@@ -6,8 +6,6 @@ import {
   getTradeListCards,
   getUser,
 } from "~/server/queries";
-import type { Card } from "~/app/types";
-import { sortByDateAndThenNumber } from "~/app/utils/helpers";
 import TradeUpdate from "./tradeUpdate";
 import { Suspense } from "react";
 import TradeStatusUpdate from "./statusUpdate";
@@ -40,20 +38,14 @@ export default async function Trade({ params }: { params?: { id: string } }) {
   const otherUserCardListIds = tradeListCards
     .filter((card) => card.card_list_id === otherUserListId)
     .map((card) => card.card_id);
-  const userCards = (await getCardsInList(userCardlistIds as string[]))
-    .map((obj) => obj.data)
-    ?.sort((a, b) => sortByDateAndThenNumber(a!, b!));
 
-  const otherUserCards = (
-    await getCardsInList(otherUserCardListIds as string[])
-  )
-    .map((obj) => obj.data)
-    ?.sort((a, b) => sortByDateAndThenNumber(a!, b!));
+  const userCards = await getCardsInList(userCardlistIds as string[]);
+  const otherUserCards = await getCardsInList(otherUserCardListIds as string[]);
 
   return (
     <div className="flex max-h-full flex-1 flex-col rounded-md pl-14 pr-14">
       <div className="max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-        <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
               Trade
@@ -80,10 +72,10 @@ export default async function Trade({ params }: { params?: { id: string } }) {
       </div>
       <Suspense fallback={<div>Loading...</div>}>
         <TradeUpdate
-          userCards={userCards as Card[]}
+          userCards={userCards}
           user_id={trade!.user_id}
           other_user_id={trade!.other_user_id}
-          otherUserCards={otherUserCards as Card[]}
+          otherUserCards={otherUserCards}
           otherUserName={trade!.other_user_name ?? ""}
           sub_card_list_id={trade!.user_sub_card_list_id ?? 0}
           other_sub_card_list_id={trade!.other_user_sub_card_list_id ?? 0}
@@ -92,6 +84,8 @@ export default async function Trade({ params }: { params?: { id: string } }) {
               ? trade?.user_status
               : trade!.other_user_status
           }
+          userCardlistIds={userCardlistIds}
+          otherUserCardListIds={otherUserCardListIds}
         />
       </Suspense>
     </div>

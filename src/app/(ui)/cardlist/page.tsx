@@ -38,7 +38,7 @@ export default async function CardList({
     const currentPage = Number(searchParams?.page) ?? 1;
     const pageSize = Number(searchParams?.pageSize) ?? 30;
     const displayAs = searchParams?.displayAs ?? "images";
-    // const orderBy = Number(searchParams?.orderBy) ?? "number";
+    const orderBy = searchParams?.orderBy ?? "number";
     const source = searchParams?.source ?? "all";
     const search = searchParams?.search ?? "";
 
@@ -50,7 +50,7 @@ export default async function CardList({
 
     const cardData =
       source === "all"
-        ? await getAllCards(currentPage, pageSize, search)
+        ? await getAllCards(currentPage, pageSize, search, orderBy)
         : await getCardsInCardList(
             source === "collection" ? collectionId : wishListId,
             currentPage,

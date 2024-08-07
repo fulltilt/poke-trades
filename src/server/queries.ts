@@ -88,22 +88,50 @@ export async function getAllCards(
   page: number,
   pageSize: number,
   search: string,
+  orderBy: string,
 ): Promise<{ totalCount: number; cards: Card[] }> {
   if (![30, 60, 90, 120].includes(Number(pageSize))) {
     pageSize = 30;
     page = 1;
   }
 
+  // const test = db
+  //   .select({
+  //     id: cards.id,
+  //     data: cards.data,
+  //     price: sql`jsonb_path_query(data, '$.tcgplayer.prices.*.market') AS price`,
+  //   })
+  //   .from(cards)
+  //   .where(sql`data->>'name' ILIKE ${sql.placeholder("search")}`)
+  //   .groupBy(cards.id)
+  //   .orderBy(sql`price DESC`)
+  //   .limit(30);
+
+  // const testData = await test.execute({
+  //   search: `%${search}%`,
+  //   limit: pageSize,
+  //   offset: (page - 1) * pageSize,
+  // });
+  // console.log(testData);
+
   const countPrepared = db
     .select({ count: count() })
     .from(cards)
-    .where(sql`data->>'name' ILIKE ${sql.placeholder("search")}`);
+    .where(
+      search.length
+        ? sql`data->>'name' ILIKE ${sql.placeholder("search")}`
+        : undefined,
+    );
   const countData = await countPrepared.execute({ search: `%${search}%` });
 
   const cardsPrepared = db
     .select()
     .from(cards)
-    .where(sql`data->>'name' ILIKE ${sql.placeholder("search")}`)
+    .where(
+      search.length
+        ? sql`data->>'name' ILIKE ${sql.placeholder("search")}`
+        : undefined,
+    )
     .orderBy(
       sql`data->'set'->>'releaseDate' DESC, CAST(DATA->>'number' AS INTEGER)`,
     )
@@ -135,6 +163,7 @@ export async function getCardsInSet(
     pageSize = 30;
     page = 1;
   }
+
   const countPrepared = db
     .select({ count: count() })
     .from(cards)
@@ -216,6 +245,12 @@ export async function getCardList(
   pageSize: number,
 ) {
   if (!user_id) return; // TODO: have message that user has to be signed in
+
+  if (![30, 60, 90, 120].includes(Number(pageSize))) {
+    pageSize = 30;
+    page = 1;
+  }
+
   const countRes = await db
     .select({
       count: count(),
@@ -296,14 +331,40 @@ export async function getUsersCardLists(userId: string) {
 
 // Get Card data given a list of Card ids
 // Used in trade/[id] page
-export async function getCardsInList(card_list: string[]) {
-  return await db
+export async function getCardsInList(
+  card_list: string[],
+  page = 1,
+  pageSize = 30,
+) {
+  if (![30, 60, 90, 120].includes(Number(pageSize))) {
+    pageSize = 30;
+    page = 1;
+  }
+
+  const countData = await db
     .select({
-      data: cards.data,
+      count: count(),
     })
     .from(cards)
     .where(inArray(cards.id, card_list))
     .execute();
+
+  const res = await db
+    .select()
+    .from(cards)
+    .where(inArray(cards.id, card_list))
+    .orderBy(
+      sql`data->'set'->>'releaseDate' DESC, CAST(DATA->>'number' AS INTEGER)`,
+    )
+    .limit(pageSize)
+    .offset((page - 1) * pageSize)
+    .execute();
+
+  return Object.assign(
+    {},
+    { cards: res.map((r) => r.data) },
+    { totalCount: countData[0]?.count ?? 0 },
+  );
 }
 
 // Given a Card List id, return all Card data associated with that list
@@ -315,6 +376,11 @@ export async function getCardsInCardList(
   search: string,
   set_id?: string,
 ) {
+  if (![30, 60, 90, 120].includes(Number(pageSize))) {
+    pageSize = 30;
+    page = 1;
+  }
+
   const countPrepared = db
     .select({ count: count() })
     .from(cardListItem)
