@@ -27,7 +27,7 @@ type List = {
 
 export const columns: ColumnDef<{
   card: Card | null;
-  userId: string;
+  userId: string | null;
   cardLists: {
     cardListId: number;
     name: string;

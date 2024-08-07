@@ -139,4 +139,5 @@ export type SearchParams = {
   displayAs?: string;
   orderBy?: string;
   source?: string;
+  member?: string;
 };

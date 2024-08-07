@@ -66,6 +66,11 @@ export default async function Trade({ params }: { params?: { id: string } }) {
                   ? trade?.user_status
                   : trade!.other_user_status
               }
+              otherUserStatus={
+                trade?.user_id === user.userId
+                  ? trade.other_user_status
+                  : trade?.user_status
+              }
             />
           </div>
         </div>

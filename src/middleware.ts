@@ -4,7 +4,6 @@ const isProtectedRoute = createRouteMatcher([
   "/username(.*)",
   "/dashboard(.*)",
   "/sets(.*)",
-  "/cardlist(.*)",
   "/trade(.*)",
   "/notifications(.*)",
 ]);

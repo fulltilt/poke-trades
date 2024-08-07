@@ -63,11 +63,12 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Correct +/- on card list tables
 [x] make mobile friendly (responsive tables)
 [x] Finish trade flow (paginate lists, +- on table)
-[] Add sort by price
-[] Lock trade on Complete and +1 trade to each user
+[x] Add sort by price
+[x] autogenerate public tradelist after user enters username
+[x] Lock trade on Complete and +1 trade to each user
 [] Build out Notifications page
 [] Add trade stats
-[] autogenerate public tradelist after user enters username
+[] Let users share trade lists
 [] Convert queries to prepared statements
 [] Proper error handling on the database side with respective messages on the UI
 [] Get away from raw queries
@@ -82,7 +83,9 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 
 Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos
--the prices are by TCGPlayer market but sometimes those fields are null. Tried to go by low but there are some entries that are obviously off so sticking to market. If price is null, check eBay last solds for comps
+-the prices are by TCGPlayer market but sometimes those fields are null so have to go by another field which
+sometimes results in some weird results when sorting. Tried to go by low but there are some entries that are obviously off so sticking to market. If price is null, check eBay last solds for comps. If it
+already hasn't happeed yet, there will be an ability to manually change the price during a trade
 -English only
 
 https://tocalai.medium.com/pagination-on-tanstack-table-under-next-js-787ed03198a3

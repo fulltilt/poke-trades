@@ -33,7 +33,10 @@ export default async function Dashboard() {
           </div>
 
           <div className="flex items-center gap-4">
-            <NewTradeComponent user={user.userId} />
+            <NewTradeComponent
+              user={user.userId}
+              username={loggedInUser.username}
+            />
           </div>
         </div>
       </div>

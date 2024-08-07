@@ -1,16 +1,6 @@
 "use server";
 
-import {
-  sql,
-  count,
-  like,
-  and,
-  eq,
-  ne,
-  or,
-  inArray,
-  ConsoleLogWriter,
-} from "drizzle-orm";
+import { sql, count, like, and, eq, ne, or, inArray } from "drizzle-orm";
 import { db } from "./db";
 import {
   sets,
@@ -22,7 +12,6 @@ import {
   notification,
 } from "./db/schema";
 import type { Card, SSet } from "~/app/types";
-import { escape } from "sqlstring";
 
 export async function getUser(userId: string) {
   if (!userId) throw new Error("Invalid User");
@@ -31,6 +20,16 @@ export async function getUser(userId: string) {
     .select()
     .from(user)
     .where(eq(user.auth_id, userId))
+    .execute();
+
+  return res[0];
+}
+
+export async function getUserId(username: string) {
+  const res = await db
+    .select({ id: user.auth_id })
+    .from(user)
+    .where(eq(user.username, username))
     .execute();
 
   return res[0];
@@ -135,25 +134,50 @@ export async function getAllCards(
     );
   const countData = await countPrepared.execute({ search: `%${search}%` });
 
-  const cardsPrepared = db
-    .select()
-    .from(cards)
-    .where(
-      search.length
-        ? sql`data->>'name' ILIKE ${sql.placeholder("search")}`
-        : undefined,
-    )
-    .orderBy(
-      sql`data->'set'->>'releaseDate' DESC, CAST(DATA->>'number' AS INTEGER)`,
-    )
-    .limit(sql.placeholder("limit"))
-    .offset(sql.placeholder("offset"));
+  let cardsData: {
+    id: string;
+    data: Card | null;
+    price?: number;
+  }[];
+  if (orderBy.includes("price")) {
+    const cards = await db.execute(sql`
+      SELECT id, data, price 
+      FROM (
+        SELECT distinct on (id) id, data, jsonb_path_query(data, '$.tcgplayer.prices.*.market') AS price
+        FROM poketrades_card
+        WHERE DATA->>'name' ILIKE '%${sql.raw(search)}%'
+      )
+      ORDER BY price ${sql.raw(orderBy.includes("DESC") ? "DESC" : "ASC")} 
+      LIMIT ${pageSize}
+      OFFSET ${(page - 1) * pageSize}
+    `);
 
-  const cardsData = await cardsPrepared.execute({
-    search: `%${search}%`,
-    limit: pageSize,
-    offset: (page - 1) * pageSize,
-  });
+    cardsData = cards.rows as {
+      id: string;
+      data: Card | null;
+      price?: number;
+    }[];
+  } else {
+    const cardsPrepared = db
+      .select()
+      .from(cards)
+      .where(
+        search.length
+          ? sql`data->>'name' ILIKE ${sql.placeholder("search")}`
+          : undefined,
+      )
+      .orderBy(
+        sql`data->'set'->>'releaseDate' DESC, CAST(DATA->>'number' AS INTEGER)`,
+      )
+      .limit(sql.placeholder("limit"))
+      .offset(sql.placeholder("offset"));
+
+    cardsData = await cardsPrepared.execute({
+      search: `%${search}%`,
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+    });
+  }
 
   return Object.assign(
     {},
@@ -244,6 +268,8 @@ export async function getCardsInSet(
               DATA->>'name' ILIKE '%${sql.raw(search)}%'
       )
       ORDER BY price ${sql.raw(orderBy.includes("DESC") ? "DESC" : "ASC")} 
+      LIMIT ${pageSize}
+      OFFSET ${(page - 1) * pageSize}
     `);
     cardsData = cards.rows as {
       id: string;

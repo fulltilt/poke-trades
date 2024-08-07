@@ -8,13 +8,14 @@ import {
   getCardList,
   getCardsInCardList,
   getSet,
-  getUser,
+  getUserId,
+  // getUser,
   getUsersCardLists,
 } from "~/server/queries";
 import type { Card, SearchParams } from "~/app/types";
 import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./[id]/card";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 import CardListOptions from "./cardListOptions";
 import { DataTable } from "~/components/data-table";
 import { columns } from "./columns";
@@ -28,12 +29,10 @@ export default async function CardList({
 }) {
   async function Cards() {
     const user = auth();
-    if (!user.userId) redirect("/");
-
-    const loggedInUser = await getUser(user.userId);
-    if (!loggedInUser?.username) {
-      redirect("/username");
-    }
+    // const loggedInUser = await getUser(user.userId ?? "");
+    // if (!loggedInUser?.username) {
+    //   redirect("/username");
+    // }
 
     const currentPage = Number(searchParams?.page) ?? 1;
     const pageSize = Number(searchParams?.pageSize) ?? 30;
@@ -41,8 +40,16 @@ export default async function CardList({
     const orderBy = searchParams?.orderBy ?? "number";
     const source = searchParams?.source ?? "all";
     const search = searchParams?.search ?? "";
+    const member = searchParams?.member ?? "";
 
-    const cardLists = await getUsersCardLists(user.userId);
+    let userId = user.userId;
+
+    // special logic to view a users collection without being logged in
+    if (member) {
+      userId = (await getUserId(member))?.id ?? "";
+    }
+
+    const cardLists = await getUsersCardLists(userId ?? "");
     const collectionId =
       cardLists.filter((l) => l.name === "Collection")[0]?.cardListId ?? 0;
     const wishListId =

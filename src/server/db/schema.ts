@@ -58,6 +58,7 @@ export const user = createTable("user", {
   auth_id: varchar("auth_id").unique().notNull(),
   username: varchar("username").unique(),
   email: varchar("email").notNull(),
+  completed_trades: integer("completed_trades").default(0),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -119,9 +120,6 @@ export const trade = createTable("trade", {
     .references(() => statusType.id)
     .default(2),
   other_user_status: integer("other_user_status")
-    .references(() => statusType.id)
-    .default(2),
-  status: integer("status")
     .references(() => statusType.id)
     .default(2),
   created_at: timestamp("created_at", { withTimezone: true })
