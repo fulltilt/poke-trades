@@ -24,22 +24,28 @@ export function getPrice(card: Card | null) {
   if (card === null) return "-";
 
   const unlimitedHolo = fixedTwoDecimals(
-    card?.tcgplayer?.prices?.unlimitedHolofoil?.market,
+    card?.price
+      ? card.price
+      : card?.tcgplayer?.prices?.unlimitedHolofoil?.market,
   );
   const firstEditionHolo = fixedTwoDecimals(
-    card?.tcgplayer?.prices?.["1stEdition"]?.market,
+    card?.price ? card.price : card?.tcgplayer?.prices?.["1stEdition"]?.market,
   );
   const unlimited = fixedTwoDecimals(
-    card?.tcgplayer?.prices?.unlimited?.market,
+    card?.price ? card.price : card?.tcgplayer?.prices?.unlimited?.market,
   );
   const firstEdition = fixedTwoDecimals(
-    card?.tcgplayer?.prices?.["1stEdition"]?.market,
+    card?.price ? card.price : card?.tcgplayer?.prices?.["1stEdition"]?.market,
   );
-  const holo = fixedTwoDecimals(card?.tcgplayer?.prices?.holofoil?.market);
+  const holo = fixedTwoDecimals(
+    card?.price ? card.price : card?.tcgplayer?.prices?.holofoil?.market,
+  );
   const reverse = fixedTwoDecimals(
-    card?.tcgplayer?.prices?.reverseHolofoil?.market,
+    card?.price ? card.price : card?.tcgplayer?.prices?.reverseHolofoil?.market,
   );
-  const normal = fixedTwoDecimals(card?.tcgplayer?.prices?.normal?.market);
+  const normal = fixedTwoDecimals(
+    card?.price ? card.price : card?.tcgplayer?.prices?.normal?.market,
+  );
 
   return (
     firstEditionHolo ??

@@ -70,6 +70,7 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [] autogenerate public tradelist after user enters username
 [] Convert queries to prepared statements
 [] Proper error handling on the database side with respective messages on the UI
+[] Get away from raw queries
 [] handle when adding variations of same card. Currently doesn't differentiate between holo/normal/reverse/etc
 [] Send notification email
 [] Optimize trade search

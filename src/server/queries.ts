@@ -1,6 +1,16 @@
 "use server";
 
-import { sql, count, like, and, eq, ne, or, inArray } from "drizzle-orm";
+import {
+  sql,
+  count,
+  like,
+  and,
+  eq,
+  ne,
+  or,
+  inArray,
+  ConsoleLogWriter,
+} from "drizzle-orm";
 import { db } from "./db";
 import {
   sets,
@@ -12,6 +22,7 @@ import {
   notification,
 } from "./db/schema";
 import type { Card, SSet } from "~/app/types";
+import { escape } from "sqlstring";
 
 export async function getUser(userId: string) {
   if (!userId) throw new Error("Invalid User");
@@ -158,12 +169,14 @@ export async function getCardsInSet(
   page: number,
   pageSize: number,
   search: string,
+  orderBy: string,
 ) {
   if (![30, 60, 90, 120].includes(Number(pageSize))) {
     pageSize = 30;
     page = 1;
   }
 
+  // The count should be the same for both queries
   const countPrepared = db
     .select({ count: count() })
     .from(cards)
@@ -181,31 +194,96 @@ export async function getCardsInSet(
     search: `%${search}%`,
   });
 
-  const cardsPrepared = db
-    .select()
-    .from(cards)
-    .where(
-      and(
-        id.length ? like(cards.id, sql.placeholder("searchterm")) : undefined,
-        search.length
-          ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
-          : undefined,
-      ),
-    )
-    .orderBy(sql`CAST(DATA->>'number' AS INTEGER)`)
-    .limit(sql.placeholder("limit"))
-    .offset(sql.placeholder("offset"));
+  let cardsData: {
+    id: string;
+    data: Card | null;
+    price?: number;
+  }[];
+  if (orderBy.includes("price")) {
+    // const subquery = db
+    //   .select({
+    //     id: cards.id,
+    //     data: cards.data,
+    //     price: sql`jsonb_path_query(data, '$.tcgplayer.prices.*.market') AS price`,
+    //   })
+    //   .from(cards)
+    //   .where(
+    //     and(
+    //       id.length ? like(cards.id, sql.placeholder("searchterm")) : undefined,
+    //       search.length
+    //         ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
+    //         : undefined,
+    //     ),
+    //   )
+    //   .as("subquery");
 
-  const cardsData = await cardsPrepared.execute({
-    limit: pageSize,
-    offset: (page - 1) * pageSize,
-    searchterm: id.length ? `${id}-%` : "",
-    search: `%${search}%`,
-  });
+    // Error: You tried to reference "price" field from a subquery, which is a raw SQL field, but it doesn't have an alias declared. Please add an alias to the field using ".as('alias')" method.
+    // cardsData = await db
+    //   .select({
+    //     id: subquery.id,
+    //     data: subquery.data,
+    //     price: subquery.price,
+    //   })
+    //   .from(subquery)
+    //   .orderBy(sql`price DESC`)
+    //   .limit(sql.placeholder("limit"))
+    //   .offset(sql.placeholder("offset"))
+    //   .execute({
+    //     search: `%${search}%`,
+    //     searchterm: id.length ? `${id}-%` : "",
+    //     limit: pageSize,
+    //     offset: (page - 1) * pageSize,
+    //   });
+
+    const cards = await db.execute(sql`
+      SELECT id, data, price 
+      FROM (
+        SELECT distinct on (id) id, data, jsonb_path_query(data, '$.tcgplayer.prices.*.market') AS price
+        FROM poketrades_card
+        WHERE poketrades_card.id ILIKE '%${sql.raw(id)}%' AND
+              DATA->>'name' ILIKE '%${sql.raw(search)}%'
+      )
+      ORDER BY price ${sql.raw(orderBy.includes("DESC") ? "DESC" : "ASC")} 
+    `);
+    cardsData = cards.rows as {
+      id: string;
+      data: Card | null;
+      price?: number;
+    }[];
+  } else {
+    const cardsPrepared = db
+      .select()
+      .from(cards)
+      .where(
+        and(
+          id.length ? like(cards.id, sql.placeholder("searchterm")) : undefined,
+          search.length
+            ? sql`DATA->>'name' ILIKE ${sql.placeholder("search")}`
+            : undefined,
+        ),
+      )
+      .orderBy(sql`CAST(DATA->>'number' AS INTEGER)`)
+      .limit(sql.placeholder("limit"))
+      .offset(sql.placeholder("offset"));
+
+    cardsData = await cardsPrepared.execute({
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+      searchterm: id.length ? `${id}-%` : "",
+      search: `%${search}%`,
+    });
+  }
 
   return Object.assign(
     {},
-    { cards: cardsData.map((r) => r.data) },
+    {
+      cards: cardsData.map((r) => {
+        if (r?.price) {
+          return Object.assign({}, r.data, { price: r.price });
+        }
+        return r.data;
+      }),
+    },
     { totalCount: countData[0]?.count },
   );
 }

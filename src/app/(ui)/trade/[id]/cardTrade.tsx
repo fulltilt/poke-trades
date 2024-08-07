@@ -11,7 +11,6 @@ import { getPrice } from "~/app/utils/helpers";
 import { Favorite } from "../../cardlist/[id]/card";
 import { getCardsInList, updateCardList } from "~/server/queries";
 import { useEffect, useState } from "react";
-import PaginationComponent from "~/components/pagination";
 import ModalPaginationComponent from "~/components/modal-pagination";
 
 export default function CardTradeComponent({
@@ -37,7 +36,7 @@ export default function CardTradeComponent({
     getCardsInList(cardListIds as string[], currentPage, pageSize)
       .then((res) => setCardPage(res.cards))
       .catch((err) => console.log(err));
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, cardListIds]);
 
   return (
     <div>
