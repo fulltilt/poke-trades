@@ -9,11 +9,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { createList } from "~/server/queries";
 import { useToast } from "~/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import type { CardList } from "~/app/types";
 
 function ShareIcon() {
   return (
@@ -37,16 +45,19 @@ function ShareIcon() {
 export default function NewListComponent({
   user,
   username,
+  cardLists,
 }: {
   user: string;
   username: string;
+  cardLists: CardList[];
 }) {
   const router = useRouter();
   const { toast } = useToast();
-  console.log(username);
+
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialog2, setOpenDialog2] = useState(false);
   const [listName, setListName] = useState("");
+  const [listToShare, setListToShare] = useState("");
 
   return (
     <div className="flex gap-4">
@@ -106,32 +117,44 @@ export default function NewListComponent({
         >
           <DialogHeader>
             <DialogTitle>Share Lists</DialogTitle>
-            <DialogDescription>
-              <p>
-                Click on the links below to show others your Collection or your
-                Wish List
-              </p>
-              <div className="flex justify-center gap-4">
-                <Button
-                  onClick={async () => {
-                    await window.navigator.clipboard.writeText(
-                      `${window.location.hostname}?source=collection&member=${username}`,
-                    );
-                  }}
-                >
-                  Share Collection
-                </Button>
-                <Button
-                  onClick={async () => {
-                    await window.navigator.clipboard.writeText(
-                      `${window.location.hostname}?source=wishlist&member=${username}`,
-                    );
-                  }}
-                >
-                  Share WishList
-                </Button>
-              </div>
-            </DialogDescription>
+            <DialogDescription></DialogDescription>
+            <div>
+              Click on the links below to show others your Collection or your
+              Wish List
+            </div>
+            <div className="flex justify-center gap-4">
+              <Select
+                name="order"
+                onValueChange={(val) => setListToShare(val)}
+                defaultValue={cardLists[0]?.name}
+              >
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="List Name" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cardLists.map((list) => (
+                    <SelectItem value={list.name} key={list.name}>
+                      {list.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={async () => {
+                  await window.navigator.clipboard.writeText(
+                    `${window.location.hostname}/cardlist?source=${listToShare}&member=${username}`,
+                  );
+
+                  toast({
+                    variant: "success",
+                    title: "Success!",
+                    description: "URL copied to your clipboard!",
+                  });
+                }}
+              >
+                Copy URL
+              </Button>
+            </div>
           </DialogHeader>
         </DialogContent>
       </Dialog>

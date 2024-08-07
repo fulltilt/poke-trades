@@ -27,43 +27,38 @@ export default async function CardList({
   params?: { id: string };
   searchParams?: SearchParams;
 }) {
+  const user = auth();
+  // const loggedInUser = await getUser(user.userId ?? "");
+  // if (!loggedInUser?.username) {
+  //   redirect("/username");
+  // }
+
+  const member = searchParams?.member ?? "";
+  const currentPage = Number(searchParams?.page) ?? 1;
+  const pageSize = Number(searchParams?.pageSize) ?? 30;
+  const displayAs = searchParams?.displayAs ?? "images";
+  const orderBy = searchParams?.orderBy ?? "number";
+  const source = searchParams?.source ?? "all";
+  const search = searchParams?.search ?? "";
+
+  let userId = user.userId;
+
   async function Cards() {
-    const user = auth();
-    // const loggedInUser = await getUser(user.userId ?? "");
-    // if (!loggedInUser?.username) {
-    //   redirect("/username");
-    // }
-
-    const currentPage = Number(searchParams?.page) ?? 1;
-    const pageSize = Number(searchParams?.pageSize) ?? 30;
-    const displayAs = searchParams?.displayAs ?? "images";
-    const orderBy = searchParams?.orderBy ?? "number";
-    const source = searchParams?.source ?? "all";
-    const search = searchParams?.search ?? "";
-    const member = searchParams?.member ?? "";
-
-    let userId = user.userId;
-
     // special logic to view a users collection without being logged in
     if (member) {
       userId = (await getUserId(member))?.id ?? "";
     }
 
     const cardLists = await getUsersCardLists(userId ?? "");
-    const collectionId =
-      cardLists.filter((l) => l.name === "Collection")[0]?.cardListId ?? 0;
     const wishListId =
       cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
+    const listId =
+      cardLists.filter((l) => l.name === source)[0]?.cardListId ?? 0;
 
     const cardData =
       source === "all"
         ? await getAllCards(currentPage, pageSize, search, orderBy)
-        : await getCardsInCardList(
-            source === "collection" ? collectionId : wishListId,
-            currentPage,
-            pageSize,
-            search,
-          );
+        : await getCardsInCardList(listId, currentPage, pageSize, search);
     const pageCount = Math.ceil(cardData?.totalCount / Number(pageSize));
 
     const wishList = (
@@ -124,7 +119,10 @@ export default async function CardList({
     <div className="m-auto mt-6 flex max-w-[1200px] flex-col items-center sm:items-start">
       <div className="text-4xl font-bold">{setInfo?.data?.name ?? ""}</div>
       <div className="mb-4 mt-6">
-        <SearchInput placeholder={"Search cards..."} />
+        <SearchInput
+          placeholder={"Search cards..."}
+          hideRadios={member.length !== 0}
+        />
       </div>
       <Suspense
         fallback={

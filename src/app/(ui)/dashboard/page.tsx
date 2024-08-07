@@ -3,7 +3,11 @@
 // import { SkeletonCard } from "~/components/skeletonCard";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getUser, getUsersCardLists } from "~/server/queries";
+import {
+  getCompletedTrades,
+  getUser,
+  getUsersCardLists,
+} from "~/server/queries";
 import Link from "next/link";
 import NewTradeComponent from "./newList";
 
@@ -16,6 +20,7 @@ export default async function Dashboard() {
     redirect("/username");
   }
 
+  const completedTrades = await getCompletedTrades(user.userId);
   const cardLists = await getUsersCardLists(user.userId);
   const publicLists = cardLists.filter((l) => !l.is_private && !l.is_sub_list);
   const privateLists = cardLists.filter((l) => l.is_private && !l.is_sub_list);
@@ -36,12 +41,16 @@ export default async function Dashboard() {
             <NewTradeComponent
               user={user.userId}
               username={loggedInUser.username}
+              cardLists={publicLists}
             />
           </div>
         </div>
       </div>
 
-      <main className="mb-12 max-w-screen-xl flex-1 pt-2">
+      <main className="mb-12 max-w-screen-xl flex-1 px-4 py-8 pt-2 sm:px-6 sm:py-12 lg:px-8">
+        <p className="text-lg font-semibold">
+          Completed Trades: {completedTrades.data}
+        </p>
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
             <p className="font-bold">Public Lists</p>
@@ -73,12 +82,12 @@ export default async function Dashboard() {
               ))}
             </ul>
           </div>
-          <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
+          {/* <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
             <p className="font-bold">Pending Trades</p>
           </div>
           <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
             <p className="font-bold">Completed Trades</p>
-          </div>
+          </div> */}
         </div>
       </main>
     </div>

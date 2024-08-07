@@ -67,7 +67,7 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] autogenerate public tradelist after user enters username
 [x] Lock trade on Complete and +1 trade to each user
 [] Build out Notifications page
-[] Add trade stats
+[x] Add trade stats
 [] Let users share trade lists
 [] Convert queries to prepared statements
 [] Proper error handling on the database side with respective messages on the UI

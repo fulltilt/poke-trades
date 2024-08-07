@@ -141,3 +141,10 @@ export type SearchParams = {
   source?: string;
   member?: string;
 };
+
+export type CardList = {
+  cardListId: number;
+  name: string;
+  is_private: boolean | null;
+  is_sub_list: boolean | null;
+};

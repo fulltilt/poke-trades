@@ -665,7 +665,6 @@ export async function getTradeLists(user_id: string) {
         icl.name = 'Wish List' AND
         icl.id = icli.card_list_id)
   `);
-  // console.log(res.rows);
   return res.rows;
 
   // const subquery = db
@@ -858,6 +857,26 @@ export async function updateTradeStatus(
       message = "Status updated";
     }
     return { success: message };
+  } catch {
+    return { error: "Error updating Trade status" };
+  }
+}
+
+export async function getCompletedTrades(user_id: string) {
+  try {
+    const res = await db
+      .select({ count: count() })
+      .from(trade)
+      .where(
+        and(
+          or(eq(trade.user_id, user_id), eq(trade.other_user_id, user_id)),
+          eq(trade.user_status, 4),
+          eq(trade.other_user_status, 4),
+        ),
+      )
+      .execute();
+
+    return { data: res[0]?.count };
   } catch {
     return { error: "Error updating Trade status" };
   }

@@ -5,7 +5,13 @@ import { useDebouncedCallback } from "use-debounce";
 import { createQueryString } from "~/app/utils/helpers";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 
-export default function SearchInput({ placeholder }: { placeholder: string }) {
+export default function SearchInput({
+  placeholder,
+  hideRadios,
+}: {
+  placeholder: string;
+  hideRadios: boolean;
+}) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -40,30 +46,32 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
         />
       </div>
       <div>
-        <RadioGroup
-          defaultValue="all"
-          className="flex gap-4"
-          onValueChange={(val) => {
-            const urlParams = createQueryString(
-              { source: val },
-              searchParams.toString(),
-            );
-            router.push(`${pathname}?${urlParams}`);
-          }}
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="all" id="all" />
-            <label htmlFor="all">All</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="collection" id="collection" />
-            <label htmlFor="collection">In Collection</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="wishlist" id="wishlist" />
-            <label htmlFor="wishlist">Wish List</label>
-          </div>
-        </RadioGroup>
+        {!hideRadios && (
+          <RadioGroup
+            defaultValue="all"
+            className="flex gap-4"
+            onValueChange={(val) => {
+              const urlParams = createQueryString(
+                { source: val },
+                searchParams.toString(),
+              );
+              router.push(`${pathname}?${urlParams}`);
+            }}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="all" id="all" />
+              <label htmlFor="all">All</label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Collection" id="collection" />
+              <label htmlFor="collection">In Collection</label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Wish List" id="wishlist" />
+              <label htmlFor="wishlist">Wish List</label>
+            </div>
+          </RadioGroup>
+        )}
       </div>
     </div>
   );
