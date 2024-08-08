@@ -59,6 +59,7 @@ export const user = createTable("user", {
   username: varchar("username").unique(),
   email: varchar("email").notNull(),
   completed_trades: integer("completed_trades").default(0),
+  is_premium: boolean("is_premium").default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -142,4 +143,7 @@ export const notification = createTable("notification", {
     .references(() => user.auth_id),
   message: varchar("message").notNull(),
   viewed: boolean("viewed").default(false),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });

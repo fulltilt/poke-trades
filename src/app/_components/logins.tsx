@@ -38,8 +38,10 @@ export default function Logins() {
   useEffect(() => {
     async function fetchNotifications() {
       try {
-        const res = await getNotifications(userId!);
-        setCount(res.notifications!.length);
+        const res = (await getNotifications(userId!))?.data?.filter(
+          (n) => n.viewed === false,
+        );
+        setCount(res?.length ?? 0);
       } catch {
         toast({
           title: "Error",

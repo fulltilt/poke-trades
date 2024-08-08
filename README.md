@@ -66,20 +66,19 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Add sort by price
 [x] autogenerate public tradelist after user enters username
 [x] Lock trade on Complete and +1 trade to each user
-[] Build out Notifications page
 [x] Add trade stats
-[] Let users share trade lists
-[] Convert queries to prepared statements
+[x] Let users share trade lists
+[x] Build out Notifications page
+[] Convert queries to prepared statements, Get away from raw queries
+[] move to Auth.js
 [] Proper error handling on the database side with respective messages on the UI
-[] Get away from raw queries
 [] handle when adding variations of same card. Currently doesn't differentiate between holo/normal/reverse/etc
 [] Send notification email
+[] Limit # of public lists for non-premium users
 [] Optimize trade search
 [] Realtime updates on trade page
 [] Go through all sets to make sure cards are in order and all show up
 [x] Consider how to deal with deletions when there's foreign keys (ie trade table relies on trade lists which user may want to delete (update: don't let them delete but hide trades after a certain time))
-[] Figure out Clerk middleware to redirect user when doesn't have a username set
-[] Clerk route testing (redirects after auth, redirects after logging out, etc)
 
 Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos
@@ -90,3 +89,75 @@ already hasn't happeed yet, there will be an ability to manually change the pric
 
 https://tocalai.medium.com/pagination-on-tanstack-table-under-next-js-787ed03198a3
 https://medium.com/@ctrlaltmonique/how-to-use-usecontext-and-usereducer-with-typescript-in-react-735f6c5f27ba
+
+TRIGGER FUNCTIONS
+
+CREATE OR REPLACE FUNCTION create_notification()
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+AS $$
+BEGIN
+INSERT INTO poketrades_notification (sender_id, recipient_id, message)
+VALUES (NEW.user_id, NEW.other_user_id, 'You have a new trade request from user ' || NEW.username);
+RETURN NEW;
+END;
+
+$$
+;
+
+CREATE TRIGGER after_trade_insert
+AFTER INSERT
+ON poketrades_trade
+FOR EACH ROW
+EXECUTE PROCEDURE create_notification();
+
+
+CREATE OR REPLACE FUNCTION create_list()
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+AS
+$$
+
+BEGIN
+INSERT INTO poketrades_card_list (name, user_id, is_private, is_sub_list)
+VALUES (NEW.username || '\_TradeList', OLD.auth_id, FALSE, FALSE);
+RETURN NEW;
+END;
+
+$$
+;
+
+CREATE OR REPLACE TRIGGER create_public_list
+AFTER UPDATE
+OF username
+ON poketrades_user
+FOR EACH ROW
+EXECUTE PROCEDURE create_list();
+
+
+CREATE OR REPLACE FUNCTION update_trades()
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+AS
+$$
+
+BEGIN
+UPDATE poketrades_user
+SET completed_trades = completed_trades + 1
+WHERE auth_id = NEW.user_id;
+UPDATE poketrades_user
+SET completed_trades = completed_trades + 1
+WHERE auth_id = NEW.other_user_id;
+RETURN NEW;
+END;
+
+$$
+;
+
+CREATE OR REPLACE TRIGGER update_trades
+AFTER UPDATE OF user_status, other_user_status
+ON poketrades_trade
+FOR EACH ROW
+WHEN (NEW.user_status = 4 AND NEW.other_user_status = 4)
+EXECUTE PROCEDURE update_trades();
+$$

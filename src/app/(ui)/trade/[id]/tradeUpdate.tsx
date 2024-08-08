@@ -61,6 +61,8 @@ export default function TradeUpdate({
   const [otherUserList, setOtherUserList] = useState<Card[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentList, setCurrentList] = useState(0);
+  const [userLoading, setUserLoading] = useState(true);
+  const [otherUserLoading, setOtherUserLoading] = useState(true);
 
   useEffect(() => {
     getCardsInCardList(sub_card_list_id, 1, 30, "")
@@ -70,7 +72,8 @@ export default function TradeUpdate({
         );
         setUserList(cards as Card[]);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setUserLoading(false));
 
     getCardsInCardList(other_sub_card_list_id, 1, 30, "")
       .then((res) => {
@@ -79,7 +82,8 @@ export default function TradeUpdate({
         );
         setOtherUserList(cards as Card[]);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
+      .finally(() => setOtherUserLoading(false));
   }, [sub_card_list_id, other_sub_card_list_id]);
 
   return (
@@ -146,7 +150,8 @@ export default function TradeUpdate({
               </tbody>
             </table>
           </div>
-        ) : (
+        ) : null}
+        {userLoading && (
           <div className="flex items-center justify-around px-4 sm:px-6 sm:py-4 lg:px-8">
             <Skeleton className="h-12 w-12 rounded-full" />
             <div className="w-[50%] space-y-2">
@@ -155,6 +160,9 @@ export default function TradeUpdate({
             </div>
             <Skeleton className="h-12 w-12 rounded-full" />
           </div>
+        )}
+        {!userLoading && userList.length === 0 && (
+          <p className="mt-4 text-center">List currently empty</p>
         )}
       </div>
 
@@ -220,7 +228,8 @@ export default function TradeUpdate({
               </tbody>
             </table>
           </div>
-        ) : (
+        ) : null}
+        {otherUserLoading && (
           <div className="flex items-center justify-around px-4 sm:px-6 sm:py-4 lg:px-8">
             <Skeleton className="h-12 w-12 rounded-full" />
             <div className="w-[50%] space-y-2">
@@ -229,6 +238,9 @@ export default function TradeUpdate({
             </div>
             <Skeleton className="h-12 w-12 rounded-full" />
           </div>
+        )}
+        {!otherUserLoading && otherUserList.length === 0 && (
+          <p className="mt-4 text-center">List currently empty</p>
         )}
       </div>
 

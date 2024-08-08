@@ -890,13 +890,35 @@ export async function getNotifications(user_id: string) {
       .where(
         and(
           eq(notification.recipient_id, user_id),
-          eq(notification.viewed, false),
+          // eq(notification.viewed, false),
         ),
       )
       .execute();
-    return { notifications: res };
+    return { data: res };
   } catch (err) {
     return { error: "Error retrieving notifications" };
+  }
+}
+
+export async function markNotificationAsRead(id: number) {
+  try {
+    await db
+      .update(notification)
+      .set({ viewed: true })
+      .where(eq(notification.id, id))
+      .execute();
+    return { data: "Successfully updated notification" };
+  } catch (err) {
+    return { error: "Error updating notification" };
+  }
+}
+
+export async function deleteNotification(id: number) {
+  try {
+    await db.delete(notification).where(eq(notification.id, id)).execute();
+    return { data: "Successfully deleted notification" };
+  } catch (err) {
+    return { error: "Error deleting notification" };
   }
 }
 

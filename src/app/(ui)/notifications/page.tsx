@@ -1,13 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getUser } from "~/server/queries";
+import { getNotifications, getUser } from "~/server/queries";
+import NotificationTable from "./notificationTable";
 
 export default async function Notifications() {
   const user = auth();
-  if (!user.userId) redirect("/");
-
-  const currentUser = await getUser(user.userId);
+  const currentUser = await getUser(user?.userId ?? "");
   if (!currentUser?.username) redirect("/dashboard");
+
+  const notifications = (await getNotifications(user?.userId ?? "")).data;
 
   return (
     <div className="flex max-h-full flex-1 flex-col rounded-md pl-14 pr-14">
@@ -20,9 +21,9 @@ export default async function Notifications() {
 
             <p className="mt-1.5 text-sm text-gray-500"></p>
           </div>
-
-          <div className="flex items-center gap-4"></div>
         </div>
+
+        <NotificationTable notifications={notifications!} />
       </div>
     </div>
   );

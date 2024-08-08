@@ -65,7 +65,7 @@ export function reducer(state: State, action: Actions) {
     case ActionTypes.INCREMENT:
       return {
         ...state,
-        count: action.payload,
+        count: state.count + 1,
       };
     case ActionTypes.DECREMENT:
       return {

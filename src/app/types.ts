@@ -148,3 +148,12 @@ export type CardList = {
   is_private: boolean | null;
   is_sub_list: boolean | null;
 };
+
+export type Notification = {
+  id: number;
+  created_at: Date;
+  sender_id: string;
+  recipient_id: string;
+  message: string;
+  viewed: boolean | null;
+};
