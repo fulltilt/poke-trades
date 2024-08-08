@@ -118,7 +118,7 @@ export default async function CardList({
     <div className="m-auto mt-6 flex max-w-[1200px] flex-col items-center sm:items-start">
       <div className="ml-4 text-4xl font-bold">{setInfo?.data?.name ?? ""}</div>
       <div className="mb-4 mt-6">
-        <SearchInput placeholder={"Search cards..."} />
+        <SearchInput placeholder={"Search cards..."} hideRadios={false} />
       </div>
       <Suspense
         fallback={

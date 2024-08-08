@@ -104,25 +104,28 @@ export async function getAllCards(
     pageSize = 30;
     page = 1;
   }
+  // const cardsPrepared = db
+  //     .select({
+  //       id: cards.id,
+  //       data: cards.data,
+  //       price: sql`jsonb_path_query(data, '$.tcgplayer.prices.*.market')`.as(
+  //         "price",
+  //       ),
+  //     })
+  //     .from(cards)
+  //     .where(sql`data->>'name' ILIKE ${sql.placeholder("search")}`)
+  //     .groupBy(cards.id)
+  //     // .orderBy(sql`price ${sql.placeholder("order")}`)
+  //     // .orderBy(({ price }) => price)
+  //     .limit(sql.placeholder("limit"))
+  //     .offset(sql.placeholder("offset"));
 
-  // const test = db
-  //   .select({
-  //     id: cards.id,
-  //     data: cards.data,
-  //     price: sql`jsonb_path_query(data, '$.tcgplayer.prices.*.market') AS price`,
-  //   })
-  //   .from(cards)
-  //   .where(sql`data->>'name' ILIKE ${sql.placeholder("search")}`)
-  //   .groupBy(cards.id)
-  //   .orderBy(sql`price DESC`)
-  //   .limit(30);
-
-  // const testData = await test.execute({
-  //   search: `%${search}%`,
-  //   limit: pageSize,
-  //   offset: (page - 1) * pageSize,
-  // });
-  // console.log(testData);
+  //   cardsData = await cardsPrepared.execute({
+  //     search: `%${search}%`,
+  //     limit: pageSize,
+  //     offset: (page - 1) * pageSize,
+  //     order: orderBy.includes("DESC") ? "DESC" : "ASC",
+  //   });
 
   const countPrepared = db
     .select({ count: count() })
@@ -140,19 +143,37 @@ export async function getAllCards(
     price?: number;
   }[];
   if (orderBy.includes("price")) {
-    const cards = await db.execute(sql`
+    // console.log(
+    //   db.execute(
+    //     sql`SELECT * FROM poketrades_user WHERE username ILIKE '%${search}%'`,
+    //   ),
+    // );
+    // console.log(
+    //   db.execute(sql`
+    //   SELECT id, data, price
+    //   FROM (
+    //     SELECT distinct on (id) id, data, jsonb_path_query(data, '$.tcgplayer.prices.*.market') AS price
+    //     FROM ${cards}
+    //     WHERE DATA->>'name' ILIKE '%${search}%'
+    //   )
+    //   ORDER BY price ${orderBy.includes("DESC") ? "DESC" : "ASC"}
+    //   LIMIT ${pageSize}
+    //   OFFSET ${(page - 1) * pageSize}
+    // `),
+    // );
+    const cardsRes = await db.execute(sql`
       SELECT id, data, price 
       FROM (
         SELECT distinct on (id) id, data, jsonb_path_query(data, '$.tcgplayer.prices.*.market') AS price
-        FROM poketrades_card
-        WHERE DATA->>'name' ILIKE '%${sql.raw(search)}%'
+        FROM ${cards}
+        WHERE DATA->>'name' ILIKE '%${search}%'
       )
       ORDER BY price ${sql.raw(orderBy.includes("DESC") ? "DESC" : "ASC")} 
       LIMIT ${pageSize}
       OFFSET ${(page - 1) * pageSize}
     `);
 
-    cardsData = cards.rows as {
+    cardsData = cardsRes.rows as {
       id: string;
       data: Card | null;
       price?: number;
