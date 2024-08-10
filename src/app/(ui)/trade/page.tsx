@@ -12,11 +12,11 @@ import TradeRequest from "./tradeRequest";
 import { auth } from "~/app/api/auth/authConfig";
 
 type List = {
-  id: number;
+  card_list_id: number;
+  user_id: string;
   name: string;
   username: string;
   card_id: string;
-  auth_id: string;
 };
 
 export default async function TradeComponent() {
@@ -41,17 +41,18 @@ export default async function TradeComponent() {
   const aggregatedListData = otherUsersTradeLists.reduce<
     Map<number, { username: string; listname: string; other_user_id: string }>
   >((acc, curr) => {
-    acc.set(curr.id, {
-      other_user_id: curr.auth_id,
+    acc.set(curr.card_list_id, {
+      other_user_id: curr.user_id,
       username: curr.username,
       listname: curr.name,
     });
     return acc;
   }, new Map());
+
   const tradeListsMap = otherUsersTradeLists.reduce<Map<number, string[]>>(
     (lists, current) => {
-      if (!lists.has(current.id)) lists.set(current.id, []);
-      lists.get(current.id)?.push(current.card_id);
+      if (!lists.has(current.card_list_id)) lists.set(current.card_list_id, []);
+      lists.get(current.card_list_id)?.push(current.card_id);
       return lists;
     },
     new Map(),
@@ -207,7 +208,7 @@ export default async function TradeComponent() {
                         otherUserId={otherUserId}
                         wishListId={wishListId}
                         otherUserListId={id}
-                        username={loggedInUser?.name ?? ""}
+                        username={loggedInUser?.username ?? ""}
                         otherUsername={username}
                       />
                     </td>

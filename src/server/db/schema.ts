@@ -118,8 +118,8 @@ export const trade = createTable("trade", {
   other_user_sub_card_list_id: integer(
     "other_user_sub_card_list_id",
   ).references(() => cardList.id),
-  username: varchar("username").references(() => user.name),
-  other_user_name: varchar("other_user_name").references(() => user.name),
+  username: varchar("username").references(() => user.username),
+  other_user_name: varchar("other_user_name").references(() => user.username),
   user_status: integer("user_status")
     .references(() => statusType.id)
     .default(2),
@@ -138,10 +138,10 @@ export const statusType = createTable("status_type", {
 
 export const notification = createTable("notification", {
   id: serial("id").primaryKey(),
-  sender_id: varchar("sender_id")
+  sender_id: text("sender_id")
     .notNull()
     .references(() => user.id),
-  recipient_id: varchar("recipient_id")
+  recipient_id: text("recipient_id")
     .notNull()
     .references(() => user.id),
   message: varchar("message").notNull(),

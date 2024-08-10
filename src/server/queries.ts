@@ -666,7 +666,7 @@ export async function getCardQuantityByList(user_id: string, card_id: string) {
 export async function getTradeLists(user_id: string) {
   const res = await db.execute(sql`
   SELECT DISTINCT 
-    cl.id, cl.name, cli.card_id, u.id, u.name
+    cl.id as card_list_id, cl.name, cli.card_id, u.id as user_id, u.username
   FROM 
     poketrades_card_list cl, poketrades_card_list_item cli, poketrades_user u
   WHERE 
@@ -790,6 +790,7 @@ export async function createTrade(
         is_sub_list: true,
       })
       .returning();
+
     const [l2] = await tx
       .insert(cardList)
       .values({
@@ -823,6 +824,7 @@ export async function getTrade(trade_id: number) {
 }
 
 // get trades involving a particular user
+// NOTE: will probably have to add another WHERE condition for trades that aren't completed
 export async function getTrades(user_id: string) {
   const res = await db
     .select()
