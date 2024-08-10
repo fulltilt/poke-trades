@@ -9,13 +9,11 @@ import {
   getCardsInCardList,
   getSet,
   getUserId,
-  // getUser,
   getUsersCardLists,
 } from "~/server/queries";
 import type { Card, SearchParams } from "~/app/types";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "~/app/api/auth/authConfig";
 import CardComponent from "./[id]/card";
-// import { redirect } from "next/navigation";
 import CardListOptions from "./cardListOptions";
 import { DataTable } from "~/components/data-table";
 import { columns } from "./columns";
@@ -27,11 +25,8 @@ export default async function CardList({
   params?: { id: string };
   searchParams?: SearchParams;
 }) {
-  const user = auth();
-  // const loggedInUser = await getUser(user.userId ?? "");
-  // if (!loggedInUser?.username) {
-  //   redirect("/username");
-  // }
+  const session = await auth();
+  let userId = session?.user?.id ?? "";
 
   const member = searchParams?.member ?? "";
   const currentPage = Number(searchParams?.page) ?? 1;
@@ -40,8 +35,6 @@ export default async function CardList({
   const orderBy = searchParams?.orderBy ?? "number";
   const source = searchParams?.source ?? "all";
   const search = searchParams?.search ?? "";
-
-  let userId = user.userId;
 
   async function Cards() {
     // special logic to view a users collection without being logged in
@@ -61,9 +54,9 @@ export default async function CardList({
         : await getCardsInCardList(listId, currentPage, pageSize, search);
     const pageCount = Math.ceil(cardData?.totalCount / Number(pageSize));
 
-    const wishList = (
-      await getCardList(user?.userId, wishListId, 1, 30)
-    )?.data.map((a) => a.cardId);
+    const wishList = (await getCardList(userId, wishListId, 1, 30))?.data.map(
+      (a) => a.cardId,
+    );
 
     return (
       <div className="m-4 flex max-w-[1200px] flex-col items-center sm:items-start">
@@ -78,7 +71,7 @@ export default async function CardList({
                 return (
                   <CardComponent
                     card={card}
-                    userId={user.userId}
+                    userId={userId}
                     key={card?.id}
                     inWishList={wishList?.includes(card?.id ?? null) ?? false}
                     cardLists={cardLists}
@@ -96,7 +89,7 @@ export default async function CardList({
               columns={columns}
               data={cardData.cards.map((d) => ({
                 card: d,
-                userId: user.userId,
+                userId: userId,
                 cardLists,
               }))}
               pageCount={pageCount}

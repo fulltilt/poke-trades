@@ -3,7 +3,7 @@ import { inter } from "~/app/fonts";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
+import { SessionProvider } from "next-auth/react";
 import { TopNav } from "./_components/topnav";
 import { Footer } from "./_components/footer";
 import { Toaster } from "~/components/ui/toaster";
@@ -20,7 +20,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider>
+    <SessionProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body className={`${inter.className} antialiased`}>
           <NextTopLoader />
@@ -34,6 +34,6 @@ export default function RootLayout({
           </div>
         </body>
       </html>
-    </ClerkProvider>
+    </SessionProvider>
   );
 }

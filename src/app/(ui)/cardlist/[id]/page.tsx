@@ -8,14 +8,15 @@ import {
   getCardsInCardList,
   getSet,
   getUsersCardLists,
+  getUser,
 } from "~/server/queries";
 import type { Card, SearchParams } from "~/app/types";
-import { auth } from "@clerk/nextjs/server";
 import CardComponent from "./card";
 import { redirect } from "next/navigation";
 import CardListOptions from "../cardListOptions";
 import { DataTable } from "~/components/data-table";
 import { columns } from "../columns";
+import { auth } from "~/app/api/auth/authConfig";
 
 export default async function CardList({
   params,
@@ -25,8 +26,14 @@ export default async function CardList({
   searchParams?: SearchParams;
 }) {
   async function Cards() {
-    const user = auth();
-    if (!user.userId) redirect("/");
+    const session = await auth();
+    if (!session) redirect("/auth/signin");
+
+    const userId = session?.user?.id ?? "";
+    const loggedInUser = await getUser(userId);
+    if (!loggedInUser?.username) {
+      redirect("/username");
+    }
 
     const currentPage = Number(searchParams?.page) ?? 1;
     const pageSize = Number(searchParams?.pageSize) ?? 30;
@@ -35,7 +42,7 @@ export default async function CardList({
     const source = searchParams?.source ?? "all";
     const search = searchParams?.search ?? "";
 
-    const cardLists = await getUsersCardLists(user.userId);
+    const cardLists = await getUsersCardLists(userId);
     const collectionId =
       cardLists.filter((l) => l.name === "Collection")[0]?.cardListId ?? 0;
     const wishListId =
@@ -58,10 +65,9 @@ export default async function CardList({
             params?.id ?? "",
           );
     const pageCount = Math.ceil((cardData?.totalCount ?? 0) / Number(pageSize));
-    // console.log(cardData);
-    const wishList = (
-      await getCardList(user?.userId, wishListId, 1, 30)
-    )?.data.map((a) => a.cardId);
+    const wishList = (await getCardList(userId, wishListId, 1, 30))?.data.map(
+      (a) => a.cardId,
+    );
 
     return (
       <div className="m-4 flex max-w-[1200px] flex-col items-center sm:items-start">
@@ -76,7 +82,7 @@ export default async function CardList({
                 return (
                   <CardComponent
                     card={card}
-                    userId={user.userId}
+                    userId={userId}
                     key={card?.id}
                     inWishList={wishList?.includes(card?.id ?? null) ?? false}
                     cardLists={cardLists}
@@ -95,7 +101,7 @@ export default async function CardList({
               columns={columns}
               data={cardData.cards.map((d) => ({
                 card: d,
-                userId: user.userId,
+                userId: userId,
                 cardLists,
               }))}
               pageCount={pageCount}

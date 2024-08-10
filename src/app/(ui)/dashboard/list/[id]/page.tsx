@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getCardList, getUser } from "~/server/queries";
 import { columns } from "./columns";
@@ -6,6 +5,7 @@ import { DataTable } from "../../../../../components/data-table";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { sortByDateAndThenNumber } from "~/app/utils/helpers";
+import { auth } from "~/app/api/auth/authConfig";
 
 export default async function ListComponent({
   params,
@@ -14,11 +14,14 @@ export default async function ListComponent({
   params?: { id: string };
   searchParams?: { name: string; page: string; pageSize: string };
 }) {
-  const user = auth();
-  if (!user.userId) redirect("/");
+  const session = await auth();
+  if (!session) redirect("/auth/signin");
 
-  const currentUser = await getUser(user.userId);
-  if (!currentUser?.username) redirect("/dashboard");
+  const userId = session?.user?.id ?? "";
+  const loggedInUser = await getUser(userId);
+  if (!loggedInUser?.username) {
+    redirect("/username");
+  }
 
   const name = searchParams?.name ?? "";
   const page = searchParams?.page ?? "1";
@@ -26,7 +29,7 @@ export default async function ListComponent({
 
   const listId = params?.id ?? 0;
   const listRes = await getCardList(
-    user.userId,
+    userId,
     Number(listId),
     Number(page),
     Number(offset),

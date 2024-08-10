@@ -1,6 +1,6 @@
 "use server";
 
-import { sql, count, like, and, eq, ne, or, inArray } from "drizzle-orm";
+import { sql, count, like, and, eq, ne, or, inArray, lt } from "drizzle-orm";
 import { db } from "./db";
 import {
   sets,
@@ -10,31 +10,11 @@ import {
   cardListItem,
   trade,
   notification,
+  verificationTokens,
 } from "./db/schema";
 import type { Card, SSet } from "~/app/types";
 
-export async function getUser(userId: string) {
-  if (!userId) throw new Error("Invalid User");
-
-  const res = await db
-    .select()
-    .from(user)
-    .where(eq(user.auth_id, userId))
-    .execute();
-
-  return res[0];
-}
-
-export async function getUserId(username: string) {
-  const res = await db
-    .select({ id: user.auth_id })
-    .from(user)
-    .where(eq(user.username, username))
-    .execute();
-
-  return res[0];
-}
-
+// Auth.js
 export async function updateUsername(
   userId: string,
   username: string,
@@ -50,7 +30,7 @@ export async function updateUsername(
     await db
       .update(user)
       .set({ username })
-      .where(eq(user.auth_id, userId))
+      .where(eq(user.id, userId))
       .execute();
 
     return {
@@ -62,6 +42,24 @@ export async function updateUsername(
       error: "Username already exists",
     };
   }
+}
+
+export async function getUser(userId: string) {
+  if (!userId) throw new Error("Invalid User");
+
+  const res = await db.select().from(user).where(eq(user.id, userId)).execute();
+
+  return res[0];
+}
+
+export async function getUserId(username: string) {
+  const res = await db
+    .select({ id: user.id })
+    .from(user)
+    .where(eq(user.username, username))
+    .execute();
+
+  return res[0];
 }
 
 export async function getSets() {
@@ -93,6 +91,7 @@ export async function getSet(id: string) {
 
   return res[0];
 }
+// /Auth.js
 
 export async function getAllCards(
   page: number,
@@ -144,8 +143,8 @@ export async function getAllCards(
   }[];
   if (orderBy.includes("price")) {
     // console.log(
-    //   db.execute(
-    //     sql`SELECT * FROM poketrades_user WHERE username ILIKE '%${search}%'`,
+    //   await db.execute(
+    //     sql`SELECT * FROM poketrades_user WHERE username ILIKE '%' || ${search} || '%'`,
     //   ),
     // );
     // console.log(
@@ -166,7 +165,7 @@ export async function getAllCards(
       FROM (
         SELECT distinct on (id) id, data, jsonb_path_query(data, '$.tcgplayer.prices.*.market') AS price
         FROM ${cards}
-        WHERE DATA->>'name' ILIKE '%${search}%'
+        WHERE DATA->>'name' ILIKE '%' || ${search} || '%'
       )
       ORDER BY price ${sql.raw(orderBy.includes("DESC") ? "DESC" : "ASC")} 
       LIMIT ${pageSize}
@@ -336,7 +335,7 @@ export async function getCardsInSet(
 }
 
 export async function createUser(auth_id: string, email: string) {
-  await db.insert(user).values({ auth_id, email });
+  await db.insert(user).values({ id: auth_id, email });
 
   // const cardsData = await cardsPrepared.execute({
   //   search: `%${search}%`,
@@ -667,11 +666,11 @@ export async function getCardQuantityByList(user_id: string, card_id: string) {
 export async function getTradeLists(user_id: string) {
   const res = await db.execute(sql`
   SELECT DISTINCT 
-    cl.id, cl.name, cli.card_id, u.auth_id, u.username
+    cl.id, cl.name, cli.card_id, u.id, u.name
   FROM 
     poketrades_card_list cl, poketrades_card_list_item cli, poketrades_user u
   WHERE 
-    u.auth_id = cl.user_id AND
+    u.id = cl.user_id AND
     cl.is_private IS NOT TRUE AND
     cl.name != 'Wish List' AND
     cl.user_id != ${user_id} AND
@@ -940,6 +939,37 @@ export async function deleteNotification(id: number) {
     return { data: "Successfully deleted notification" };
   } catch (err) {
     return { error: "Error deleting notification" };
+  }
+}
+
+export async function clearStaleTokens() {
+  try {
+    await db
+      .delete(verificationTokens)
+      .where(lt(verificationTokens.expires, sql`CURRENT_TIMESTAMP`));
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function checkForExistingGoogleAccount(uuid: string) {
+  try {
+    const res = await db.execute(
+      sql`SELECT EXISTS (SELECT 1 FROM accounts WHERE provider = 'google' AND \"userId\" = ${uuid})`,
+    );
+    return res.rows;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function unlinkAccount(provider: string, uuid: string) {
+  try {
+    await db.execute(
+      sql`DELETE FROM accounts WHERE provider = '${provider}' AND \"userId\" = ${uuid}`,
+    );
+  } catch (err) {
+    console.error(`Failed to unlink ${provider} account:`, err);
   }
 }
 

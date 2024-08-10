@@ -1,16 +1,17 @@
-import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
-import { Button, buttonVariants } from "~/components/ui/button";
-import { SignInButton } from "@clerk/nextjs";
+import { buttonVariants } from "~/components/ui/button";
 import { redirect } from "next/navigation";
+import { auth } from "./api/auth/authConfig";
+import { SignInButton } from "./_components/signInButton";
 
 export const dynamic = "force-dynamic";
 
-export default function HomePage() {
-  const user = auth();
+export default async function HomePage() {
+  const session = await auth();
+  const userId = session?.user?.id ?? "";
 
-  if (!user.userId) {
+  if (!userId) {
     return (
       <div className="bg-slate-900">
         <section className="body-font text-gray-600">
@@ -23,11 +24,7 @@ export default function HomePage() {
               trading process smooth and trackable
             </h2>
             <div className="ml-6 flex justify-center gap-8">
-              <SignInButton>
-                <Button variant="outline" className="w-28">
-                  Sign In
-                </Button>
-              </SignInButton>
+              <SignInButton className="bg-white text-black hover:bg-white" />
               <Link
                 href="/cardlist"
                 className={buttonVariants({ variant: "outline" })}

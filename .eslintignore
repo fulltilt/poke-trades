@@ -1,0 +1,3 @@
+# .eslintignore
+
+src/app/api/auth/authConfig.ts

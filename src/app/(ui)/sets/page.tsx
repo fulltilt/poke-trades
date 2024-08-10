@@ -1,7 +1,5 @@
-import { getSets, getUser } from "~/server/queries";
-import { auth } from "@clerk/nextjs/server";
+import { getSets } from "~/server/queries";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import type { SSet } from "~/app/types";
 
 const SetDisplay = ({ set }: { set: SSet | null }) => {
@@ -31,11 +29,14 @@ const SetDisplay = ({ set }: { set: SSet | null }) => {
 };
 
 export default async function Series() {
-  const user = auth();
-  const loggedInUser = await getUser(user?.userId ?? "");
-  if (!loggedInUser?.username) {
-    redirect("/username");
-  }
+  // const session = await auth();
+  // if (!session) redirect("/auth/signin");
+
+  // const userId = session?.user?.id ?? "";
+  // const loggedInUser = await getUser(userId);
+  // if (!loggedInUser?.username) {
+  //   redirect("/username");
+  // }
 
   const sets = await getSets();
 

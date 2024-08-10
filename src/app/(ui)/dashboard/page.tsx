@@ -1,7 +1,3 @@
-// import { Suspense } from "react";
-
-// import { SkeletonCard } from "~/components/skeletonCard";
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import {
   getCompletedTrades,
@@ -10,18 +6,20 @@ import {
 } from "~/server/queries";
 import Link from "next/link";
 import NewTradeComponent from "./newList";
+import { auth } from "~/app/api/auth/authConfig";
 
 export default async function Dashboard() {
-  const user = auth();
-  if (!user.userId) redirect("/");
+  const session = await auth();
+  if (!session) redirect("/auth/signin");
 
-  const loggedInUser = await getUser(user.userId);
+  const userId = session?.user?.id ?? "";
+  const loggedInUser = await getUser(userId);
   if (!loggedInUser?.username) {
     redirect("/username");
   }
 
-  const completedTrades = await getCompletedTrades(user.userId);
-  const cardLists = await getUsersCardLists(user.userId);
+  const completedTrades = await getCompletedTrades(userId);
+  const cardLists = await getUsersCardLists(userId);
   const publicLists = cardLists.filter((l) => !l.is_private && !l.is_sub_list);
   const privateLists = cardLists.filter((l) => l.is_private && !l.is_sub_list);
 
@@ -39,8 +37,8 @@ export default async function Dashboard() {
 
           <div className="flex items-center gap-4">
             <NewTradeComponent
-              user={user.userId}
-              username={loggedInUser.username}
+              user={userId}
+              username={loggedInUser?.username ?? ""}
               cardLists={publicLists}
             />
           </div>

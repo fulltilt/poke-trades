@@ -1,13 +1,14 @@
 "use client";
 
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignInButton } from "./signInButton";
 import { useAppContext } from "./reducers";
 import Link from "next/link";
 import { Badge } from "~/components/ui/badge";
-import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { getNotifications } from "~/server/queries";
 import { useToast } from "~/components/ui/use-toast";
+import { SignOutButton } from "./signOutButton";
+import type { Session } from "next-auth";
 
 function NotificationBell() {
   return (
@@ -28,8 +29,9 @@ function NotificationBell() {
   );
 }
 
-export default function Logins() {
-  const { userId } = useAuth();
+export default function Logins({ session }: { session: Session | null }) {
+  // const { userId } = useAuth();
+  const userId = session?.user?.id ?? "";
   const { state } = useAppContext();
   const { toast } = useToast();
 
@@ -38,7 +40,7 @@ export default function Logins() {
   useEffect(() => {
     async function fetchNotifications() {
       try {
-        const res = (await getNotifications(userId!))?.data?.filter(
+        const res = (await getNotifications(userId))?.data?.filter(
           (n) => n.viewed === false,
         );
         setCount(res?.length ?? 0);
@@ -73,13 +75,15 @@ export default function Logins() {
         <Link href={"/notifications"}>Notifications</Link>
       </div>
       {/* <div className="sm:hidden">Login</div> */}
-      <div className="mt-4 sm:mt-2">
+      {/* <div className="mt-4 sm:mt-2">
         <SignedOut>
           <SignInButton />
         </SignedOut>
         <SignedIn>
           <UserButton />
-        </SignedIn>
+        </SignedIn> */}
+      <div className="mt-4 sm:mt-0">
+        {userId ? <SignOutButton /> : <SignInButton />}
       </div>
     </div>
   );

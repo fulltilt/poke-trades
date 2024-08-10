@@ -1,14 +1,19 @@
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getNotifications, getUser } from "~/server/queries";
 import NotificationTable from "./notificationTable";
+import { auth } from "~/app/api/auth/authConfig";
 
 export default async function Notifications() {
-  const user = auth();
-  const currentUser = await getUser(user?.userId ?? "");
-  if (!currentUser?.username) redirect("/dashboard");
+  const session = await auth();
+  if (!session) redirect("/auth/signin");
 
-  const notifications = (await getNotifications(user?.userId ?? "")).data;
+  const userId = session?.user?.id ?? "";
+  const loggedInUser = await getUser(userId);
+  if (!loggedInUser?.username) {
+    redirect("/username");
+  }
+
+  const notifications = (await getNotifications(userId)).data;
 
   return (
     <div className="flex max-h-full flex-1 flex-col rounded-md pl-14 pr-14">

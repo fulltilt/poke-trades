@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import {
   getCardList,
@@ -10,6 +9,7 @@ import {
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import TradeRequest from "./tradeRequest";
+import { auth } from "~/app/api/auth/authConfig";
 
 type List = {
   id: number;
@@ -20,23 +20,24 @@ type List = {
 };
 
 export default async function TradeComponent() {
-  const user = auth();
-  if (!user.userId) redirect("/");
+  const session = await auth();
+  if (!session) redirect("/auth/signin");
 
-  const loggedInUser = await getUser(user.userId);
+  const userId = session?.user?.id ?? "";
+  const loggedInUser = await getUser(userId);
   if (!loggedInUser?.username) {
     redirect("/username");
   }
 
   // aggregate Wish List
   const wishListId =
-    (await getUsersCardLists(user.userId)).filter(
+    (await getUsersCardLists(userId)).filter(
       (list) => list.name === "Wish List",
     )[0]?.cardListId ?? 0;
-  const cardsInWishList = await getCardList(user.userId, wishListId, 1, 30);
+  const cardsInWishList = await getCardList(userId, wishListId, 1, 30);
 
   // aggregate other users trade lists that contain Cards in Wish List
-  const otherUsersTradeLists = (await getTradeLists(user.userId)) as List[];
+  const otherUsersTradeLists = (await getTradeLists(userId)) as List[];
   const aggregatedListData = otherUsersTradeLists.reduce<
     Map<number, { username: string; listname: string; other_user_id: string }>
   >((acc, curr) => {
@@ -56,7 +57,7 @@ export default async function TradeComponent() {
     new Map(),
   );
 
-  const inProgressTrades = await getTrades(user.userId);
+  const inProgressTrades = await getTrades(userId);
   const inProgressTradeOtherListIds = inProgressTrades.map(
     (t) => t.other_user_card_list_id,
   );
@@ -202,11 +203,11 @@ export default async function TradeComponent() {
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-center text-gray-700">
                       <TradeRequest
-                        userId={user.userId}
+                        userId={userId}
                         otherUserId={otherUserId}
                         wishListId={wishListId}
                         otherUserListId={id}
-                        username={loggedInUser?.username ?? ""}
+                        username={loggedInUser?.name ?? ""}
                         otherUsername={username}
                       />
                     </td>

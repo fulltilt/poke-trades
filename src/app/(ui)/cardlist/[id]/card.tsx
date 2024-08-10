@@ -20,7 +20,6 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 
-import { SignInButton } from "@clerk/nextjs";
 import { Button } from "~/components/ui/button";
 import { formatType, getPrice } from "~/app/utils/helpers";
 
@@ -213,11 +212,9 @@ export default function CardComponent({
             {!userId ? (
               <p>
                 Please{" "}
-                <SignInButton>
-                  <span className="cursor-pointer underline focus:outline-none">
-                    Sign In
-                  </span>
-                </SignInButton>{" "}
+                <span className="cursor-pointer underline focus:outline-none">
+                  Sign In
+                </span>
                 or create an account to access functionality
               </p>
             ) : (

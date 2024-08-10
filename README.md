@@ -69,8 +69,8 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Add trade stats
 [x] Let users share trade lists
 [x] Build out Notifications page
-[] Convert queries to prepared statements, Get away from raw queries
 [] move to Auth.js
+[] Convert queries to prepared statements, Get away from raw queries
 [] Proper error handling on the database side with respective messages on the UI
 [] handle when adding variations of same card. Currently doesn't differentiate between holo/normal/reverse/etc
 [] Send notification email
@@ -89,7 +89,7 @@ already hasn't happeed yet, there will be an ability to manually change the pric
 
 https://tocalai.medium.com/pagination-on-tanstack-table-under-next-js-787ed03198a3
 https://medium.com/@ctrlaltmonique/how-to-use-usecontext-and-usereducer-with-typescript-in-react-735f6c5f27ba
-https://github.com/drizzle-team/drizzle-orm/discussions/1452
+https://www.youtube.com/watch?v=TLGFTH4s_0Y
 
 TRIGGER FUNCTIONS
 

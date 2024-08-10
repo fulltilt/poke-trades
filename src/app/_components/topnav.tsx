@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { auth } from "../api/auth/authConfig";
 
 export function Hamburger() {
   return (
@@ -26,7 +27,9 @@ export function Hamburger() {
   );
 }
 
-export function TopNav() {
+export async function TopNav() {
+  const session = await auth();
+
   return (
     <nav className="sticky top-0 z-50 flex w-full items-center justify-between bg-black p-2 pl-4 pr-4 text-xl font-semibold text-white">
       <div className="flex items-center gap-8">
@@ -76,13 +79,13 @@ export function TopNav() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Logins />
+              <Logins session={session} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
       <div className="hidden sm:block">
-        <Logins />
+        <Logins session={session} />
       </div>
     </nav>
   );

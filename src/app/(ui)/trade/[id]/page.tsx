@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import {
   getCardsInList,
@@ -9,12 +8,14 @@ import {
 import TradeUpdate from "./tradeUpdate";
 import { Suspense } from "react";
 import TradeStatusUpdate from "./statusUpdate";
+import { auth } from "~/app/api/auth/authConfig";
 
 export default async function Trade({ params }: { params?: { id: string } }) {
-  const user = auth();
-  if (!user.userId) redirect("/");
+  const session = await auth();
+  if (!session) redirect("/auth/signin");
 
-  const loggedInUser = await getUser(user.userId);
+  const userId = session?.user?.id ?? "";
+  const loggedInUser = await getUser(userId);
   if (!loggedInUser?.username) {
     redirect("/username");
   }
@@ -23,7 +24,7 @@ export default async function Trade({ params }: { params?: { id: string } }) {
   const trade = (await getTrade(tradeId))[0];
 
   const [currentUserListId, otherUserListId] =
-    user.userId === trade?.user_id
+    userId === trade?.user_id
       ? [trade?.card_list_id, trade?.other_user_card_list_id]
       : [trade?.other_user_card_list_id, trade?.card_list_id];
   const card_list_id = trade?.card_list_id ?? 0;
@@ -57,17 +58,15 @@ export default async function Trade({ params }: { params?: { id: string } }) {
             <TradeStatusUpdate
               tradeId={tradeId}
               tradeUserStatusField={
-                trade?.user_id === user.userId
-                  ? "user_status"
-                  : "other_user_status"
+                trade?.user_id === userId ? "user_status" : "other_user_status"
               }
               userStatus={
-                trade?.user_id === user.userId
+                trade?.user_id === userId
                   ? trade?.user_status
                   : trade!.other_user_status
               }
               otherUserStatus={
-                trade?.user_id === user.userId
+                trade?.user_id === userId
                   ? trade.other_user_status
                   : trade?.user_status
               }
@@ -85,7 +84,7 @@ export default async function Trade({ params }: { params?: { id: string } }) {
           sub_card_list_id={trade!.user_sub_card_list_id ?? 0}
           other_sub_card_list_id={trade!.other_user_sub_card_list_id ?? 0}
           userStatus={
-            trade?.user_id === user.userId
+            trade?.user_id === userId
               ? trade?.user_status
               : trade!.other_user_status
           }
