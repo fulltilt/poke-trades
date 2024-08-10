@@ -879,7 +879,8 @@ export async function updateTradeStatus(
       message = "Status updated";
     }
     return { success: message };
-  } catch {
+  } catch (err) {
+    console.log(err);
     return { error: "Error updating Trade status" };
   }
 }
@@ -900,7 +901,7 @@ export async function getCompletedTrades(user_id: string) {
 
     return { data: res[0]?.count };
   } catch {
-    return { error: "Error updating Trade status" };
+    return { error: "Error retrieving number of completed trades" };
   }
 }
 

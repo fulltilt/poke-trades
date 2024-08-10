@@ -30,7 +30,6 @@ function NotificationBell() {
 }
 
 export default function Logins({ session }: { session: Session | null }) {
-  // const { userId } = useAuth();
   const userId = session?.user?.id ?? "";
   const { state } = useAppContext();
   const { toast } = useToast();
@@ -74,14 +73,6 @@ export default function Logins({ session }: { session: Session | null }) {
       <div className="sm:hidden">
         <Link href={"/notifications"}>Notifications</Link>
       </div>
-      {/* <div className="sm:hidden">Login</div> */}
-      {/* <div className="mt-4 sm:mt-2">
-        <SignedOut>
-          <SignInButton />
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn> */}
       <div className="mt-4 sm:mt-0">
         {userId ? <SignOutButton /> : <SignInButton />}
       </div>

@@ -159,16 +159,15 @@ export default function TradeStatusUpdate({
         <AlertDialogContent onEscapeKeyDown={() => setOpenDialog(false)}>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {status === "4" && (
-                <p>
-                  This action cannot be undone. By confirming, you&apos;re
-                  acknowledging that you received the other users trade and you
-                  are fine with the conditions.
-                </p>
-              )}
-            </AlertDialogDescription>
+            <AlertDialogDescription></AlertDialogDescription>
           </AlertDialogHeader>
+          {status === "4" && (
+            <p>
+              This action cannot be undone. By confirming, you&apos;re
+              acknowledging that you received the other users trade and you are
+              fine with the conditions.
+            </p>
+          )}
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setStatus("3")}>
               Cancel
