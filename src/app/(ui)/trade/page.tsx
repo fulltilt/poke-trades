@@ -58,7 +58,18 @@ export default async function TradeComponent() {
     new Map(),
   );
 
-  const inProgressTrades = await getTrades(userId);
+  const completeStatusCode = 4;
+  const trades = await getTrades(userId);
+  const completedTrades = trades.filter(
+    (trade) =>
+      trade.user_status === completeStatusCode &&
+      trade.other_user_status === completeStatusCode,
+  );
+  const inProgressTrades = trades.filter(
+    (trade) =>
+      trade.user_status !== completeStatusCode ||
+      trade.other_user_status !== completeStatusCode,
+  );
   const inProgressTradeOtherListIds = inProgressTrades.map(
     (t) => t.other_user_card_list_id,
   );
@@ -219,6 +230,51 @@ export default async function TradeComponent() {
           </table>
         ) : (
           <p>No potential trades available at the moment</p>
+        )}
+      </div>
+
+      <div className="max-w-screen-xl overflow-x-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <h2 className="text-xl font-semibold">Completed Trades</h2>
+        {completedTrades.length ? (
+          <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+            <thead>
+              <tr>
+                <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-900">
+                  Requester
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-900">
+                  Other User
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-semibold text-gray-900">
+                  Date
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900"></th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-200">
+              {completedTrades.map((trade) => (
+                <tr key={trade.id}>
+                  <td className="whitespace-nowrap px-4 py-2 text-center text-gray-900">
+                    {trade.username}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-2 text-center text-gray-900">
+                    {trade.other_user_name}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-2 text-center text-gray-900">
+                    {new Date(trade.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-2 text-center font-medium text-gray-900">
+                    <Button>
+                      <Link href={`/trade/${trade.id}`}>View</Link>
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No completed trades</p>
         )}
       </div>
     </div>

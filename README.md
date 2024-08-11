@@ -70,7 +70,13 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Let users share trade lists
 [x] Build out Notifications page
 [x] move to Auth.js
-[] Convert queries to prepared statements, Get away from raw queries
+[] find a way for next build to ignore one file instead of ignoring all typescript errors
+[x] in trade list, make a separate list for completed trades
+[x] completed trades still show up in potential trade lists (for now don't update users wish lists and make note of it in UI)
+[x] trades should have a last updated field to show last time trade was updated
+[x] Convert queries to prepared statements, Get away from raw queries
+[] deploy to AWS
+[] tests
 [] Proper error handling on the database side with respective messages on the UI
 [] handle when adding variations of same card. Currently doesn't differentiate between holo/normal/reverse/etc
 [] Send notification email
@@ -79,8 +85,6 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [] Realtime updates on trade page
 [] Go through all sets to make sure cards are in order and all show up
 [x] Consider how to deal with deletions when there's foreign keys (ie trade table relies on trade lists which user may want to delete (update: don't let them delete but hide trades after a certain time))
-[] // NOTE: will probably have to add another WHERE condition for trades that aren't completed
-export async function getTrades(user_id: string) {
 
 Shortcomings
 -only main variants. Basically, official checklist so won't have variations like cosmos

@@ -166,6 +166,9 @@ export default function TradeStatusUpdate({
               This action cannot be undone. By confirming, you&apos;re
               acknowledging that you received the other users trade and you are
               fine with the conditions.
+              <br />
+              Note: on trade completion, Cards you traded for will still be in
+              your Wish List.
             </p>
           )}
           <AlertDialogFooter>

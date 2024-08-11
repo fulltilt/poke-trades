@@ -80,3 +80,21 @@ ON poketrades_trade
 FOR EACH ROW
 WHEN (NEW.user_status = 4 AND NEW.other_user_status = 4)
 EXECUTE PROCEDURE update_trades();
+
+
+-- update updated_at field whenever there is an update on a Trade row
+CREATE OR REPLACE FUNCTION update_trade_date()
+RETURNS TRIGGER 
+LANGUAGE PLPGSQL
+AS $$
+BEGIN 
+   NEW.updated_at = clock_timestamp();
+   RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER update_trade_date 
+BEFORE UPDATE 
+ON poketrades_trade 
+FOR EACH ROW 
+EXECUTE PROCEDURE update_trade_date();

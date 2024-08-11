@@ -284,8 +284,8 @@ export async function getCardsInSet(
       FROM (
         SELECT distinct on (id) id, data, jsonb_path_query(data, '$.tcgplayer.prices.*.market') AS price
         FROM poketrades_card
-        WHERE poketrades_card.id ILIKE '%${sql.raw(id)}%' AND
-              DATA->>'name' ILIKE '%${sql.raw(search)}%'
+        WHERE poketrades_card.id ILIKE '%' || ${id} || '%' AND
+              DATA->>'name' ILIKE '%' || ${search} || '%'
       )
       ORDER BY price ${sql.raw(orderBy.includes("DESC") ? "DESC" : "ASC")} 
       LIMIT ${pageSize}
@@ -675,6 +675,7 @@ export async function getTradeLists(user_id: string) {
     cl.name != 'Wish List' AND
     cl.user_id != ${user_id} AND
     cl.id = cli.card_list_id AND
+    cl.is_sub_list IS NOT TRUE AND
     cli.card_id IN
       (SELECT 
         icli.card_id
