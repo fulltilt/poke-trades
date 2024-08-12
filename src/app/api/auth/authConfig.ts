@@ -64,7 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       if (user) {
-        await clearTokens(); // Clear up any stale verification tokens from the database after a successful sign in
+        // await clearTokens(); // Clear up any stale verification tokens from the database after a successful sign in
         return {
           ...token,
           id: user.id,

@@ -75,8 +75,12 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] completed trades still show up in potential trade lists (for now don't update users wish lists and make note of it in UI)
 [x] trades should have a last updated field to show last time trade was updated
 [x] Convert queries to prepared statements, Get away from raw queries
+[x] Dockerized DB
+[x] Containerize app
+[] verify prod build
 [] deploy to AWS
 [] tests
+[] revisit clearStaleTokens
 [] Proper error handling on the database side with respective messages on the UI
 [] handle when adding variations of same card. Currently doesn't differentiate between holo/normal/reverse/etc
 [] Send notification email
@@ -84,6 +88,7 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [] Optimize trade search
 [] Realtime updates on trade page
 [] Go through all sets to make sure cards are in order and all show up
+[] drizzle.config.ts to better handle url?
 [x] Consider how to deal with deletions when there's foreign keys (ie trade table relies on trade lists which user may want to delete (update: don't let them delete but hide trades after a certain time))
 
 Shortcomings

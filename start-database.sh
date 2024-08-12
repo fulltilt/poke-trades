@@ -45,7 +45,7 @@ if [ "$DB_PASSWORD" = "password" ]; then
   DB_PASSWORD=$(openssl rand -base64 12 | tr '+/' '-_')
   sed -i -e "s#:password@#:$DB_PASSWORD@#" .env
 fi
-
+echo "hello workd"
 docker run -d \
   --name $DB_CONTAINER_NAME \
   -e POSTGRES_USER="postgres" \
