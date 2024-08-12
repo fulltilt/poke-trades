@@ -51,7 +51,13 @@ export default async function CardList({
     const cardData =
       source === "all"
         ? await getAllCards(currentPage, pageSize, search, orderBy)
-        : await getCardsInCardList(listId, currentPage, pageSize, search);
+        : await getCardsInCardList(
+            listId,
+            currentPage,
+            pageSize,
+            search,
+            orderBy,
+          );
     const pageCount = Math.ceil(cardData?.totalCount / Number(pageSize));
 
     const wishList = (await getCardList(userId, wishListId, 1, 30))?.data.map(

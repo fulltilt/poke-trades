@@ -465,6 +465,12 @@ export async function getCardsInList(
     page = 1;
   }
 
+  if (card_list.length === 0)
+    return {
+      cards: [],
+      totalCount: 0,
+    };
+
   const countData = await db
     .select({
       count: count(),
@@ -498,6 +504,7 @@ export async function getCardsInCardList(
   page: number,
   pageSize: number,
   search: string,
+  orderBy: string,
   set_id?: string,
 ) {
   if (![30, 60, 90, 120].includes(Number(pageSize))) {
@@ -544,6 +551,7 @@ export async function getCardsInCardList(
   const res = await cardsPrepared.execute({
     set_id: `${set_id}-%`,
     search: `%${search}%`,
+    orderBy,
     limit: pageSize,
     offset: (page - 1) * pageSize,
   });

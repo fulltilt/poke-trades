@@ -65,7 +65,7 @@ export default function TradeUpdate({
   const [otherUserLoading, setOtherUserLoading] = useState(true);
 
   useEffect(() => {
-    getCardsInCardList(sub_card_list_id, 1, 30, "")
+    getCardsInCardList(sub_card_list_id, 1, 30, "", "")
       .then((res) => {
         const cards = res.cards.map((card) =>
           Object.assign({}, card, { price: getPrice(card) }),
@@ -75,7 +75,7 @@ export default function TradeUpdate({
       .catch((err) => console.log(err))
       .finally(() => setUserLoading(false));
 
-    getCardsInCardList(other_sub_card_list_id, 1, 30, "")
+    getCardsInCardList(other_sub_card_list_id, 1, 30, "", "")
       .then((res) => {
         const cards = res.cards.map((card) =>
           Object.assign({}, card, { price: getPrice(card) }),
@@ -255,11 +255,14 @@ export default function TradeUpdate({
             <DialogDescription></DialogDescription>
           </DialogHeader>
           <div>
-            <h2 className="text-xl font-semibold">
-              {currentList === sub_card_list_id
-                ? "Your Cards"
-                : `${otherUserName}'s Cards`}
-            </h2>
+            <div className="mb-8 text-center">
+              <h2 className="text-xl font-semibold">
+                {currentList === sub_card_list_id
+                  ? "Your Cards"
+                  : `${otherUserName}'s Cards`}
+              </h2>
+              <p>Click on Heart icon to add to or remove from trade</p>
+            </div>
             <CardTradeComponent
               cards={
                 currentList === sub_card_list_id ? userCards : otherUserCards

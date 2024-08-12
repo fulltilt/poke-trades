@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { handleEmailSignIn } from "~/app/api/auth/emailSignInServerAction";
 import { handleGoogleSignIn } from "~/app/api/auth/googleSignInServerAction";
 import { Button } from "~/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 function GoogleIcon() {
   return (
@@ -38,6 +39,8 @@ function GoogleIcon() {
 export default function SignInPage() {
   const [isPending, startTransition] = useTransition();
   const [formData, setFormData] = useState({ email: "" as string });
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault(); // Prevents the form from submitting and reloading the page, allowing us to handle the submission in TypeScript.
@@ -47,6 +50,8 @@ export default function SignInPage() {
       });
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading1(false);
     }
   };
 
@@ -78,7 +83,10 @@ export default function SignInPage() {
               disabled={isPending}
               required
             />
-            <Button type="submit">Sign in with email</Button>
+            <Button type="submit" onClick={() => setLoading1(true)}>
+              {loading1 && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              &nbsp;&nbsp;Sign in with email
+            </Button>
           </form>
 
           <div className="flex w-[75%] items-center p-2">
@@ -96,8 +104,13 @@ export default function SignInPage() {
           <div className="flex w-[100%] flex-col">
             <Button
               className="google"
-              onClick={async () => handleGoogleSignIn()}
+              onClick={async () => {
+                setLoading2(true);
+                await handleGoogleSignIn();
+                setLoading2(false);
+              }}
             >
+              {loading2 && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <GoogleIcon />
               &nbsp;&nbsp; Sign in with Google
             </Button>

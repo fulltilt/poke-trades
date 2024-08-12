@@ -50,6 +50,9 @@ export async function TopNav() {
           >
             Cards
           </Link>
+          <Link href="/about" className="text-sm">
+            About
+          </Link>
         </div>
       </div>
       <div className="sm:hidden">
@@ -76,6 +79,11 @@ export async function TopNav() {
             <DropdownMenuItem>
               <Link href="/cardlist" className="text-sm">
                 Cards
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/about" className="text-sm">
+                About
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>

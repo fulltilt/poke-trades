@@ -58,10 +58,11 @@ export default async function CardList({
             orderBy,
           )
         : await getCardsInCardList(
-            source === "collection" ? collectionId : wishListId,
+            source === "Collection" ? collectionId : wishListId,
             currentPage,
             pageSize,
             search,
+            orderBy,
             params?.id ?? "",
           );
     const pageCount = Math.ceil((cardData?.totalCount ?? 0) / Number(pageSize));

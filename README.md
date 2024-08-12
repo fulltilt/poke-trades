@@ -70,20 +70,23 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] Let users share trade lists
 [x] Build out Notifications page
 [x] move to Auth.js
-[] find a way for next build to ignore one file instead of ignoring all typescript errors
 [x] in trade list, make a separate list for completed trades
 [x] completed trades still show up in potential trade lists (for now don't update users wish lists and make note of it in UI)
 [x] trades should have a last updated field to show last time trade was updated
 [x] Convert queries to prepared statements, Get away from raw queries
 [x] Dockerized DB
 [x] Containerize app
-[] verify prod build
+[x] Add spinners
+[x] user shouldn't be able to select a list unless it has at least 1 card (update: decided that even if we did that, user can still empty out the list)
+[x] pretty up modal
+[x] verify prod build
+[] find a way for next build to ignore one file instead of ignoring all typescript errors
 [] deploy to AWS
 [] tests
+[] price sorting not hooked up to In Collection and Wish List
 [] revisit clearStaleTokens
 [] Proper error handling on the database side with respective messages on the UI
 [] handle when adding variations of same card. Currently doesn't differentiate between holo/normal/reverse/etc
-[] Send notification email
 [] Limit # of public lists for non-premium users
 [] Optimize trade search
 [] Realtime updates on trade page

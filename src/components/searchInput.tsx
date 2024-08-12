@@ -14,8 +14,9 @@ export default function SearchInput({
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-
   const router = useRouter();
+
+  const source = searchParams.get("source") ?? "all";
 
   const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
@@ -48,7 +49,7 @@ export default function SearchInput({
       <div>
         {!hideRadios && (
           <RadioGroup
-            defaultValue="all"
+            defaultValue={source}
             className="flex gap-4"
             onValueChange={(val) => {
               const urlParams = createQueryString(

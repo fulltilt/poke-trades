@@ -69,6 +69,7 @@ export default function TradeRequest({
             .finally(() => {
               getPublicCardLists(userId)
                 .then((res) => {
+                  console.log(res);
                   setTradeLists(res);
                   setOpenDialog(true);
                 })
