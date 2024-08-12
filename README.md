@@ -80,16 +80,15 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] user shouldn't be able to select a list unless it has at least 1 card (update: decided that even if we did that, user can still empty out the list)
 [x] pretty up modal
 [x] verify prod build
-[] find a way for next build to ignore one file instead of ignoring all typescript errors
 [] deploy to AWS
 [] tests
 [] price sorting not hooked up to In Collection and Wish List
-[] revisit clearStaleTokens
 [] Proper error handling on the database side with respective messages on the UI
 [] handle when adding variations of same card. Currently doesn't differentiate between holo/normal/reverse/etc
 [] Limit # of public lists for non-premium users
 [] Optimize trade search
 [] Realtime updates on trade page
+[] find a way for next build to ignore one file instead of ignoring all typescript errors (might not matter as not deploying in Vercel)
 [] Go through all sets to make sure cards are in order and all show up
 [] drizzle.config.ts to better handle url?
 [x] Consider how to deal with deletions when there's foreign keys (ie trade table relies on trade lists which user may want to delete (update: don't let them delete but hide trades after a certain time))
