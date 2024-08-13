@@ -97,6 +97,7 @@ export default async function CardList({
                 card: d,
                 userId: userId,
                 cardLists,
+                wishList,
               }))}
               pageCount={pageCount}
             />

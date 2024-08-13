@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Minus, Plus } from "~/app/(ui)/cardlist/[id]/card";
+import { Favorite, Minus, Plus } from "~/app/(ui)/cardlist/[id]/card";
 import { formatType, getPrice } from "~/app/utils/helpers";
 import { getCardQuantityByList, updateCardList } from "~/server/queries";
 import type { Card } from "~/app/types";
@@ -17,6 +17,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import { Divide } from "lucide-react";
 
 type List = {
   id: number;
@@ -34,6 +41,7 @@ export const columns: ColumnDef<{
     is_private: boolean | null;
     is_sub_list: boolean | null;
   }[];
+  wishList: (string | null)[] | undefined;
 }>[] = [
   {
     cell: function Cell({ row }) {
@@ -165,7 +173,49 @@ export const columns: ColumnDef<{
     header: "Quantity",
   },
   {
-    accessorFn: (row) => `${row?.card?.name}`,
+    // accessorFn: (row) => `${row?.card?.name}`,
+    cell: function Cell({ row }) {
+      const userId = row.original.userId ?? "";
+      const wishListId =
+        row.original.cardLists.filter((list) => list.name === "Wish List")[0]
+          ?.cardListId ?? 0;
+      const cardId = row?.original?.card?.id ?? "";
+      // const isCardInWishList =
+      //   row?.original?.wishList?.includes(cardId) ?? false;
+
+      const [isCardInWishList, setIsCardInWishList] = useState(
+        row?.original?.wishList?.includes(cardId) ?? false,
+      );
+
+      return (
+        <div className="flex gap-4">
+          <div
+            onClick={async () => {
+              const updateRes = await updateCardList(
+                userId,
+                wishListId,
+                cardId,
+                isCardInWishList ? -1 : 1,
+              );
+
+              setIsCardInWishList(!isCardInWishList);
+            }}
+          >
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Favorite fill={isCardInWishList ? "red" : "#b6b6b6"} />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Add/Remove from your Wish List</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <p>{row?.original?.card?.name}</p>
+        </div>
+      );
+    },
     header: "Name",
   },
   {

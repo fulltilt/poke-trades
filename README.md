@@ -80,7 +80,9 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] user shouldn't be able to select a list unless it has at least 1 card (update: decided that even if we did that, user can still empty out the list)
 [x] pretty up modal
 [x] verify prod build
-[] deploy to AWS
+[x] hearts on card list view
+[x] deploy to AWS
+[] users should be able to message each other during a trade
 [] tests
 [] price sorting not hooked up to In Collection and Wish List
 [] Proper error handling on the database side with respective messages on the UI

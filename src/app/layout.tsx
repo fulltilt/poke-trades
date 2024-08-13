@@ -1,6 +1,7 @@
 import "~/styles/globals.css";
 import { inter } from "~/app/fonts";
 
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
@@ -33,6 +34,7 @@ export default function RootLayout({
             <Footer />
           </div>
         </body>
+        <GoogleAnalytics gaId="G-BNX08YMCR9" />
       </html>
     </SessionProvider>
   );

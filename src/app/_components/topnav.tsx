@@ -53,6 +53,12 @@ export async function TopNav() {
           <Link href="/about" className="text-sm">
             About
           </Link>
+          <Link
+            href="https://www.paypal.com/donate/?hosted_button_id=ZCDZKZW4JE5LG"
+            className="text-sm"
+          >
+            Donate
+          </Link>
         </div>
       </div>
       <div className="sm:hidden">
@@ -84,6 +90,14 @@ export async function TopNav() {
             <DropdownMenuItem>
               <Link href="/about" className="text-sm">
                 About
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link
+                href="https://www.paypal.com/donate/?hosted_button_id=ZCDZKZW4JE5LG"
+                className="text-sm"
+              >
+                Donate
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
