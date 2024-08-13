@@ -17,9 +17,9 @@ export default function About() {
       <div className="flex flex-col gap-8 sm:px-6 lg:px-20">
         <h2 className="text-2xl font-bold">How to use this site</h2>
         <p>
-          When you first log in, you'll be asked to create a username, after
-          which you'll be redirected to your Dashboard where you'll see your
-          trade stats as well as your Trade Lists.
+          When you first log in, you&apos;ll be asked to create a username,
+          after which you&apos;ll be redirected to your Dashboard where
+          you&apos;ll see your trade stats as well as your Trade Lists.
         </p>
         <p>
           Each user is given three by default: a Collection list which is
@@ -64,9 +64,9 @@ export default function About() {
         <p>
           Once you see a potential trade partner, click on the View button which
           opens a pop-up where you can initiate a trade once you select which
-          trade list you'd like the other User to see. You'll now see a new
-          entry in the "In Progress" trade list and click View where you'll be
-          taken to an area where you can start the trade
+          trade list you&apos;d like the other User to see. You&apos;ll now see
+          a new entry in the "In Progress" trade list and click View where
+          you&apos;ll be taken to an area where you can start the trade
         </p>
         <p>
           In this new section, and the other user will have to opportunity to go
@@ -78,9 +78,9 @@ export default function About() {
         <p>
           Once the trade looks good, users can put the trade status as Pending
           which means that the User has sent out the Cards. At this point, you
-          won't be able to update the Trade unless you put the progress back
-          into In Progress. Once the Cards are received, change the status to
-          Completed and once the other User marks the Trade as Complete, both
+          won&apos;t be able to update the Trade unless you put the progress
+          back into In Progress. Once the Cards are received, change the status
+          to Completed and once the other User marks the Trade as Complete, both
           Users will have their trading score increased by 1. Once a trade is
           marked Complete, you will be unable to edit the Trade.
         </p>
@@ -103,11 +103,11 @@ export default function About() {
           easier and to have a log of all my trades going forward.{" "}
         </p>
         <p>
-          This site is a work in progress and there's a lot to do but at the
-          very least the main functionality is working although there's a lot of
-          bugs to flush out and although there's a lot of work to do here's a
-          short list of shortcomings this site has as well as things that
-          probably aren't going to change anytime soon:
+          This site is a work in progress and there&apos;s a lot to do but at
+          the very least the main functionality is working although there&apos;s
+          a lot of bugs to flush out and although there&apos;s a lot of work to
+          do here&apos;s a short list of shortcomings this site has as well as
+          things that probably aren&apos;t going to change anytime soon:
         </p>
         <ul className="list-disc">
           <li>
@@ -117,19 +117,20 @@ export default function About() {
           <li>
             The listed cardds will only be from the basic set lists. Think of
             the list you see in the back of the booklets of an elite trainer
-            box. I won't have variants such as cosmos, etc listed here. There's
-            better sites that handle this.
+            box. I won&apos;t have variants such as cosmos, etc listed here.
+            There&apos;s better sites that handle this.
           </li>
           <li>
             The prices are by TCGPlayer market but sometimes those fields are
             empty from the data source I pull from so sometimes I have to go by
             another field which sometimes results in some weird results when
             sorting. No matter what I tried there are always going to be some
-            entries that are obviously off and I don't have the time to scour
-            through the prices so I'm sticking to TCGPlayer market for now. If
-            price is empty or jsut looks plain wried, check eBay last solds,
-            pricecharting, etc for comps. If it already hasn't happened yet,
-            there will be an ability to manually change the price during a trade
+            entries that are obviously off and I don&apos;t have the time to
+            scour through the prices so I&apos;m sticking to TCGPlayer market
+            for now. If price is empty or jsut looks plain wried, check eBay
+            last solds, pricecharting, etc for comps. If it already hasn&apos;t
+            happened yet, there will be an ability to manually change the price
+            during a trade
           </li>
         </ul>
         <p>
@@ -141,7 +142,7 @@ export default function About() {
           >
             donations
           </a>{" "}
-          are appreciated. Also styling isn't my strong suite so if you can
+          are appreciated. Also styling isn&apos;t my strong suite so if you can
           offer assistance in that area, that would be great as well. Anyways,
           happy trading!
         </p>
