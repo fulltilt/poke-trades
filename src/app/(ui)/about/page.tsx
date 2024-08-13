@@ -49,7 +49,7 @@ export default function About() {
           You can use the search inputs and dropdowns to help search for cards
           and if you want to add any cards to your Wish List, click on the heart
           and if you want to add a card to your Collection list or public trade
-          list(s), click on the "+/-" button to adjust quantities.
+          list(s), click on the &quot;+/-&quot; button to adjust quantities.
         </p>
         <p>
           Once you have filled out the initial lists, you can now go to the{" "}
@@ -65,8 +65,8 @@ export default function About() {
           Once you see a potential trade partner, click on the View button which
           opens a pop-up where you can initiate a trade once you select which
           trade list you&apos;d like the other User to see. You&apos;ll now see
-          a new entry in the "In Progress" trade list and click View where
-          you&apos;ll be taken to an area where you can start the trade
+          a new entry in the &quot;In Progress&quot; trade list and click View
+          where you&apos;ll be taken to an area where you can start the trade
         </p>
         <p>
           In this new section, and the other user will have to opportunity to go
