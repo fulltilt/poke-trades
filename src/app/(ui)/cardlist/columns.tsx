@@ -23,7 +23,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { Divide } from "lucide-react";
 
 type List = {
   id: number;
@@ -191,7 +190,7 @@ export const columns: ColumnDef<{
         <div className="flex gap-4">
           <div
             onClick={async () => {
-              const updateRes = await updateCardList(
+              await updateCardList(
                 userId,
                 wishListId,
                 cardId,

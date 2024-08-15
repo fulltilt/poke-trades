@@ -205,12 +205,15 @@ export default async function TradeComponent() {
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-center text-gray-700">
                       <ul>
-                        {cardData.map((card) => (
+                        {cardData.slice(5).map((card) => (
                           <li key={card.id}>
                             {card?.name} - {card?.set} - {card?.number}/
                             {card?.printedTotal}
                           </li>
                         ))}
+                        {cardData.length > 5 && (
+                          <li>...plus {cardData.length - 5} more</li>
+                        )}
                       </ul>
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-center text-gray-700">
