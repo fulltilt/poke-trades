@@ -27,7 +27,7 @@ export default async function CardList({
 }) {
   const session = await auth();
   let userId = session?.user?.id ?? "";
-
+  // await seedData();
   const member = searchParams?.member ?? "";
   const currentPage = Number(searchParams?.page) ?? 1;
   const pageSize = Number(searchParams?.pageSize) ?? 30;
@@ -37,7 +37,7 @@ export default async function CardList({
   const search = searchParams?.search ?? "";
 
   async function Cards() {
-    // special logic to view a users collection without being logged in
+    // special logic to view a users trade list without being logged in
     if (member) {
       userId = (await getUserId(member))?.id ?? "";
     }

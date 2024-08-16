@@ -4,8 +4,8 @@ RETURNS TRIGGER
 LANGUAGE PLPGSQL
 AS $$
 BEGIN
-   INSERT INTO poketrades_card_list (name, user_id, is_private, is_sub_list)
-   VALUES ('Collection', NEW.id, TRUE, FALSE);
+   -- INSERT INTO poketrades_card_list (name, user_id, is_private, is_sub_list)
+   -- VALUES ('Collection', NEW.id, TRUE, FALSE);
    INSERT INTO poketrades_card_list (name, user_id, is_private, is_sub_list)
    VALUES ('Wish List', NEW.id, FALSE, FALSE);
    RETURN NEW;

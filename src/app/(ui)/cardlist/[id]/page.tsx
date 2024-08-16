@@ -43,8 +43,8 @@ export default async function CardList({
     const search = searchParams?.search ?? "";
 
     const cardLists = await getUsersCardLists(userId);
-    const collectionId =
-      cardLists.filter((l) => l.name === "Collection")[0]?.cardListId ?? 0;
+    // const collectionId =
+    //   cardLists.filter((l) => l.name === "Collection")[0]?.cardListId ?? 0;
     const wishListId =
       cardLists.filter((l) => l.name === "Wish List")[0]?.cardListId ?? 0;
 
@@ -58,7 +58,8 @@ export default async function CardList({
             orderBy,
           )
         : await getCardsInCardList(
-            source === "Collection" ? collectionId : wishListId,
+            // source === "Collection" ? collectionId : wishListId,
+            wishListId,
             currentPage,
             pageSize,
             search,

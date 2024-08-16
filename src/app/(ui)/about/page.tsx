@@ -22,13 +22,11 @@ export default function About() {
           you&apos;ll see your trade stats as well as your Trade Lists.
         </p>
         <p>
-          Each user is given three by default: a Collection list which is
-          private where you can see your current collection, a Wish List which
-          is a list of cards that you are looking for and is used to search for
-          any other users that have a card(s) in their public trade lists and
-          lastly a public trade list (named [your username]_TradeList) which
-          will be the list another user sees when you are in the middle of a
-          trade.
+          Each user is given two by default: a Wish List which is a list of
+          cards that you are looking for and is used to search for any other
+          users that have a card(s) in their public trade lists and lastly a
+          public trade list (named [your username]_TradeList) which will be the
+          list another user sees when you are in the middle of a trade.
         </p>
         <p>
           The first things you want to do is to fill out your Wish List and
@@ -48,8 +46,8 @@ export default function About() {
         <p>
           You can use the search inputs and dropdowns to help search for cards
           and if you want to add any cards to your Wish List, click on the heart
-          and if you want to add a card to your Collection list or public trade
-          list(s), click on the &quot;+/-&quot; button to adjust quantities.
+          and if you want to add a card to your public trade list(s), click on
+          the &quot;+/-&quot; button to adjust quantities.
         </p>
         <p>
           Once you have filled out the initial lists, you can now go to the{" "}

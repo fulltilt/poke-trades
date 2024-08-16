@@ -63,10 +63,10 @@ export default function SearchInput({
               <RadioGroupItem value="all" id="all" />
               <label htmlFor="all">All</label>
             </div>
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <RadioGroupItem value="Collection" id="collection" />
               <label htmlFor="collection">In Collection</label>
-            </div>
+            </div> */}
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="Wish List" id="wishlist" />
               <label htmlFor="wishlist">Wish List</label>

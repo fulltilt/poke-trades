@@ -20,8 +20,8 @@ export default async function HomePage() {
               We make the Pokemon trade process a lot easier
             </h1>
             <h2 className="font-4 lh-6 ld-04 pb-11 text-center text-2xl font-semibold text-white">
-              PokeTrades is a collection tracker that can be used to make the
-              trading process smooth and trackable
+              PokeTrades lets users trade Pokemon cards that makes the trading
+              process smoother and trackable
             </h2>
             <div className="ml-6 flex justify-center gap-8">
               <SignInButton className="bg-white text-black hover:bg-white" />

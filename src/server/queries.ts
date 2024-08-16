@@ -197,6 +197,7 @@ export async function getAllCards(
       limit: pageSize,
       offset: (page - 1) * pageSize,
     });
+    console.log("cardsData", cardsData);
   }
 
   return Object.assign(
@@ -349,7 +350,8 @@ export async function createList(user_id: string, name: string) {
     await db.insert(cardList).values({
       user_id,
       name,
-      is_private: name === "Collection" ? true : false,
+      // is_private: name === "Collection" ? true : false,
+      is_private: false,
     });
     return {
       success: `Created list: ${name}`,
@@ -986,7 +988,8 @@ export async function unlinkAccount(provider: string, uuid: string) {
 }
 
 export async function seedData() {
-  // const dat = [];
+  // const dat = [
+  // ];
   // await db.insert(cards).values(
   //   dat.map((d: any) => ({
   //     id: sql`${d.id}::text`,

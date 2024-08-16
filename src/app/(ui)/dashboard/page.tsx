@@ -21,7 +21,7 @@ export default async function Dashboard() {
   const completedTrades = await getCompletedTrades(userId);
   const cardLists = await getUsersCardLists(userId);
   const publicLists = cardLists.filter((l) => !l.is_private && !l.is_sub_list);
-  const privateLists = cardLists.filter((l) => l.is_private && !l.is_sub_list);
+  // const privateLists = cardLists.filter((l) => l.is_private && !l.is_sub_list);
 
   return (
     <div className="flex max-h-full flex-1 flex-col rounded-md pl-14 pr-14">
@@ -65,7 +65,7 @@ export default async function Dashboard() {
               ))}
             </ul>
           </div>
-          <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
+          {/* <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
             <p className="font-bold">Private Lists</p>
             <ul className="list-none">
               {privateLists.map((l) => (
@@ -79,7 +79,7 @@ export default async function Dashboard() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
           {/* <div className="block rounded-lg p-4 shadow-md shadow-indigo-100">
             <p className="font-bold">Pending Trades</p>
           </div>

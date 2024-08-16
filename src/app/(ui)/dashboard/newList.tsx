@@ -119,41 +119,43 @@ export default function NewListComponent({
             <DialogTitle>Share Lists</DialogTitle>
             <DialogDescription></DialogDescription>
             <div>
-              Click on the links below to show others your Collection or your
-              Wish List
-            </div>
-            <div className="flex justify-center gap-4">
-              <Select
-                name="order"
-                onValueChange={(val) => setListToShare(val)}
-                defaultValue={cardLists[0]?.name}
-              >
-                <SelectTrigger className="w-[160px]">
-                  <SelectValue placeholder="List Name" />
-                </SelectTrigger>
-                <SelectContent>
-                  {cardLists.map((list) => (
-                    <SelectItem value={list.name} key={list.name}>
-                      {list.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button
-                onClick={async () => {
-                  await window.navigator.clipboard.writeText(
-                    `${window.location.hostname}/cardlist?source=${listToShare}&member=${username}`,
-                  );
+              <div className="mb-8">
+                A select a List below to share your Trade Lists(s) or your Wish
+                List
+              </div>
+              <div className="flex justify-center gap-4">
+                <Select
+                  name="order"
+                  onValueChange={(val) => setListToShare(val)}
+                  defaultValue={cardLists[0]?.name}
+                >
+                  <SelectTrigger className="w-[160px]">
+                    <SelectValue placeholder="List Name" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cardLists.map((list) => (
+                      <SelectItem value={list.name} key={list.name}>
+                        {list.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  onClick={async () => {
+                    await window.navigator.clipboard.writeText(
+                      `${window.location.hostname}/cardlist?source=${listToShare}&member=${username}`,
+                    );
 
-                  toast({
-                    variant: "success",
-                    title: "Success!",
-                    description: "URL copied to your clipboard!",
-                  });
-                }}
-              >
-                Copy URL
-              </Button>
+                    toast({
+                      variant: "success",
+                      title: "Success!",
+                      description: "URL copied to your clipboard!",
+                    });
+                  }}
+                >
+                  Copy URL
+                </Button>
+              </div>
             </div>
           </DialogHeader>
         </DialogContent>
