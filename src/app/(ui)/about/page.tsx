@@ -141,8 +141,15 @@ export default function About() {
             donations
           </a>{" "}
           are appreciated. Also styling isn&apos;t my strong suite so if you can
-          offer assistance in that area, that would be great as well. Anyways,
-          happy trading!
+          offer assistance in that area, that would be great as well. Any
+          questions or recommendations can be sent{" "}
+          <a
+            href="mailto: dave.doria@webprodesigninc.com"
+            className="text-blue-600 underline"
+          >
+            here
+          </a>
+          . Anyways, happy trading!
         </p>
       </div>
     </div>
