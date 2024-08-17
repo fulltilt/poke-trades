@@ -144,7 +144,7 @@ export default function About() {
           offer assistance in that area, that would be great as well. Any
           questions or recommendations can be sent{" "}
           <a
-            href="mailto: dave.doria@webprodesigninc.com"
+            href="mailto: support@poke-trades.com"
             className="text-blue-600 underline"
           >
             here
