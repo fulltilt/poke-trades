@@ -26,9 +26,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
+import { Textarea } from "~/components/ui/textarea";
 
 import { useToast } from "~/components/ui/use-toast";
-import { updateTradeStatus } from "~/server/queries";
+import { createNotification, updateTradeStatus } from "~/server/queries";
 
 export function InfoCircle() {
   return (
@@ -62,17 +70,23 @@ export default function TradeStatusUpdate({
   tradeUserStatusField,
   userStatus,
   otherUserStatus,
+  user_id,
+  other_user_id,
 }: {
   tradeId: number;
   tradeUserStatusField: string;
   userStatus: number | null;
   otherUserStatus: number | null | undefined;
+  user_id: string;
+  other_user_id: string;
 }) {
   const router = useRouter();
   const { toast } = useToast();
 
   const [openDialog, setOpenDialog] = useState(false);
+  const [openNotificationDialog, setOpenNotificationDialog] = useState(false);
   const [status, setStatus] = useState(String(userStatus));
+  const [message, setMessage] = useState("");
 
   async function updateStatus() {
     const res = await updateTradeStatus(
@@ -181,6 +195,58 @@ export default function TradeStatusUpdate({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <Button
+        onClick={async () => setOpenNotificationDialog(true)}
+        disabled={userStatus === 4}
+      >
+        Send message
+      </Button>
+      <Dialog
+        open={openNotificationDialog}
+        onOpenChange={setOpenNotificationDialog}
+      >
+        <DialogContent
+          onEscapeKeyDown={() => setOpenNotificationDialog(false)}
+          onInteractOutside={() => setOpenNotificationDialog(false)}
+        >
+          <DialogHeader>
+            <DialogTitle>Send Message to other User</DialogTitle>
+            <DialogDescription>
+              Messaging has not been implemented into the app yet so for now use
+              messaging to share contact information
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="Type your message here."
+            value={message}
+            onChange={(evt) => setMessage(evt.target.value)}
+            minLength={10}
+          />
+          <Button
+            onClick={async () => {
+              console.log(user_id, other_user_id, message);
+              try {
+                await createNotification(user_id, other_user_id, message);
+
+                toast({
+                  title: "Success",
+                  description: "Sent message to other user",
+                });
+                setOpenNotificationDialog(false);
+                setMessage("");
+                router.refresh();
+              } catch {
+                toast({
+                  title: "Error",
+                  description: "Error sending message",
+                });
+              }
+            }}
+          >
+            Submit
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

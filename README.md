@@ -82,7 +82,8 @@ https://api.pokemontcg.io/v2/cards?q=(id:"swsh10-46" OR id:"swsh11-79")
 [x] verify prod build
 [x] hearts on card list view
 [x] deploy to AWS
-[] users should be able to message each other during a trade
+[x] loading bar for search
+[x] users should be able to message each other during a trade
 [] tests
 [] price sorting not hooked up to In Collection and Wish List
 [] Proper error handling on the database side with respective messages on the UI

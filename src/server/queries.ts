@@ -916,6 +916,25 @@ export async function getCompletedTrades(user_id: string) {
   }
 }
 
+export async function createNotification(
+  sender_id: string,
+  recipient_id: string,
+  message: string,
+) {
+  try {
+    await db
+      .insert(notification)
+      .values({
+        sender_id,
+        recipient_id,
+        message,
+      })
+      .execute();
+  } catch (err) {
+    return { error: "Error adding notifications" };
+  }
+}
+
 export async function getNotifications(user_id: string) {
   try {
     const res = await db

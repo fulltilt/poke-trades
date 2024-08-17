@@ -70,6 +70,16 @@ export default async function Trade({ params }: { params?: { id: string } }) {
                   ? trade.other_user_status
                   : trade?.user_status
               }
+              user_id={
+                trade?.user_id === userId
+                  ? trade?.user_id
+                  : trade!.other_user_id
+              }
+              other_user_id={
+                trade?.user_id === userId
+                  ? trade?.other_user_id
+                  : trade!.user_id
+              }
             />
           </div>
         </div>
