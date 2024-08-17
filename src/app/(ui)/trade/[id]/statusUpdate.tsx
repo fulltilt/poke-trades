@@ -159,7 +159,7 @@ export default function TradeStatusUpdate({
 
       <Button
         onClick={async () => {
-          if (status === "4") {
+          if (status === "3" || status === "4") {
             setOpenDialog(true);
           } else {
             await updateStatus();
@@ -172,9 +172,21 @@ export default function TradeStatusUpdate({
       <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
         <AlertDialogContent onEscapeKeyDown={() => setOpenDialog(false)}>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Warning</AlertDialogTitle>
             <AlertDialogDescription></AlertDialogDescription>
           </AlertDialogHeader>
+          {status === "3" && (
+            <p>
+              By setting status to Pending means you are ready to ship out your
+              Cards. To minimize your risk, always make sure you get timestamps
+              (pictures of the cards you want from the other user with the
+              present date somewhere in the picture) of what you&apos;re trading
+              for and to have tracking numbers for higher value orders. Also if
+              you&apos;re dealing with cash, protect yourself with something
+              like PayPal goods and services so you can get a refund if things
+              don&apos;t go as planned.
+            </p>
+          )}
           {status === "4" && (
             <p>
               This action cannot be undone. By confirming, you&apos;re
