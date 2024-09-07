@@ -61,9 +61,9 @@ export default function NewListComponent({
 
   return (
     <div className="flex gap-4">
-      <Button onClick={() => setOpenDialog(!openDialog)}>
+      {/* <Button onClick={() => setOpenDialog(!openDialog)}>
         Create Trade List
-      </Button>
+      </Button> */}
       <Button onClick={() => setOpenDialog2(!openDialog2)}>
         <ShareIcon />
         &nbsp;Share Lists
@@ -135,7 +135,7 @@ export default function NewListComponent({
                   <SelectContent>
                     {cardLists.map((list) => (
                       <SelectItem value={list.name} key={list.name}>
-                        {list.name}
+                        {list.name.includes("Trade") ? "Trade List" : list.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
