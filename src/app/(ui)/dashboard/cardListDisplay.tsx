@@ -15,11 +15,10 @@ import {
 } from "~/components/ui/dialog";
 import type { Card } from "~/app/types";
 import { getPrice } from "~/app/utils/helpers";
-// import { Favorite } from "../../cardlist/[id]/card";
-import { getCardsInList, updateCardList } from "~/server/queries";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ModalPaginationComponent from "~/components/modal-pagination";
 import { Button } from "~/components/ui/button";
+import { InfoCircle } from "../trade/[id]/statusUpdate";
 
 export default function CardListDisplayComponent({
   cards,
@@ -42,8 +41,20 @@ export default function CardListDisplayComponent({
   const [openDialog, setOpenDialog] = useState(false);
 
   return (
-    <div>
-      <Button onClick={() => setOpenDialog(true)}>View Wish List</Button>
+    <div className="flex items-center">
+      <Button onClick={() => setOpenDialog(true)}>View Wish List </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoCircle />
+          </TooltipTrigger>
+          <TooltipContent>
+            The cards on this list will be used to search other users trade
+            lists
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent
           onEscapeKeyDown={() => setOpenDialog(false)}

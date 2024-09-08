@@ -1,25 +1,23 @@
 import { redirect } from "next/navigation";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import {
   getCardList,
-  getCardsInCardList,
   getCompletedTrades,
   getUser,
   getUsersCardLists,
 } from "~/server/queries";
-import Link from "next/link";
 import NewTradeComponent from "./newList";
 import { auth } from "~/app/api/auth/authConfig";
 import CardListDisplayComponent from "./cardListDisplay";
 import { sortByDateAndThenNumber } from "~/app/utils/helpers";
 import { DataTable } from "~/components/data-table";
 import { columns } from "./list/columns";
+import { InfoCircle } from "../trade/[id]/statusUpdate";
 
 export default async function Dashboard({
   searchParams,
@@ -99,7 +97,22 @@ export default async function Dashboard({
         <div>
           <div>
             <div className="mb-8 mt-8">
-              <h2 className="mb-8 text-center text-xl font-bold">Trade List</h2>
+              <div className="mb-8 flex items-center justify-center">
+                <h2 className="mr-2 text-xl font-bold">Trade List</h2>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <InfoCircle />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        The cards on this list is what will be used for other
+                        users to find you
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <DataTable columns={columns} data={list} pageCount={pageCount} />
             </div>
           </div>
