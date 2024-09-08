@@ -24,18 +24,22 @@ import { Button } from "~/components/ui/button";
 export default function CardListDisplayComponent({
   cards,
 }: {
-  cards: { cards: (Card | null)[]; totalCount: number };
+  cards: {
+    data: {
+      userId: string;
+      cardId: string | null;
+      cardListId: number;
+      name: string;
+      quantity: number;
+      data: Card | null;
+    }[];
+    totalCount: number;
+  };
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(30);
-  const [cardPage, setCardPage] = useState(cards.cards);
+  const [cardPage, setCardPage] = useState(cards.data);
   const [openDialog, setOpenDialog] = useState(false);
-
-  // useEffect(() => {
-  //   getCardsInList(cardListIds as string[], currentPage, pageSize)
-  //     .then((res) => setCardPage(res.cards))
-  //     .catch((err) => console.log(err));
-  // }, [currentPage, pageSize, cardListIds]);
 
   return (
     <div>
@@ -59,28 +63,30 @@ export default function CardListDisplayComponent({
               <div className="m-auto grid gap-4 md:grid-cols-4 lg:grid-cols-6">
                 {cardPage.map((card) => {
                   // const isCardInTradeList = tradeList.some((c) => c.id === card?.id);
-                  const cardPrice = getPrice(card);
+                  const cardPrice = getPrice(card.data);
 
                   return (
-                    <div key={card?.id} className="pb-8">
+                    <div key={card?.data?.id} className="pb-8">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
                             <div className="relative">
                               <img
-                                src={card?.images.small}
+                                src={card?.data?.images.small}
                                 alt={`${card?.name}`}
                                 className="cursor-pointer"
                               />
                               <p className="absolute bottom-0 left-0 rounded-sm bg-white p-1 text-[12px] font-semibold">
-                                {card?.number}/{card?.set?.printedTotal}
+                                {card?.data?.number}/
+                                {card?.data?.set?.printedTotal}
                               </p>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>
-                              {card?.name} - {card?.set?.name} - {card?.number}/
-                              {card?.set?.printedTotal}
+                              {card?.name} - {card?.data?.set?.name} -{" "}
+                              {card?.data?.number}/
+                              {card?.data?.set?.printedTotal}
                             </p>
                           </TooltipContent>
                         </Tooltip>

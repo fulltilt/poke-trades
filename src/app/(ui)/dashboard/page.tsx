@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import {
+  getCardList,
   getCardsInCardList,
   getCompletedTrades,
   getUser,
@@ -18,7 +19,7 @@ import { auth } from "~/app/api/auth/authConfig";
 import CardListDisplayComponent from "./cardListDisplay";
 import { sortByDateAndThenNumber } from "~/app/utils/helpers";
 import { DataTable } from "~/components/data-table";
-import { columns } from "./list/[id]/columns";
+import { columns } from "./list/columns";
 
 export default async function Dashboard({
   searchParams,
@@ -49,27 +50,22 @@ export default async function Dashboard({
     (list) => !list.name.includes("Wish List"),
   )[0]?.cardListId;
 
-  const tradeListCards = await getCardsInCardList(
+  const tradeListCards = await getCardList(
+    userId,
     tradeListId ?? 0,
     page,
     offSet,
-    "",
-    "",
   );
-  const wishListCards = await getCardsInCardList(
-    wishListId ?? 0,
-    1,
-    30,
-    "",
-    "",
-  );
+  const wishListCards = await getCardList(userId, wishListId ?? 0, 1, 30);
 
   const count = tradeListCards?.totalCount ?? 0;
   const pageCount = Math.ceil(count / Number(offSet));
 
   // sort List by dates descending then Card numbers ascending
-  tradeListCards.cards.sort((a, b) => sortByDateAndThenNumber(a!, b!));
-  const list = tradeListCards?.cards ?? [];
+  tradeListCards?.data.sort((a, b) =>
+    sortByDateAndThenNumber(a.data!, b.data!),
+  );
+  const list = tradeListCards?.data ?? [];
 
   return (
     <div className="flex max-h-full flex-1 flex-col rounded-md pl-14 pr-14">
@@ -84,6 +80,7 @@ export default async function Dashboard({
           </div>
 
           <div className="flex items-center gap-4">
+            <CardListDisplayComponent cards={wishListCards!} />
             <NewTradeComponent
               user={userId}
               username={loggedInUser?.username ?? ""}
@@ -101,23 +98,10 @@ export default async function Dashboard({
           <div className="block rounded-lg p-4 shadow-md shadow-indigo-100"> */}
         <div>
           <div>
-            <div className="container mx-auto py-10">
+            <div className="mb-8 mt-8">
+              <h2 className="mb-8 text-center text-xl font-bold">Trade List</h2>
               <DataTable columns={columns} data={list} pageCount={pageCount} />
             </div>
-            {/* <p className="font-bold">Public Lists</p> */}
-            {/* <ul className="list-none">
-              {publicLists.map((l) => (
-                <li key={l.cardListId}>
-                  <Link
-                    className="text-[#106bc5]"
-                    href={`/dashboard/list/${l.cardListId}?name=${l.name}`}
-                  >
-                    {l.name}
-                  </Link>
-                </li>
-              ))}
-            </ul> */}
-            <CardListDisplayComponent cards={wishListCards} />
           </div>
         </div>
       </main>
