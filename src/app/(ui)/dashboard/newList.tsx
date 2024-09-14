@@ -57,7 +57,7 @@ export default function NewListComponent({
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialog2, setOpenDialog2] = useState(false);
   const [listName, setListName] = useState("");
-  const [listToShare, setListToShare] = useState("");
+  const [listToShare, setListToShare] = useState("Wish+List");
 
   return (
     <div className="flex gap-4">
@@ -126,7 +126,10 @@ export default function NewListComponent({
               <div className="flex justify-center gap-4">
                 <Select
                   name="order"
-                  onValueChange={(val) => setListToShare(val)}
+                  onValueChange={(val) => {
+                    if (val === "Wish List") val = "Wish+List";
+                    setListToShare(val);
+                  }}
                   defaultValue={cardLists[0]?.name}
                 >
                   <SelectTrigger className="w-[160px]">
@@ -142,6 +145,7 @@ export default function NewListComponent({
                 </Select>
                 <Button
                   onClick={async () => {
+                    console.log(listToShare);
                     await window.navigator.clipboard.writeText(
                       `${window.location.hostname}/cardlist?source=${listToShare}&member=${username}`,
                     );

@@ -22,6 +22,7 @@ import {
 
 import { Button } from "~/components/ui/button";
 import { formatType, getPrice } from "~/app/utils/helpers";
+import { useSession } from "next-auth/react";
 
 export function Favorite({ fill }: { fill: string }) {
   return (
@@ -98,6 +99,8 @@ export default function CardComponent({
     is_sub_list: boolean | null;
   }[];
 }) {
+  const session = useSession();
+
   const [isInWishList, setIsInWishList] = useState(inWishList);
   const [openDialog, setOpenDialog] = useState(false);
   const [lists, setLists] = useState<List[]>();
@@ -164,6 +167,7 @@ export default function CardComponent({
 
               setOpenDialog(true);
             }}
+            disabled={session.status === "unauthenticated"}
           >
             +&nbsp;-
           </Button>
@@ -184,16 +188,18 @@ export default function CardComponent({
             setIsInWishList(!isInWishList);
           }}
         >
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Favorite fill={isInWishList ? "red" : "#b6b6b6"} />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Add/Remove from your Wish List</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          {session.status === "authenticated" && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Favorite fill={isInWishList ? "red" : "#b6b6b6"} />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Add/Remove from your Wish List</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
       </div>
 
@@ -206,10 +212,12 @@ export default function CardComponent({
         >
           <DialogHeader>
             <DialogTitle>
-              {!userId ? "Please log in" : "Update Card list quantity"}
+              {session.status === "unauthenticated"
+                ? "Please log in"
+                : "Update Card list quantity"}
             </DialogTitle>
             <DialogDescription></DialogDescription>
-            {!userId ? (
+            {session.status === "unauthenticated" ? (
               <p>
                 Please{" "}
                 <span className="cursor-pointer underline focus:outline-none">
