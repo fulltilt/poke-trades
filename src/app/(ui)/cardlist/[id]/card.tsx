@@ -138,7 +138,7 @@ export default function CardComponent({
               <img
                 src={card?.images.small}
                 alt={`${card?.name}`}
-                className="cursor-pointer opacity-50 transition-all duration-200 hover:opacity-100"
+                className={`cursor-pointer transition-all duration-200 hover:opacity-100 ${session.status === "authenticated" ? "opacity-50" : ""}}`}
               />
               <p className="absolute bottom-0 left-0 rounded-sm bg-white p-1 text-[12px] font-semibold">
                 {card?.number}/{card?.set?.printedTotal}
