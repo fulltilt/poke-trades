@@ -3,7 +3,7 @@ import { inter } from "~/app/fonts";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { GeistSans } from "geist/font/sans";
-import { type Metadata } from "next";
+import { Viewport, type Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { TopNav } from "./_components/topnav";
 import { Footer } from "./_components/footer";
@@ -17,15 +17,16 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+export const viewport: Viewport = {
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <SessionProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-        </head>
         <body className={`${inter.className} antialiased`}>
           <NextTopLoader />
           <div className="grid min-h-screen grid-rows-[auto,1fr]">
@@ -37,7 +38,7 @@ export default function RootLayout({
             <Footer />
           </div>
         </body>
-        {/* <GoogleAnalytics gaId="G-BNX08YMCR9" /> */}
+        <GoogleAnalytics gaId="G-BNX08YMCR9" />
       </html>
     </SessionProvider>
   );
