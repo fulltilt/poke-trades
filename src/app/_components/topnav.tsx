@@ -67,32 +67,32 @@ export async function TopNav() {
             <Hamburger />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href="/dashboard" className="text-sm">
                 Dashboard
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href="/trade" className="text-sm">
                 Trades
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href="/sets" className="text-sm">
                 Sets
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href="/cardlist" className="text-sm">
                 Cards
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href="/about" className="text-sm">
                 About
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link
                 href="https://www.paypal.com/donate/?hosted_button_id=ZCDZKZW4JE5LG"
                 className="text-sm"
@@ -100,7 +100,7 @@ export async function TopNav() {
                 Donate
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Logins session={session} />
             </DropdownMenuItem>
           </DropdownMenuContent>
