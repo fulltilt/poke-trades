@@ -23,6 +23,9 @@ export default function RootLayout({
   return (
     <SessionProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+        </head>
         <body className={`${inter.className} antialiased`}>
           <NextTopLoader />
           <div className="grid min-h-screen grid-rows-[auto,1fr]">
