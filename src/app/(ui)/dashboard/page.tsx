@@ -88,7 +88,7 @@ export default async function Dashboard({
         </div>
       </div>
 
-      <main className="mb-12 max-w-screen-xl flex-1 px-4 py-8 pt-2 sm:px-6 sm:py-12 lg:px-8">
+      <main className="mb-12 max-w-screen-sm flex-1 px-4 py-8 pt-2 sm:max-w-screen-xl sm:px-6 sm:py-12 lg:px-8">
         <p className="text-lg font-semibold">
           Completed Trades: {completedTrades.data}
         </p>

@@ -16,60 +16,60 @@ export const columns: ColumnDef<{
   quantity: number;
   data: Card | null;
 }>[] = [
-  {
-    cell: function Cell({ row }) {
-      const [quantity, setQuantity] = useState(row?.original.quantity);
-      return (
-        <div className="flex">
-          <div
-            className="cursor-pointer font-bold"
-            onClick={async () => {
-              if (quantity === 0) return;
-              const updateRes = await updateCardList(
-                row?.original.userId ?? "",
-                row?.original.cardListId ?? 0,
-                row?.original.cardId ?? "",
-                -1,
-              );
-              if (updateRes?.error) {
-                // TODO: display error message
-                return;
-              }
+  // {
+  //   cell: function Cell({ row }) {
+  //     const [quantity, setQuantity] = useState(row?.original.quantity);
+  //     return (
+  //       <div className="flex">
+  //         <div
+  //           className="cursor-pointer font-bold"
+  //           onClick={async () => {
+  //             if (quantity === 0) return;
+  //             const updateRes = await updateCardList(
+  //               row?.original.userId ?? "",
+  //               row?.original.cardListId ?? 0,
+  //               row?.original.cardId ?? "",
+  //               -1,
+  //             );
+  //             if (updateRes?.error) {
+  //               // TODO: display error message
+  //               return;
+  //             }
 
-              setQuantity(quantity - 1);
-            }}
-          >
-            <Minus />
-          </div>
-          <div className="bold ml-4 mr-4">{quantity}</div>
-          <div
-            className="cursor-pointer font-bold"
-            onClick={async () => {
-              if (
-                row?.original.name === "Wish List" &&
-                row?.original.quantity === 1
-              )
-                return;
-              const updateRes = await updateCardList(
-                row?.original.userId ?? "",
-                row?.original.cardListId ?? 0,
-                row?.original.cardId ?? "",
-                1,
-              );
-              if (updateRes?.error) {
-                // TODO: display error message
-                return;
-              }
-              setQuantity(quantity + 1);
-            }}
-          >
-            <Plus />
-          </div>
-        </div>
-      );
-    },
-    header: "Quantity",
-  },
+  //             setQuantity(quantity - 1);
+  //           }}
+  //         >
+  //           <Minus />
+  //         </div>
+  //         <div className="bold ml-4 mr-4">{quantity}</div>
+  //         <div
+  //           className="cursor-pointer font-bold"
+  //           onClick={async () => {
+  //             if (
+  //               row?.original.name === "Wish List" &&
+  //               row?.original.quantity === 1
+  //             )
+  //               return;
+  //             const updateRes = await updateCardList(
+  //               row?.original.userId ?? "",
+  //               row?.original.cardListId ?? 0,
+  //               row?.original.cardId ?? "",
+  //               1,
+  //             );
+  //             if (updateRes?.error) {
+  //               // TODO: display error message
+  //               return;
+  //             }
+  //             setQuantity(quantity + 1);
+  //           }}
+  //         >
+  //           <Plus />
+  //         </div>
+  //       </div>
+  //     );
+  //   },
+  //   header: "Quantity",
+  // },
   {
     accessorKey: "data.name",
     header: "Name",
